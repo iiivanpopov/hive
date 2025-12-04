@@ -1,0 +1,10 @@
+{
+  "name": "hive-backend",
+  "type": "module",
+  "scripts": {
+    "lint": "bun --bun eslint ."
+  },
+  "devDependencies": {
+    "eslint": "catalog:"
+  }
+}

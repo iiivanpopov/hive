@@ -1,0 +1,4 @@
+COMMIT_MSG_FILE=$1
+PREFIX=$(bun -e "const emojis = ['🚀', '✨', '🎉', '🔥', '💚', '🌟', '⚡️', '🥵', '🦄', '😎', '🤘', '🍺', '❤️', '👍', '🐛', '♻️', '🎨', '💄', '✏️', '✅', '🔒', '🚚', '📝']; console.log(emojis[Math.floor(Math.random() * emojis.length)])")
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+echo "$PREFIX  $COMMIT_MSG" > "$COMMIT_MSG_FILE"

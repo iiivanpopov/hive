@@ -1,0 +1,17 @@
+{
+  "name": "hive-frontend",
+  "type": "module",
+  "scripts": {
+    "lint": "bun --bun eslint .",
+    "lint:css": "bun --bun stylelint \"./src/**/*.css\""
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:",
+    "@eslint-react/eslint-plugin": "^2.3.12",
+    "@yelaiii/stylelint": "^1.0.2",
+    "eslint": "catalog:",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "stylelint": "^16.26.1"
+  }
+}
