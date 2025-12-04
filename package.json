@@ -2,9 +2,7 @@
   "name": "hive",
   "type": "module",
   "workspaces": {
-    "packages": [
-      "apps/*"
-    ],
+    "packages": ["apps/*"],
     "catalog": {
       "@antfu/eslint-config": "^6.4.1",
       "eslint": "^9.39.1"
