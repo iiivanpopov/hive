@@ -22,6 +22,6 @@
   },
   "lint-staged": {
     "*.{js,ts,tsx}": ["bun --workspaces lint --fix"],
-    "*.css": ["bun --filter \"frontend\" stylelint --fix"]
+    "*.css": ["bun --filter \"frontend\" lint:css --fix"]
   }
 }
