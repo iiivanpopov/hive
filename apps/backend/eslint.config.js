@@ -1,3 +1,3 @@
-import globalConfig from '../../eslint.config'
+import globalConfig from '../../eslint.config.js'
 
 export default globalConfig
