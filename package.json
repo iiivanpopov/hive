@@ -10,7 +10,7 @@
   },
   "scripts": {
     "lint": "bun --workspaces lint",
-    "lint:css": "bun --filter \"frontend\" lint:css",
+    "lint:css": "bun --filter \"./apps/frontend\" lint:css",
     "prepare": "husky || true"
   },
   "devDependencies": {
