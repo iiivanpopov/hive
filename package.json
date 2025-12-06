@@ -14,12 +14,14 @@
     "prepare": "husky || true"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "catalog:",
+    "eslint": "catalog:",
     "eslint-plugin-format": "^1.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": ["bun --workspaces lint --fix"],
-    "*.css": ["bun --filter \"frontend\" lint:css --fix"]
+    "*.css": ["bun --filter \"./apps/frontend\" lint:css --fix"]
   }
 }
