@@ -17,3 +17,5 @@ export function validatorMiddleware(target: keyof ValidationTargets, schema: Zod
     }
   })
 }
+
+export const v = validatorMiddleware
