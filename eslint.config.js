@@ -5,6 +5,5 @@ export default antfu({
   imports: true,
   stylistic: true,
   formatters: true,
-  test: false,
   gitignore: true,
 })
