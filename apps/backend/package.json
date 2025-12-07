@@ -3,9 +3,22 @@
   "type": "module",
   "exports": "./contracts/index.ts",
   "scripts": {
+    "dev": "NODE_ENV=development bun ./src/app/entrypoint.ts",
+    "prod": "NODE_ENV=production bun ./dist/index.js",
+    "build:dev": "NODE_ENV=development bun --bun tsgo -b && bun build.script.ts",
+    "build:prod": "NODE_ENV=production bun --bun tsgo -b && bun build.script.ts",
     "lint": "bun --bun eslint ."
   },
+  "dependencies": {
+    "drizzle-orm": "^0.45.0",
+    "hono": "^4.10.7",
+    "pino": "^10.1.0"
+  },
   "devDependencies": {
-    "eslint": "catalog:"
+    "@types/bun": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "drizzle-kit": "^0.31.8",
+    "eslint": "catalog:",
+    "pino-pretty": "^13.1.3"
   }
 }

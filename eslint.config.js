@@ -6,4 +6,7 @@ export default antfu({
   stylistic: true,
   formatters: true,
   gitignore: true,
+  rules: {
+    'antfu/no-top-level-await': 'off',
+  },
 })

@@ -5,10 +5,16 @@
     "packages": ["apps/*"],
     "catalog": {
       "@antfu/eslint-config": "^6.4.1",
+      "@types/bun": "^1.3.3",
+      "@typescript/native-preview": "^7.0.0-dev.20251207.1",
       "eslint": "^9.39.1"
     }
   },
   "scripts": {
+    "dev": "bun --workspaces dev",
+    "prod": "bun --workspaces prod",
+    "build:dev": "NODE_ENV=development bun --workspaces build",
+    "build:prod": "NODE_ENV=production bun --workspaces build",
     "lint": "bun --workspaces lint",
     "lint:css": "bun --filter \"./apps/frontend\" lint:css",
     "prepare": "husky || true"
