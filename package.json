@@ -13,8 +13,8 @@
   "scripts": {
     "dev": "bun --workspaces dev",
     "prod": "bun --workspaces prod",
-    "build:dev": "NODE_ENV=development bun --workspaces build",
-    "build:prod": "NODE_ENV=production bun --workspaces build",
+    "build:dev": "bun --workspaces build:dev",
+    "build:prod": "bun --workspaces build:prod",
     "lint": "bun --workspaces lint",
     "lint:css": "bun --filter \"./apps/frontend\" lint:css",
     "prepare": "husky || true"
