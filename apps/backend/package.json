@@ -3,7 +3,7 @@
   "type": "module",
   "exports": "./contracts/index.ts",
   "scripts": {
-    "dev": "NODE_ENV=development bun ./src/app/entrypoint.ts",
+    "dev": "NODE_ENV=development bun --hot ./src/app/entrypoint.ts",
     "prod": "NODE_ENV=production bun ./dist/index.js",
     "build:dev": "NODE_ENV=development bun --bun tsgo -b && bun build.script.ts",
     "build:prod": "NODE_ENV=production bun --bun tsgo -b && bun build.script.ts",
