@@ -7,6 +7,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
+      "@/shared/*": ["./contracts/*"],
       "@/*": ["./src/*"]
     },
     "types": ["bun"],
