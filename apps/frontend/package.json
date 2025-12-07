@@ -3,9 +3,9 @@
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development bun --bun vite",
-    "prod": "NODE_ENV=production bun --bun preview",
+    "prod": "NODE_ENV=production bun --bun vite preview",
     "build:dev": "NODE_ENV=development bun --bun tsgo -b && bun --bun vite build",
-    "build:prod": "NODE_ENV=production bun --bun tsgo -b && bun --bun vite build",
+    "build:prod": "NODE_ENV=production bun --bun vite build",
     "lint": "bun --bun eslint .",
     "lint:css": "bun --bun stylelint \"./src/**/*.css\""
   },
