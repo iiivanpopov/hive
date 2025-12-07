@@ -1,6 +1,7 @@
 {
   "name": "hive-backend",
   "type": "module",
+  "exports": "./contracts/index.ts",
   "scripts": {
     "lint": "bun --bun eslint ."
   },
