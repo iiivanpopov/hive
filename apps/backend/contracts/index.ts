@@ -1,3 +1,7 @@
+import type app from '@/app/entrypoint'
+import { hc } from 'hono/client'
+import { serverConfig } from '@/config/server.config'
+
 export interface ApiError {
   code: number
   message: string
@@ -7,3 +11,6 @@ export interface ApiError {
 export interface ApiResponse<T> {
   data: T
 }
+
+// localhost as host because we will reverse proxy from frontend to backend
+export const client = hc<typeof app>(`http://localhost:${serverConfig.port}/api`)

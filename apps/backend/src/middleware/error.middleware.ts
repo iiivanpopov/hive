@@ -3,7 +3,7 @@ import { HTTPException } from 'hono/http-exception'
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 
-export function errorMiddleware(): ErrorHandler {
+export function error(): ErrorHandler {
   return (err, c) => {
     if (err instanceof ApiException) {
       return c.json({

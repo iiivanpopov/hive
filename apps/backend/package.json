@@ -7,20 +7,27 @@
     "prod": "NODE_ENV=production bun ./dist/index.js",
     "build:dev": "NODE_ENV=development bun --bun tsgo -b && bun build.script.ts",
     "build:prod": "NODE_ENV=production bun build.script.ts",
+    "studio": "bun --bun drizzle-kit studio",
+    "migrate": "bun --bun drizzle-kit migrate",
+    "push": "bun --bun drizzle-kit push",
+    "generate": "bun --bun drizzle-kit generate",
     "lint": "bun --bun eslint ."
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.7.5",
+    "@hono/standard-validator": "^0.2.0",
     "drizzle-orm": "^1.0.0-beta.2-58a4521",
     "hono": "^4.11.0",
     "pino": "^10.1.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@scalar/hono-api-reference": "^0.9.28",
+    "@standard-schema/spec": "^1.0.0",
     "@types/bun": "catalog:",
     "@typescript/native-preview": "catalog:",
     "drizzle-kit": "^1.0.0-beta.2-58a4521",
     "eslint": "catalog:",
+    "hono-openapi": "^1.1.2",
     "pino-pretty": "^13.1.3"
   }
 }

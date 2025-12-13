@@ -9,7 +9,7 @@ const build = await Bun.build({
   sourcemap: envConfig.isDevelopment ? 'linked' : 'none',
   naming: 'index.js',
   define: {
-    'import.meta.env.NODE_ENV': `"${envConfig.nodeEnv}"`,
+    'Bun.env.NODE_ENV': `'${Bun.env.NODE_ENV}'`,
   },
   target: 'bun',
   format: 'esm',

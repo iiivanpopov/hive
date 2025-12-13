@@ -1,7 +1,5 @@
-import type { NODE_ENV } from '@/types'
-
 export const envConfig = {
-  nodeEnv: import.meta.env.NODE_ENV as NODE_ENV,
-  isProduction: import.meta.env.NODE_ENV === 'production',
-  isDevelopment: import.meta.env.NODE_ENV === 'development',
+  nodeEnv: Bun.env.NODE_ENV || 'production',
+  isProduction: Bun.env.NODE_ENV === 'production',
+  isDevelopment: Bun.env.NODE_ENV === 'development',
 }

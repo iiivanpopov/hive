@@ -1,6 +1,6 @@
 import { createFactory } from 'hono/factory'
 
-interface Env {
+export interface Env {
   Bindings: undefined
   Variables: undefined
 }
