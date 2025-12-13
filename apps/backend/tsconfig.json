@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.backend.tsbuildinfo",
     "target": "ESNext",
     "lib": ["ESNext"],
     "moduleDetection": "force",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "@/shared/*": ["./contracts/*"],
       "@/*": ["./src/*"]
     },
     "types": ["bun"],

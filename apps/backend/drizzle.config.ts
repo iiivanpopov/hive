@@ -1,9 +1,10 @@
 import { defineConfig } from 'drizzle-kit'
-import { dbConfig } from '@/config/db.config'
 
 export default defineConfig({
   dialect: 'sqlite',
-  schema: './src/db/schema.ts',
+  schema: './src/db/schemas/*',
   out: './drizzle',
-  dbCredentials: dbConfig,
+  dbCredentials: {
+    url: Bun.env.DB_URL,
+  },
 })

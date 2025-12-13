@@ -16,7 +16,10 @@
     "build:dev": "bun --workspaces build:dev",
     "build:prod": "bun --workspaces build:prod",
     "lint": "bun --workspaces lint",
-    "lint:css": "bun --filter \"./apps/frontend\" lint:css",
+    "lint:css": "bun --filter ./apps/frontend lint:css",
+    "db:generate": "bun --filter ./apps/backend db:generate",
+    "db:push": "bun --filter ./apps/backend db:push",
+    "db:studio": "bun --filter ./apps/backend db:studio",
     "prepare": "husky || true"
   },
   "devDependencies": {

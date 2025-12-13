@@ -1,0 +1,20 @@
+{
+  "name": "hive-shared",
+  "type": "module",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build:dev": "tsgo -b",
+    "build:prod": "tsgo -b",
+    "lint": "bun --bun eslint ."
+
+  },
+  "devDependencies": {
+    "@typescript/native-preview": "catalog:",
+    "eslint": "catalog:"
+  }
+}

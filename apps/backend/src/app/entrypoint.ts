@@ -12,7 +12,7 @@ import { logger } from '@/middleware/logger.middleware'
 import { router } from './router'
 
 migrate(db, { migrationsFolder: './drizzle' })
-pino.debug('migrate finished')
+pino.info('migrate finished')
 
 const app = factory.createApp()
   .onError(error())
@@ -49,4 +49,5 @@ app.get('/openapi', openAPIRouteHandler(app, {
 }))
 app.get('/docs', Scalar({ url: '/openapi' }))
 
+export type App = typeof app
 export default app
