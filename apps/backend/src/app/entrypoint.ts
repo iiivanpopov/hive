@@ -49,5 +49,4 @@ app.get('/openapi', openAPIRouteHandler(app, {
 }))
 app.get('/docs', Scalar({ url: '/openapi' }))
 
-export type App = typeof app
 export default app
