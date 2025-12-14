@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": false,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    "noEmit": false,
+    "outDir": "./client",
+    "sourceMap": true,
+    "isolatedModules": false,
+    "skipLibCheck": true
+  },
+  "include": ["src/app/client.ts"],
+  "exclude": ["node_modules", "dist", "client"]
+}

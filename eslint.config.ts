@@ -1,6 +1,8 @@
 import antfu from '@antfu/eslint-config'
 
-export const globalESLintConfig: Parameters<typeof antfu>[0] = {
+export const globalESLintConfig: Parameters<typeof antfu>[0] & {
+  ignores?: string[]
+} = {
   typescript: true,
   stylistic: true,
   imports: true,

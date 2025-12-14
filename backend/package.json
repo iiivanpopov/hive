@@ -1,12 +1,20 @@
 {
   "name": "hive-backend",
   "type": "module",
-  "exports": "./contracts/index.ts",
+  "exports": {
+    ".": {
+      "types": "./client/app/client.d.ts",
+      "import": "./client/app/client.js"
+    }
+  },
+  "main": "./client/app/client.js",
+  "types": "./client/app/client.d.ts",
   "scripts": {
     "dev": "NODE_ENV=development bun --hot ./src/app/entrypoint.ts",
     "prod": "NODE_ENV=production bun ./dist/index.js",
     "build:dev": "NODE_ENV=development bun --bun tsgo -b && bun build.script.ts",
     "build:prod": "NODE_ENV=production bun build.script.ts",
+    "build:client": "bun --bun tsgo -p ./tsconfig.client.json",
     "lint": "bun --bun eslint .",
     "db:studio": "bun --bun drizzle-kit studio",
     "db:push": "bun --bun drizzle-kit push",

@@ -3,7 +3,6 @@ import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { describeRoute, openAPIRouteHandler, resolver } from 'hono-openapi'
 import { cors } from 'hono/cors'
 import z from 'zod'
-import { serverConfig } from '@/config/server.config'
 import { db } from '@/db/instance'
 import { factory } from '@/lib/factory'
 import { pino } from '@/lib/pino'
@@ -16,7 +15,10 @@ pino.info('migrate finished')
 
 const app = factory.createApp()
   .onError(error())
-  .use(cors())
+  .use(cors({
+    origin: ['http://localhost:5173', 'http://localhost:4173', 'http://frontend:80'],
+    credentials: true,
+  }))
   .use(logger())
   .route('/api', router)
   .get('/health', describeRoute({
@@ -43,10 +45,11 @@ app.get('/openapi', openAPIRouteHandler(app, {
       description: 'API documentation for Hive backend',
     },
     servers: [
-      { url: `http://localhost:${serverConfig.port}` },
+      { url: `http://localhost:5656` },
     ],
   },
 }))
 app.get('/docs', Scalar({ url: '/openapi' }))
 
+export type App = typeof app
 export default app

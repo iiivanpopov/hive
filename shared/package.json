@@ -8,10 +8,9 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build:dev": "tsgo -b",
-    "build:prod": "tsgo -b",
+    "build:dev": "NODE_ENV=development tsgo -b",
+    "build:prod": "NODE_ENV=production tsgo -b",
     "lint": "bun --bun eslint ."
-
   },
   "devDependencies": {
     "@typescript/native-preview": "catalog:",

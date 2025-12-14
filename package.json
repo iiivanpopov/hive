@@ -2,7 +2,7 @@
   "name": "hive",
   "type": "module",
   "workspaces": {
-    "packages": ["apps/*"],
+    "packages": ["backend", "frontend", "shared"],
     "catalog": {
       "@antfu/eslint-config": "^6.6.1",
       "@types/bun": "^1.3.4",
@@ -11,15 +11,16 @@
     }
   },
   "scripts": {
-    "dev": "bun --workspaces dev",
-    "prod": "bun --workspaces prod",
+    "dev": "bun --filter ./backend --filter ./frontend dev",
+    "prod": "bun --filter ./backend --filter ./frontend prod",
     "build:dev": "bun --workspaces build:dev",
     "build:prod": "bun --workspaces build:prod",
+    "build:client": "bun --filter ./backend build:client",
     "lint": "bun --workspaces lint",
-    "lint:css": "bun --filter ./apps/frontend lint:css",
-    "db:generate": "bun --filter ./apps/backend db:generate",
-    "db:push": "bun --filter ./apps/backend db:push",
-    "db:studio": "bun --filter ./apps/backend db:studio",
+    "lint:css": "bun --filter ./frontend lint:css",
+    "db:generate": "bun --filter ./backend db:generate",
+    "db:push": "bun --filter ./backend db:push",
+    "db:studio": "bun --filter ./backend db:studio",
     "prepare": "husky || true"
   },
   "devDependencies": {
@@ -31,6 +32,6 @@
   },
   "lint-staged": {
     "*.{js,ts,tsx}": ["bun --workspaces lint --fix"],
-    "*.css": ["bun --filter \"./apps/frontend\" lint:css --fix"]
+    "*.css": ["bun --filter \"./frontend\" lint:css --fix"]
   }
 }

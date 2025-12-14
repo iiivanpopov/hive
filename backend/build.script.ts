@@ -2,7 +2,7 @@ import path from 'node:path'
 import { envConfig } from '@/config/env.config'
 import { pino } from '@/lib/pino'
 
-const build = await Bun.build({
+const serverBuild = await Bun.build({
   entrypoints: ['./src/app/entrypoint.ts'],
   outdir: './dist',
   minify: true,
@@ -15,7 +15,7 @@ const build = await Bun.build({
   format: 'esm',
 })
 
-build.outputs.forEach((output) => {
+serverBuild.outputs.forEach((output) => {
   const fileName = path.basename(output.path)
   const fileSize = (output.size / 1024).toFixed(2)
 
