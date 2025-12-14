@@ -3,18 +3,18 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./client/app/client.d.ts",
-      "import": "./client/app/client.js"
+      "types": "./dist/app/client.d.ts",
+      "import": "./dist/app/client.js"
     }
   },
-  "main": "./client/app/client.js",
-  "types": "./client/app/client.d.ts",
+  "main": "./dist/app/client.js",
+  "types": "./dist/app/client.d.ts",
   "scripts": {
     "dev": "NODE_ENV=development bun --hot ./src/app/entrypoint.ts",
     "prod": "NODE_ENV=production bun ./dist/index.js",
-    "build:dev": "NODE_ENV=development bun --bun tsgo -b && bun build.script.ts",
-    "build:prod": "NODE_ENV=production bun build.script.ts",
-    "build:client": "bun --bun tsgo -p ./tsconfig.client.json",
+    "build:dev": "bun --bun tsgo -b && NODE_ENV=development bun build.script.ts && bun build:client",
+    "build:prod": "NODE_ENV=production bun build.script.ts && bun build:client",
+    "build:client": "bun --bun tsgo -p ./tsconfig.build.json",
     "lint": "bun --bun eslint .",
     "db:studio": "bun --bun drizzle-kit studio",
     "db:push": "bun --bun drizzle-kit push",

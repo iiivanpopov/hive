@@ -15,7 +15,6 @@
     "prod": "bun --filter ./backend --filter ./frontend prod",
     "build:dev": "bun --workspaces build:dev",
     "build:prod": "bun --workspaces build:prod",
-    "build:client": "bun --filter ./backend build:client",
     "lint": "bun --workspaces lint",
     "lint:css": "bun --filter ./frontend lint:css",
     "db:generate": "bun --filter ./backend db:generate",
