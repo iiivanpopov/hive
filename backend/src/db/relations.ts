@@ -12,4 +12,10 @@ export const relations = defineRelations({
       to: r.sessions.userId,
     }),
   },
+  sessions: {
+    user: r.one.users({
+      from: r.sessions.userId,
+      to: r.users.id,
+    }),
+  },
 }))
