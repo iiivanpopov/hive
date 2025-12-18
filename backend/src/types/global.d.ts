@@ -4,5 +4,6 @@ declare namespace Bun {
   interface Env {
     NODE_ENV: NODE_ENV
     DB_URL: string
+    PORT: string
   }
 }
