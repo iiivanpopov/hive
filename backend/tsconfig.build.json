@@ -10,5 +10,5 @@
     "outDir": "./dist",
     "isolatedModules": false
   },
-  "include": ["src/app/client.ts"]
+  "include": ["src/app/entrypoint.ts"]
 }

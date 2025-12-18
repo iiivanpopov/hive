@@ -3,17 +3,17 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/app/client.d.ts",
-      "import": "./dist/app/client.js"
+      "types": "./dist/app/entrypoint.d.ts",
+      "import": "./dist/app/entrypoint.js"
     }
   },
-  "main": "./dist/app/client.js",
-  "types": "./dist/app/client.d.ts",
+  "main": "./dist/app/entrypoint.js",
+  "types": "./dist/app/entrypoint.d.ts",
   "scripts": {
     "dev": "NODE_ENV=development bun --hot ./src/app/entrypoint.ts",
     "prod": "NODE_ENV=production bun ./dist/index.js",
-    "build:dev": "bun --bun tsgo -b && NODE_ENV=development bun build.script.ts && bun build:client",
-    "build:prod": "NODE_ENV=production bun build.script.ts && bun build:client",
+    "build:dev": "bun --bun tsgo -b && NODE_ENV=development bun build.script.ts",
+    "build:prod": "NODE_ENV=production bun build.script.ts",
     "build:client": "bun --bun tsgo -p ./tsconfig.build.json",
     "lint": "bun --bun eslint .",
     "db:studio": "bun --bun drizzle-kit studio",
@@ -23,7 +23,7 @@
   "dependencies": {
     "@hono/standard-validator": "^0.2.1",
     "drizzle-orm": "^1.0.0-beta.3-d4ff358",
-    "hono": "^4.11.1",
+    "hono": "catalog:",
     "pino": "^10.1.0",
     "zod": "^4.2.1"
   },

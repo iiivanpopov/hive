@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "5656:5656"
+    environment:
+      - NODE_ENV=production
+      - DB_URL=database.sqlite
+    volumes:
+      - ./backend/database.sqlite:/app/database.sqlite
+    networks:
+      - hive-network
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - hive-network
+    restart: always
+
+networks:
+  hive-network:
+    driver: bridge
