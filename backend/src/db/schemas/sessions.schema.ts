@@ -6,7 +6,7 @@ export const sessions = s.sqliteTable('sessions', {
   id: s.integer('id').primaryKey(),
   userId: s.integer('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   token: s.text('token').notNull(),
   createdAt: s.integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
