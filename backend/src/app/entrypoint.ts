@@ -6,8 +6,7 @@ import z from 'zod'
 import { db } from '@/db/instance'
 import { factory } from '@/lib/factory'
 import { pino } from '@/lib/pino'
-import { error } from '@/middleware/error.middleware'
-import { logger } from '@/middleware/logger.middleware'
+import { error, logger } from '@/middleware'
 import { router } from './router'
 
 migrate(db, { migrationsFolder: './drizzle' })

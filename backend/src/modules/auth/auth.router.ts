@@ -2,7 +2,7 @@ import { describeRoute, resolver } from 'hono-openapi'
 import { setCookie } from 'hono/cookie'
 import { cookiesConfig } from '@/config/cookies.config'
 import { factory } from '@/lib/factory'
-import { validator } from '@/middleware/validator.middleware'
+import { validator } from '@/middleware'
 import { register } from './auth.service'
 import { RegisterBodySchema, RegisterResponseSchema } from './schema/register.schema'
 

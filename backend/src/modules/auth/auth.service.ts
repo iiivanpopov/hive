@@ -2,9 +2,9 @@ import type { RegisterBody } from './schema/register.schema'
 import { db } from '@/db/instance'
 import { confirmTokens, sessions, users } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
-import { generateToken } from '@/lib/crypto'
 import { pino } from '@/lib/pino'
 import { smtp } from '@/lib/smtp'
+import { generateToken } from '@/lib/utils'
 
 async function sendConfirmationEmail(email: string, token: string) {
   return smtp.sendMail({
