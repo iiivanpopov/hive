@@ -6,4 +6,8 @@ export default antfu({
   ignores: Array.isArray(globalESLintConfig?.ignores)
     ? [...globalESLintConfig!.ignores, './client']
     : ['./client'],
+  rules: {
+    ...globalESLintConfig?.rules,
+    'unicorn/throw-new-error': 'off',
+  },
 })

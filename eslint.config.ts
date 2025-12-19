@@ -8,6 +8,7 @@ export const globalESLintConfig: Parameters<typeof antfu>[0] & {
   imports: true,
   rules: {
     'antfu/no-top-level-await': 'off',
+    'node/prefer-global/buffer': 'off',
   },
 }
 
