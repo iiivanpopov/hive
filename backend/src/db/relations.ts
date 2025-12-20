@@ -11,9 +11,9 @@ export const relations = defineRelations({
       from: r.users.id,
       to: r.sessions.userId,
     }),
-    confirmToken: r.many.confirmTokens({
+    confirmToken: r.one.confirmTokens({
       from: r.users.id,
-      to: r.sessions.userId,
+      to: r.confirmTokens.userId,
     }),
   },
   sessions: {

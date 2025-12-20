@@ -8,10 +8,10 @@ export const sessions = s.sqliteTable('sessions', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   token: s.text('token').notNull(),
-  createdAt: s.integer('created_at', { mode: 'timestamp' })
+  lastActivityAt: s.integer('last_activity_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: s.integer('updated_at', { mode: 'timestamp' })
+  createdAt: s.integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
 })

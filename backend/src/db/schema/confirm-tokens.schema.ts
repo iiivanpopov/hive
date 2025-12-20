@@ -11,7 +11,4 @@ export const confirmTokens = s.sqliteTable('confirm_tokens', {
   createdAt: s.integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: s.integer('updated_at', { mode: 'timestamp' })
-    .default(sql`(unixepoch())`)
-    .notNull(),
 })

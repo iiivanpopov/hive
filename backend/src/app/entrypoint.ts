@@ -6,19 +6,19 @@ import z from 'zod'
 import { db } from '@/db/instance'
 import { factory } from '@/lib/factory'
 import { pino } from '@/lib/pino'
-import { error, logger } from '@/middleware'
+import { errorMiddleware, loggerMiddleware, sessionMiddleware } from '@/middleware'
 import { router } from './router'
 
 migrate(db, { migrationsFolder: './drizzle' })
 pino.info('migrate finished')
 
 const app = factory.createApp()
-  .onError(error())
+  .onError(errorMiddleware())
   .use(cors({
     origin: ['http://localhost:5173', 'http://localhost:4173', 'http://frontend:80'],
     credentials: true,
   }))
-  .use(logger())
+  .use(loggerMiddleware())
   .route('/api', router)
   .get('/health', describeRoute({
     description: 'Health check',
@@ -49,6 +49,30 @@ app.get('/openapi', openAPIRouteHandler(app, {
   },
 }))
 app.get('/docs', Scalar({ url: '/openapi' }))
+
+app.get('/test', describeRoute({
+  description: 'Test route to get user from session',
+  responses: {
+    200: {
+      description: 'Successful response',
+      content: {
+        'application/json': {
+          schema: resolver(z.object({
+            user: z.object({
+              id: z.string(),
+              email: z.email(),
+              createdAt: z.string(),
+              updatedAt: z.string(),
+            }),
+          })),
+        },
+      },
+    },
+  },
+}), sessionMiddleware(), async (c) => {
+  const user = c.get('user')
+  return c.json({ user })
+})
 
 export type App = typeof app
 export default app
