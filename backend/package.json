@@ -3,12 +3,12 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/app/entrypoint.d.ts",
-      "import": "./dist/app/entrypoint.js"
+      "types": "./dist/app/public.d.ts",
+      "import": "./dist/app/public.js"
     }
   },
-  "main": "./dist/app/entrypoint.js",
-  "types": "./dist/app/entrypoint.d.ts",
+  "main": "./dist/app/public.js",
+  "types": "./dist/app/public.d.ts",
   "scripts": {
     "dev": "NODE_ENV=development bun --hot ./src/app/entrypoint.ts",
     "prod": "NODE_ENV=production bun ./dist/index.js",

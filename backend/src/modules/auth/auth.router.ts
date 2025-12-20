@@ -3,10 +3,11 @@ import { setCookie } from 'hono/cookie'
 import { cookiesConfig } from '@/config/cookies.config'
 import { factory } from '@/lib/factory'
 import { validator } from '@/middleware'
-import { register } from './auth.service'
-import { RegisterBodySchema, RegisterResponseSchema } from './schema/register.schema'
+import { confirmEmail, register } from './auth.service'
+import { ConfirmParamsSchema, RegisterBodySchema, RegisterResponseSchema } from './schema'
 
 export const authRouter = factory.createApp()
+  .basePath('/auth')
   .post(
     '/register',
     describeRoute({
@@ -36,5 +37,25 @@ export const authRouter = factory.createApp()
       })
 
       return c.json({ sessionToken }, 200)
+    },
+  )
+  .post(
+    '/confirm/:token',
+    describeRoute({
+      summary: 'Confirm user account',
+      description: 'Confirm a user account using the provided confirmation token.',
+      responses: {
+        204: {
+          description: 'Account confirmed successfully',
+        },
+      },
+    }),
+    validator('param', ConfirmParamsSchema),
+    async (c) => {
+      const { token } = c.req.valid('param')
+
+      await confirmEmail(token)
+
+      return c.body(null, 204)
     },
   )
