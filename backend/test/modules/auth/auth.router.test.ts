@@ -2,9 +2,9 @@ import { beforeAll, expect, test } from 'bun:test'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { testClient } from 'hono/testing'
 import { app } from '@/app/entrypoint'
-import { reset } from '@/db/helpers'
 import { db } from '@/db/instance'
 import * as schema from '@/db/schema'
+import { reset } from '../../_utils'
 
 const client = testClient(app)
 

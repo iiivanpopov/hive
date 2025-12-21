@@ -1,6 +1,6 @@
 import type { Table } from 'drizzle-orm'
 import { getTableName, sql } from 'drizzle-orm'
-import { db } from './instance'
+import { db } from '@/db/instance'
 
 export function reset(schema: Record<string, Table>) {
   // ignoring error because this is only for tests
