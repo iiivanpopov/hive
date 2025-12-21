@@ -5,5 +5,3 @@ dist
 .vscode
 *.log
 .env*
-frontend/dist
-backend/dist

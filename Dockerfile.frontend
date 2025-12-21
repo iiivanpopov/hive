@@ -6,12 +6,15 @@ COPY package.json bun.lock ./
 COPY backend/package.json ./backend/
 COPY frontend/package.json ./frontend/
 
-COPY . .
-
 RUN bun i --frozen-lockfile
 
-RUN bun --filter ./backend build:client
-RUN bun --filter ./frontend build:prod
+COPY . .
+
+# Fixing symlinks
+RUN bun i --frozen-lockfile
+
+RUN bun --filter hive-backend build:client
+RUN bun --filter hive-frontend build:prod
 
 FROM nginx:mainline-alpine3.23
 
