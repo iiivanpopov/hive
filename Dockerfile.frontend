@@ -11,13 +11,11 @@ COPY . .
 RUN bun i --frozen-lockfile
 
 RUN bun --filter ./backend build:client
+RUN bun --filter ./frontend build:prod
 
-RUN bun build:prod
-
-FROM nginx:1.29.3-alpine
+FROM nginx:mainline-alpine3.23
 
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
-
 COPY --from=builder /app/frontend/dist /usr/share/nginx/html
 
 EXPOSE 80
