@@ -5,3 +5,10 @@ dist
 .vscode
 *.log
 .env*
+*.md
+.github
+.gitignore
+eslint.config.*
+stylelint.config.*
+*.test.*
+test/

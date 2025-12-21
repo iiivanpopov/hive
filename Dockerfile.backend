@@ -10,10 +10,9 @@ RUN bun i --frozen-lockfile
 
 COPY . .
 
-# Fixing symlinks
-RUN bun i --frozen-lockfile
-
-RUN bun --filter hive-backend build:prod
+# Fixing symlinks and build
+RUN bun i --frozen-lockfile && \
+    bun --filter hive-backend build:prod
 
 FROM oven/bun:1.3.5-alpine
 

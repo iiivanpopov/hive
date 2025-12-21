@@ -10,11 +10,10 @@ RUN bun i --frozen-lockfile
 
 COPY . .
 
-# Fixing symlinks
-RUN bun i --frozen-lockfile
-
-RUN bun --filter hive-backend build:client
-RUN bun --filter hive-frontend build:prod
+# Fixing symlinks and build in one layer
+RUN bun i --frozen-lockfile && \
+    bun --filter hive-backend build:client && \
+    bun --filter hive-frontend build:prod
 
 FROM nginx:mainline-alpine3.23
 
