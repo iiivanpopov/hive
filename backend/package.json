@@ -37,7 +37,6 @@
     "@typescript/native-preview": "^7.0.0-dev.20251220.1",
     "drizzle-kit": "^1.0.0-beta.3-d4ff358",
     "eslint": "^9.39.2",
-    "hive-shared": "workspace:*",
     "hono-openapi": "^1.1.2",
     "pino-pretty": "^13.1.3"
   }
