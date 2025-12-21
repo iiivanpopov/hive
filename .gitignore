@@ -2,5 +2,7 @@
 .vscode
 node_modules
 .env
+.env.test
 dist
 database.sqlite
+database.test.sqlite

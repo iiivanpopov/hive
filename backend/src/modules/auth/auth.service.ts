@@ -1,5 +1,6 @@
 import type { RegisterBody } from './schema/register.schema'
 import { eq } from 'drizzle-orm/sql/expressions/conditions'
+import { envConfig } from '@/config/env.config'
 import { db } from '@/db/instance'
 import { confirmTokens, sessions, users } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
@@ -8,7 +9,7 @@ import { smtp } from '@/lib/smtp'
 import { generateToken } from '@/lib/utils'
 
 async function sendConfirmationEmail(email: string, token: string) {
-  if (Bun.env.SMTP_ENABLE !== 'true')
+  if (Bun.env.SMTP_ENABLE !== 'true' || envConfig.isTest)
     return
 
   return smtp.sendMail({
@@ -22,8 +23,10 @@ async function sendConfirmationEmail(email: string, token: string) {
 export async function register(data: RegisterBody) {
   const userExists = await db.query.users.findMany({
     where: {
-      email: data.email,
-      username: data.username,
+      OR: [
+        { email: data.email },
+        { username: data.username },
+      ],
     },
   })
   if (userExists.length > 0)
@@ -71,10 +74,8 @@ export async function confirmEmail(token: string) {
   if (!tokenExists)
     throw ApiException.BadRequest('Invalid confirmation token', 'INVALID_TOKEN')
 
-  if (tokenExists.user!.emailConfirmed) {
-    pino.debug(`User ${tokenExists.user!.id} already confirmed`)
-    return
-  }
+  if (tokenExists.user!.emailConfirmed)
+    return pino.debug(`User ${tokenExists.user!.id} already confirmed`)
 
   await db.update(users)
     .set({ emailConfirmed: true })

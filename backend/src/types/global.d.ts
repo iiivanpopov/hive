@@ -1,6 +1,6 @@
 declare namespace Bun {
   interface Env {
-    NODE_ENV: 'production' | 'development'
+    NODE_ENV: 'production' | 'development' | 'test'
     DB_URL: string
     FRONTEND_URL: string
     PORT: string

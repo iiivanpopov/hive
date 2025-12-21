@@ -2,7 +2,7 @@ import { pino } from 'pino'
 import { envConfig } from '@/config/env.config'
 
 const instance = pino({
-  level: envConfig.isDevelopment ? 'debug' : 'info',
+  level: envConfig.isTest ? 'silent' : envConfig.isProduction ? 'info' : 'debug',
   transport: envConfig.isDevelopment
     ? {
         target: 'pino-pretty',

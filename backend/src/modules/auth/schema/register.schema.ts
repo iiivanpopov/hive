@@ -7,9 +7,3 @@ export const RegisterBodySchema = z.object({
 })
 
 export type RegisterBody = z.infer<typeof RegisterBodySchema>
-
-export const RegisterResponseSchema = z.object({
-  sessionToken: z.string(),
-})
-
-export type RegisterResponse = z.infer<typeof RegisterResponseSchema>
