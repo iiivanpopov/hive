@@ -1,34 +1,25 @@
-import type { RegisterBody } from './schema/register.schema'
-import { eq } from 'drizzle-orm/sql/expressions/conditions'
-import { envConfig } from '@/config/env.config'
+import type { RegisterBody } from './schema'
+import { eq } from 'drizzle-orm'
+import { envConfig } from '@/config'
 import { db } from '@/db/instance'
 import { confirmTokens, sessions, users } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 import { smtp } from '@/lib/smtp'
-import { escapeHtml, generateToken, normalizeUserAgent } from '@/lib/utils'
+import { generateToken, normalizeUserAgent, sanitizeXss } from '@/lib/utils'
 
 async function sendConfirmationEmail(email: string, token: string) {
-  if (Bun.env.SMTP_ENABLE !== 'true' || envConfig.isTest)
-    return
-
-  const safeEmail = escapeHtml(email)
-
-  const confirmUrl = new URL('/confirm', Bun.env.FRONTEND_URL)
-  confirmUrl.searchParams.set('token', token)
-
   return smtp.sendMail({
     from: `"Hive" <${Bun.env.SMTP_USER}>`,
     to: email,
     subject: 'Welcome to Hive!',
     html: `
-    <h1>Welcome to Hive, ${safeEmail}!</h1>
-    <p>Thank you for registering.</p>
-    <p>
-      Please confirm your account by clicking
-      <a href="${confirmUrl.toString()}">here</a>.
-    </p>
-    `,
+      <h1>Welcome to Hive, ${sanitizeXss(email)}!</h1>
+      <p>Thank you for registering.</p>
+      <p>
+        Please confirm your account by clicking
+        <a href="${Bun.env.FRONTEND_URL}/confirm?token=${token}">here</a>.
+      </p>`,
   })
 }
 
@@ -45,15 +36,19 @@ export async function register(data: RegisterBody, userAgent?: string) {
     throw ApiException.BadRequest('User with given username or email already exists', 'USER_EXISTS')
 
   const passwordHash = await Bun.password.hash(data.password)
-  const [user] = await db.insert(users).values({
-    username: data.username,
-    email: data.email,
-    passwordHash,
-  }).returning()
+  const [user] = await db
+    .insert(users)
+    .values({
+      username: data.username,
+      email: data.email,
+      passwordHash,
+    })
+    .returning()
   pino.debug(`Created user: ${JSON.stringify(user)}`)
 
   const sessionToken = generateToken()
-  const [session] = await db.insert(sessions)
+  const [session] = await db
+    .insert(sessions)
     .values({
       userId: user.id,
       userAgent: normalizeUserAgent(userAgent),
@@ -63,7 +58,8 @@ export async function register(data: RegisterBody, userAgent?: string) {
   pino.debug(`Created session: ${JSON.stringify(session)}`)
 
   const confirmationToken = generateToken()
-  const [confirmation] = await db.insert(confirmTokens)
+  const [confirmation] = await db
+    .insert(confirmTokens)
     .values({
       userId: user.id,
       token: confirmationToken,
@@ -71,8 +67,10 @@ export async function register(data: RegisterBody, userAgent?: string) {
     .returning()
   pino.debug(`Created confirmation token: ${JSON.stringify(confirmation)}`)
 
-  const mail = await sendConfirmationEmail(data.email, confirmationToken)
-  pino.debug(`Sent email: ${JSON.stringify(mail)}`)
+  if (Bun.env.SMTP_ENABLE === 'true' && !envConfig.isTest) {
+    const mail = await sendConfirmationEmail(data.email, confirmationToken)
+    pino.debug(`Sent email: ${JSON.stringify(mail)}`)
+  }
 
   return sessionToken
 }
@@ -90,12 +88,14 @@ export async function confirmEmail(token: string) {
   if (tokenExists.user!.emailConfirmed)
     return pino.debug(`User ${tokenExists.user!.id} already confirmed`)
 
-  await db.update(users)
+  await db
+    .update(users)
     .set({ emailConfirmed: true })
     .where(eq(users.id, tokenExists.userId))
   pino.debug(`User ${tokenExists.user!.id} email confirmed`)
 
-  await db.delete(confirmTokens)
+  await db
+    .delete(confirmTokens)
     .where(eq(confirmTokens.id, tokenExists.id))
   pino.debug(`Deleted confirmation token ${tokenExists.id}`)
 }

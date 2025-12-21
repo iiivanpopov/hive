@@ -1,5 +1,5 @@
 import { pino } from 'pino'
-import { envConfig } from '@/config/env.config'
+import { envConfig } from '@/config'
 
 const instance = pino({
   level: envConfig.isTest ? 'silent' : envConfig.isProduction ? 'info' : 'debug',

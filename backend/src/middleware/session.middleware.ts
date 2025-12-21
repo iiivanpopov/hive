@@ -1,18 +1,15 @@
 import { eq } from 'drizzle-orm'
 import { deleteCookie, getCookie } from 'hono/cookie'
-import { cookiesConfig } from '@/config/cookies.config'
+import { authConfig } from '@/config/auth.config'
 import { db } from '@/db/instance'
 import { sessions } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
 import { factory } from '@/lib/factory'
 import { normalizeUserAgent } from '@/lib/utils'
 
-const SESSION_TIMEOUT_SECONDS = 7 * 24 * 60 * 60 // 7 days
-// const SESSION_TIMEOUT_SECONDS = 10 // 7 days
-
 export function sessionMiddleware() {
   return factory.createMiddleware(async (c, next) => {
-    const sessionToken = getCookie(c, cookiesConfig.sessionToken)
+    const sessionToken = getCookie(c, authConfig.sessionTokenName)
     if (!sessionToken)
       throw ApiException.Unauthorized('No authorization token provided', 'NO_TOKEN')
 
@@ -23,28 +20,25 @@ export function sessionMiddleware() {
       },
     })
     if (!session) {
-      deleteCookie(c, cookiesConfig.sessionToken)
+      deleteCookie(c, authConfig.sessionTokenName)
       throw ApiException.Unauthorized('Invalid authorization token', 'INVALID_TOKEN')
     }
 
-    if (session.lastActivityAt.getTime() / 1000 + SESSION_TIMEOUT_SECONDS < Date.now() / 1000) {
-      deleteCookie(c, cookiesConfig.sessionToken)
+    if (session.lastActivityAt.getTime() + authConfig.sessionTokenTTL * 1000 < Date.now()) {
+      deleteCookie(c, authConfig.sessionTokenName)
+      await db
+        .delete(sessions)
+        .where(eq(sessions.id, session.id))
       throw ApiException.Unauthorized('Session has expired', 'SESSION_EXPIRED')
     }
 
-    const requestUserAgent = normalizeUserAgent(c.req.header('User-Agent'))
-    const sessionUserAgent = normalizeUserAgent(session.userAgent)
-
-    if (
-      requestUserAgent !== 'unknown'
-      && sessionUserAgent !== 'unknown'
-      && requestUserAgent !== sessionUserAgent
-    ) {
-      deleteCookie(c, cookiesConfig.sessionToken)
+    if (normalizeUserAgent(c.req.header('User-Agent')) !== session.userAgent) {
+      deleteCookie(c, authConfig.sessionTokenName)
       throw ApiException.Unauthorized('User-Agent does not match', 'USER_AGENT_MISMATCH')
     }
 
-    await db.update(sessions)
+    await db
+      .update(sessions)
       .set({ lastActivityAt: new Date() })
       .where(eq(sessions.id, session.id))
 

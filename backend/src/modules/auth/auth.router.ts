@@ -1,6 +1,6 @@
 import { describeRoute } from 'hono-openapi'
 import { setCookie } from 'hono/cookie'
-import { cookiesConfig } from '@/config/cookies.config'
+import { authConfig } from '@/config'
 import { factory } from '@/lib/factory'
 import { validator } from '@/middleware'
 import { confirmEmail, register } from './auth.service'
@@ -25,10 +25,11 @@ export const authRouter = factory.createApp()
 
       const sessionToken = await register(body, c.req.header('User-Agent'))
 
-      setCookie(c, cookiesConfig.sessionToken, sessionToken, {
+      setCookie(c, authConfig.sessionTokenName, sessionToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
+        maxAge: authConfig.sessionTokenTTL,
       })
 
       return c.body(null, 204)
