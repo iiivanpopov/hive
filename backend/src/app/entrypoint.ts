@@ -9,6 +9,7 @@ import { factory } from '@/lib/factory'
 import { pino } from '@/lib/pino'
 import { errorMiddleware, loggerMiddleware } from '@/middleware'
 import { router } from './router'
+import '@/modules/auth/auth.scheduled'
 
 migrate(db, { migrationsFolder: './drizzle' })
 pino.info('Database migrated successfully')

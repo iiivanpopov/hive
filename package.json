@@ -2,7 +2,7 @@
   "name": "hive",
   "type": "module",
   "workspaces": {
-    "packages": ["backend", "frontend", "shared"],
+    "packages": ["backend", "frontend"],
     "catalog": {
       "@antfu/eslint-config": "^6.7.1",
       "@types/bun": "^1.3.5",
@@ -12,8 +12,8 @@
     }
   },
   "scripts": {
-    "dev": "bun --filter ./backend --filter ./frontend dev",
-    "prod": "bun --filter ./backend --filter ./frontend prod",
+    "dev": "bun --workspaces dev",
+    "prod": "bun --workspaces prod",
     "build:dev": "bun --workspaces build:dev",
     "build:prod": "bun --workspaces build:prod",
     "lint": "bun --workspaces lint",
