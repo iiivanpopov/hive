@@ -55,6 +55,7 @@ app
     },
   }))
   .get('/docs', Scalar({ url: '/openapi' }))
+  .get('/', c => c.redirect('/docs'))
 
 const server = Bun.serve({
   development: envConfig.isDevelopment,
@@ -63,4 +64,3 @@ const server = Bun.serve({
 })
 
 pino.info(`Server started on ${server.url}`)
-pino.info(`Documentation available at ${server.url}docs`)

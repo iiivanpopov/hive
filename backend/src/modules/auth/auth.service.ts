@@ -20,7 +20,9 @@ async function sendConfirmationEmail(email: string, token: string) {
   })
 }
 
-export async function register(data: RegisterBody) {
+export async function register(data: RegisterBody, userAgent?: string) {
+  const normalizedUserAgent = userAgent?.trim() || 'unknown'
+
   const userExists = await db.query.users.findMany({
     where: {
       OR: [
@@ -44,6 +46,7 @@ export async function register(data: RegisterBody) {
   const [session] = await db.insert(sessions)
     .values({
       userId: user.id,
+      userAgent: normalizedUserAgent,
       token: sessionToken,
     })
     .returning()

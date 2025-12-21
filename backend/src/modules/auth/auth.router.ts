@@ -23,7 +23,7 @@ export const authRouter = factory.createApp()
     async (c) => {
       const body = c.req.valid('json')
 
-      const sessionToken = await register(body)
+      const sessionToken = await register(body, c.req.header('User-Agent'))
 
       setCookie(c, cookiesConfig.sessionToken, sessionToken, {
         httpOnly: true,
