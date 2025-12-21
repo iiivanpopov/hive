@@ -6,23 +6,33 @@ import { confirmTokens, sessions, users } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 import { smtp } from '@/lib/smtp'
-import { generateToken } from '@/lib/utils'
+import { escapeHtml, generateToken, normalizeUserAgent } from '@/lib/utils'
 
 async function sendConfirmationEmail(email: string, token: string) {
   if (Bun.env.SMTP_ENABLE !== 'true' || envConfig.isTest)
     return
 
+  const safeEmail = escapeHtml(email)
+
+  const confirmUrl = new URL('/confirm', Bun.env.FRONTEND_URL)
+  confirmUrl.searchParams.set('token', token)
+
   return smtp.sendMail({
     from: `"Hive" <${Bun.env.SMTP_USER}>`,
     to: email,
     subject: 'Welcome to Hive!',
-    html: `<h1>Welcome to Hive, ${email}!</h1><p>Thank you for registering.</p><p>Please confirm your account by clicking <a href="${Bun.env.FRONTEND_URL}/confirm?token=${token}">here</a>.</p>`,
+    html: `
+    <h1>Welcome to Hive, ${safeEmail}!</h1>
+    <p>Thank you for registering.</p>
+    <p>
+      Please confirm your account by clicking
+      <a href="${confirmUrl.toString()}">here</a>.
+    </p>
+    `,
   })
 }
 
 export async function register(data: RegisterBody, userAgent?: string) {
-  const normalizedUserAgent = userAgent?.trim() || 'unknown'
-
   const userExists = await db.query.users.findMany({
     where: {
       OR: [
@@ -46,7 +56,7 @@ export async function register(data: RegisterBody, userAgent?: string) {
   const [session] = await db.insert(sessions)
     .values({
       userId: user.id,
-      userAgent: normalizedUserAgent,
+      userAgent: normalizeUserAgent(userAgent),
       token: sessionToken,
     })
     .returning()

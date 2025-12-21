@@ -5,13 +5,10 @@ import { db } from '@/db/instance'
 import { sessions } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
 import { factory } from '@/lib/factory'
+import { normalizeUserAgent } from '@/lib/utils'
 
 const SESSION_TIMEOUT_SECONDS = 7 * 24 * 60 * 60 // 7 days
 // const SESSION_TIMEOUT_SECONDS = 10 // 7 days
-
-function normalizeUserAgent(userAgent?: string | null) {
-  return userAgent?.trim().toLowerCase() || 'unknown'
-}
 
 export function sessionMiddleware() {
   return factory.createMiddleware(async (c, next) => {
