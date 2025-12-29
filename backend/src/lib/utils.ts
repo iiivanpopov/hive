@@ -5,12 +5,3 @@ export function generateToken() {
 export function normalizeUserAgent(userAgent?: string | null) {
   return userAgent?.trim().toLowerCase() || 'unknown'
 }
-
-export function sanitizeXss(value: string) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
