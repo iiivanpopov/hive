@@ -1,4 +1,4 @@
-import type { CacheStore } from './redis-store'
+import type { CacheStore } from '@/lib/cache'
 
 export interface TokenRepositoryOptions {
   namespace: string

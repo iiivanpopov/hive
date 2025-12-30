@@ -1,6 +1,6 @@
-import type { CacheStore } from './redis-store'
+import type { CacheStore } from '@/lib/cache'
 import { authConfig } from '@/config'
-import { redisStore } from './redis-store'
+import { redisStore } from '@/lib/cache'
 import { TokenRepository } from './token.repository'
 
 export interface ConfirmPayload {
