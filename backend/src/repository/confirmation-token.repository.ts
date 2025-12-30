@@ -10,7 +10,7 @@ export interface ConfirmPayload {
   userId: number
 }
 
-export class ConfirmTokenRepository {
+export class ConfirmationTokenRepository {
   constructor(
     private readonly tokens: TokenService,
     private readonly keys: TokenKeyCodec,
@@ -21,7 +21,7 @@ export class ConfirmTokenRepository {
     const token = this.tokens.generate()
     const key = this.keys.serialize('confirm', token)
 
-    await this.store.set(key, payload, authConfig.confirmTokenTtl)
+    await this.store.set(key, payload, authConfig.confirmationTokenTtl)
     return token
   }
 
@@ -34,7 +34,7 @@ export class ConfirmTokenRepository {
   }
 }
 
-export const confirmTokens = new ConfirmTokenRepository(
+export const confirmationTokens = new ConfirmationTokenRepository(
   tokenService,
   keyCodec,
   store,

@@ -8,9 +8,9 @@ import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 import { smtp } from '@/lib/smtp'
 import { normalizeUserAgent } from '@/lib/utils'
-import { confirmTokens, sessionTokens } from '@/repository'
+import { confirmationTokens, sessionTokens } from '@/repository'
 
-async function sendConfirmationEmail(user: User, token: string) {
+async function sendConfirmEmail(user: User, token: string) {
   return smtp.sendMail({
     from: `"Hive" <${Bun.env.SMTP_USER}>`,
     to: user.email,
@@ -50,11 +50,11 @@ export async function register(data: RegisterBody, userAgent?: string) {
   const sessionToken = await sessionTokens.create({ userId: user.id, userAgent: normalizeUserAgent(userAgent) })
   pino.debug(`Created session ${sessionToken}`)
 
-  const confirmationToken = await confirmTokens.create({ userId: user.id })
-  pino.debug(`Created confirmation token ${confirmationToken}`)
+  const confirmationToken = await confirmationTokens.create({ userId: user.id })
+  pino.debug(`Created confirm token ${confirmationToken}`)
 
   if (Bun.env.SMTP_ENABLE === 'true' && !envConfig.isTest) {
-    await sendConfirmationEmail(user, confirmationToken)
+    await sendConfirmEmail(user, confirmationToken)
     pino.debug(`Sent email to ${user.email}`)
   }
 
@@ -62,22 +62,21 @@ export async function register(data: RegisterBody, userAgent?: string) {
 }
 
 export async function confirmEmail(token: string) {
-  const payload = await confirmTokens.resolve(token)
-  if (!payload)
+  const confirmationToken = await confirmationTokens.resolve(token)
+  if (!confirmationToken)
     throw ApiException.BadRequest('Invalid confirmation token', 'INVALID_TOKEN')
 
-  const { userId } = payload
   const user = await db.query.users.findFirst({
-    where: { id: userId },
+    where: { id: confirmationToken.userId },
   })
 
   await db
     .update(users)
     .set({ emailConfirmed: true })
-    .where(eq(users.id, userId))
-  pino.debug(`User ${user!.id} email confirmed`)
+    .where(eq(users.id, confirmationToken.userId))
+  pino.debug(`Email ${user!.email} confirmed`)
 
-  await confirmTokens.revoke(token)
+  await confirmationTokens.revoke(token)
 }
 
 export async function login(data: LoginBody, userAgent?: string) {
@@ -107,6 +106,5 @@ export async function logout(sessionToken: string | undefined) {
     return
 
   await sessionTokens.revoke(sessionToken)
-
-  pino.debug(`Deleted session with token: ${sessionToken}`)
+  pino.debug(`Deleted session ${sessionToken}`)
 }

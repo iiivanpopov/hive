@@ -1,3 +1,4 @@
+import { redis } from 'bun'
 import { beforeAll, expect, test } from 'bun:test'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { testClient } from 'hono/testing'
@@ -8,7 +9,8 @@ import { reset } from '../../_utils'
 
 const client = testClient(app)
 
-beforeAll(() => {
+beforeAll(async () => {
+  await redis.send('FLUSHALL', [])
   reset(schema)
   migrate(db, { migrationsFolder: './drizzle' })
 })
