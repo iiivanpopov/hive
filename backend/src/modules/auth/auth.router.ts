@@ -27,7 +27,7 @@ export const authRouter = factory.createApp()
 
       const sessionToken = await register(body, c.req.header('User-Agent'))
 
-      setCookie(c, authConfig.sessionTokenName, sessionToken, {
+      setCookie(c, authConfig.sessionTokenCookie, sessionToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
@@ -54,7 +54,7 @@ export const authRouter = factory.createApp()
 
       const sessionToken = await login(body, c.req.header('User-Agent'))
 
-      setCookie(c, authConfig.sessionTokenName, sessionToken, {
+      setCookie(c, authConfig.sessionTokenCookie, sessionToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
@@ -76,11 +76,11 @@ export const authRouter = factory.createApp()
       },
     }),
     async (c) => {
-      const sessionToken = getCookie(c, authConfig.sessionTokenName)
+      const sessionToken = getCookie(c, authConfig.sessionTokenCookie)
 
       await logout(sessionToken)
 
-      deleteCookie(c, authConfig.sessionTokenName)
+      deleteCookie(c, authConfig.sessionTokenCookie)
 
       return c.body(null, 204)
     },
@@ -136,7 +136,7 @@ authRouter
 
       const sessionToken = await authenticateGoogleUser(googleUser)
 
-      setCookie(c, authConfig.sessionTokenName, sessionToken, {
+      setCookie(c, authConfig.sessionTokenCookie, sessionToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'lax',

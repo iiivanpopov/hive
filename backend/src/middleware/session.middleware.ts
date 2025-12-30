@@ -8,18 +8,18 @@ import { sessionTokens } from '@/repository'
 
 export function sessionMiddleware() {
   return factory.createMiddleware(async (c, next) => {
-    const sessionToken = getCookie(c, authConfig.sessionTokenName)
+    const sessionToken = getCookie(c, authConfig.sessionTokenCookie)
     if (!sessionToken)
       throw ApiException.Unauthorized('No authorization token provided', 'NO_SESSION_TOKEN')
 
     const session = await sessionTokens.resolve(sessionToken)
     if (!session) {
-      deleteCookie(c, authConfig.sessionTokenName)
+      deleteCookie(c, authConfig.sessionTokenCookie)
       throw ApiException.Unauthorized('Invalid authorization token', 'INVALID_SESSION_TOKEN')
     }
 
     if (normalizeUserAgent(c.req.header('User-Agent')) !== session.userAgent) {
-      deleteCookie(c, authConfig.sessionTokenName)
+      deleteCookie(c, authConfig.sessionTokenCookie)
       throw ApiException.Unauthorized('User-Agent does not match', 'USER_AGENT_MISMATCH')
     }
 
@@ -27,13 +27,13 @@ export function sessionMiddleware() {
       where: { id: session.userId },
     })
     if (!user) {
-      deleteCookie(c, authConfig.sessionTokenName)
+      deleteCookie(c, authConfig.sessionTokenCookie)
       throw ApiException.Unauthorized('User not found', 'USER_NOT_FOUND')
     }
 
     await sessionTokens.refresh(sessionToken)
 
-    setCookie(c, authConfig.sessionTokenName, sessionToken, {
+    setCookie(c, authConfig.sessionTokenCookie, sessionToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
