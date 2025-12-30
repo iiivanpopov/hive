@@ -1,35 +1,21 @@
-import { eq } from 'drizzle-orm'
-import { deleteCookie, getCookie } from 'hono/cookie'
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { authConfig } from '@/config/auth.config'
 import { db } from '@/db/instance'
-import { sessions } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
 import { factory } from '@/lib/factory'
 import { normalizeUserAgent } from '@/lib/utils'
+import { sessionTokens } from '@/repository'
 
 export function sessionMiddleware() {
   return factory.createMiddleware(async (c, next) => {
     const sessionToken = getCookie(c, authConfig.sessionTokenName)
     if (!sessionToken)
-      throw ApiException.Unauthorized('No authorization token provided', 'NO_TOKEN')
+      throw ApiException.Unauthorized('No authorization token provided', 'NO_SESSION_TOKEN')
 
-    const [session] = await db.query.sessions.findMany({
-      where: { token: sessionToken },
-      with: {
-        user: true,
-      },
-    })
+    const session = await sessionTokens.resolve(sessionToken)
     if (!session) {
       deleteCookie(c, authConfig.sessionTokenName)
-      throw ApiException.Unauthorized('Invalid authorization token', 'INVALID_TOKEN')
-    }
-
-    if (session.lastActivityAt.getTime() + authConfig.sessionTokenTTL * 1000 < Date.now()) {
-      deleteCookie(c, authConfig.sessionTokenName)
-      await db
-        .delete(sessions)
-        .where(eq(sessions.id, session.id))
-      throw ApiException.Unauthorized('Session has expired', 'SESSION_EXPIRED')
+      throw ApiException.Unauthorized('Invalid authorization token', 'INVALID_SESSION_TOKEN')
     }
 
     if (normalizeUserAgent(c.req.header('User-Agent')) !== session.userAgent) {
@@ -37,12 +23,24 @@ export function sessionMiddleware() {
       throw ApiException.Unauthorized('User-Agent does not match', 'USER_AGENT_MISMATCH')
     }
 
-    await db
-      .update(sessions)
-      .set({ lastActivityAt: new Date() })
-      .where(eq(sessions.id, session.id))
+    const user = await db.query.users.findFirst({
+      where: { id: session.userId },
+    })
+    if (!user) {
+      deleteCookie(c, authConfig.sessionTokenName)
+      throw ApiException.Unauthorized('User not found', 'USER_NOT_FOUND')
+    }
 
-    c.set('user', session.user!)
+    await sessionTokens.refresh(sessionToken)
+
+    setCookie(c, authConfig.sessionTokenName, sessionToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: authConfig.sessionTokenTtl,
+    })
+
+    c.set('user', user)
 
     await next()
   })

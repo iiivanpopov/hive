@@ -3,11 +3,12 @@ import type { User } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { envConfig } from '@/config'
 import { db } from '@/db/instance'
-import { confirmTokens, sessions, users } from '@/db/schema'
+import { users } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 import { smtp } from '@/lib/smtp'
-import { generateToken, normalizeUserAgent } from '@/lib/utils'
+import { normalizeUserAgent } from '@/lib/utils'
+import { confirmTokens, sessionTokens } from '@/repository'
 
 async function sendConfirmationEmail(user: User, token: string) {
   return smtp.sendMail({
@@ -44,60 +45,39 @@ export async function register(data: RegisterBody, userAgent?: string) {
       passwordHash,
     })
     .returning()
-  pino.debug(`Created user: ${JSON.stringify(user)}`)
+  pino.debug(`Created user ${user.id}`)
 
-  const sessionToken = generateToken()
-  const [session] = await db
-    .insert(sessions)
-    .values({
-      userId: user.id,
-      userAgent: normalizeUserAgent(userAgent),
-      token: sessionToken,
-    })
-    .returning()
-  pino.debug(`Created session: ${JSON.stringify(session)}`)
+  const sessionToken = await sessionTokens.create({ userId: user.id, userAgent: normalizeUserAgent(userAgent) })
+  pino.debug(`Created session ${sessionToken}`)
 
-  const confirmationToken = generateToken()
-  const [confirmation] = await db
-    .insert(confirmTokens)
-    .values({
-      userId: user.id,
-      token: confirmationToken,
-    })
-    .returning()
-  pino.debug(`Created confirmation token: ${JSON.stringify(confirmation)}`)
+  const confirmationToken = await confirmTokens.create({ userId: user.id })
+  pino.debug(`Created confirmation token ${confirmationToken}`)
 
   if (Bun.env.SMTP_ENABLE === 'true' && !envConfig.isTest) {
-    const mail = await sendConfirmationEmail(user, confirmationToken)
-    pino.debug(`Sent email: ${JSON.stringify(mail)}`)
+    await sendConfirmationEmail(user, confirmationToken)
+    pino.debug(`Sent email to ${user.email}`)
   }
 
   return sessionToken
 }
 
 export async function confirmEmail(token: string) {
-  const [tokenExists] = await db.query.confirmTokens.findMany({
-    where: { token },
-    with: {
-      user: true,
-    },
-  })
-  if (!tokenExists)
+  const payload = await confirmTokens.resolve(token)
+  if (!payload)
     throw ApiException.BadRequest('Invalid confirmation token', 'INVALID_TOKEN')
 
-  if (tokenExists.user!.emailConfirmed)
-    return pino.debug(`User ${tokenExists.user!.id} already confirmed`)
+  const { userId } = payload
+  const user = await db.query.users.findFirst({
+    where: { id: userId },
+  })
 
   await db
     .update(users)
     .set({ emailConfirmed: true })
-    .where(eq(users.id, tokenExists.userId))
-  pino.debug(`User ${tokenExists.user!.id} email confirmed`)
+    .where(eq(users.id, userId))
+  pino.debug(`User ${user!.id} email confirmed`)
 
-  await db
-    .delete(confirmTokens)
-    .where(eq(confirmTokens.id, tokenExists.id))
-  pino.debug(`Deleted confirmation token ${tokenExists.id}`)
+  await confirmTokens.revoke(token)
 }
 
 export async function login(data: LoginBody, userAgent?: string) {
@@ -116,16 +96,8 @@ export async function login(data: LoginBody, userAgent?: string) {
   if (!passwordMatch)
     throw ApiException.Unauthorized('Invalid credentials', 'INVALID_CREDENTIALS')
 
-  const sessionToken = generateToken()
-  const [session] = await db
-    .insert(sessions)
-    .values({
-      userId: user.id,
-      userAgent: normalizeUserAgent(userAgent),
-      token: sessionToken,
-    })
-    .returning()
-  pino.debug(`Created session: ${JSON.stringify(session)}`)
+  const sessionToken = await sessionTokens.create({ userId: user.id, userAgent: normalizeUserAgent(userAgent) })
+  pino.debug(`Created session ${sessionToken}`)
 
   return sessionToken
 }
@@ -134,8 +106,7 @@ export async function logout(sessionToken: string | undefined) {
   if (!sessionToken)
     return
 
-  await db
-    .delete(sessions)
-    .where(eq(sessions.token, sessionToken))
+  await sessionTokens.revoke(sessionToken)
+
   pino.debug(`Deleted session with token: ${sessionToken}`)
 }

@@ -29,8 +29,56 @@ export const authRouter = factory.createApp()
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
-        maxAge: authConfig.sessionTokenTTL,
+        maxAge: authConfig.sessionTokenTtl,
       })
+
+      return c.body(null, 204)
+    },
+  )
+  .post(
+    '/login',
+    describeRoute({
+      summary: 'Login into an account',
+      description: 'Authenticate a user and return a session token.',
+      responses: {
+        204: {
+          description: 'User logged in successfully',
+        },
+      },
+    }),
+    validator('json', LoginBodySchema),
+    async (c) => {
+      const body = c.req.valid('json')
+
+      const sessionToken = await login(body, c.req.header('User-Agent'))
+
+      setCookie(c, authConfig.sessionTokenName, sessionToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: authConfig.sessionTokenTtl,
+      })
+
+      return c.body(null, 204)
+    },
+  )
+  .post(
+    '/logout',
+    describeRoute({
+      summary: 'Logout from current session',
+      description: 'Invalidate the current user session token.',
+      responses: {
+        204: {
+          description: 'User logged out successfully',
+        },
+      },
+    }),
+    async (c) => {
+      const sessionToken = getCookie(c, authConfig.sessionTokenName)
+
+      await logout(sessionToken)
+
+      deleteCookie(c, authConfig.sessionTokenName)
 
       return c.body(null, 204)
     },
@@ -51,54 +99,6 @@ export const authRouter = factory.createApp()
       const { token } = c.req.valid('param')
 
       await confirmEmail(token)
-
-      return c.body(null, 204)
-    },
-  )
-  .post(
-    '/login',
-    describeRoute({
-      summary: 'Login into an existing user account',
-      description: 'Authenticate a user and return a session token.',
-      responses: {
-        204: {
-          description: 'User logged in successfully',
-        },
-      },
-    }),
-    validator('json', LoginBodySchema),
-    async (c) => {
-      const body = c.req.valid('json')
-
-      const sessionToken = await login(body, c.req.header('User-Agent'))
-
-      setCookie(c, authConfig.sessionTokenName, sessionToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        maxAge: authConfig.sessionTokenTTL,
-      })
-
-      return c.body(null, 204)
-    },
-  )
-  .post(
-    '/logout',
-    describeRoute({
-      summary: 'Logout from the current user session',
-      description: 'Invalidate the current user session token.',
-      responses: {
-        204: {
-          description: 'User logged out successfully',
-        },
-      },
-    }),
-    async (c) => {
-      const sessionToken = getCookie(c, authConfig.sessionTokenName)
-
-      await logout(sessionToken)
-
-      deleteCookie(c, authConfig.sessionTokenName)
 
       return c.body(null, 204)
     },

@@ -3,13 +3,11 @@ import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { describeRoute, openAPIRouteHandler, resolver } from 'hono-openapi'
 import { cors } from 'hono/cors'
 import z from 'zod'
-import { envConfig } from '@/config'
 import { db } from '@/db/instance'
 import { factory } from '@/lib/factory'
 import { pino } from '@/lib/pino'
 import { errorMiddleware, loggerMiddleware } from '@/middleware'
 import { router } from './router'
-import '@/modules/auth/auth.scheduled'
 
 migrate(db, { migrationsFolder: './drizzle' })
 pino.info('Database migrated successfully')
@@ -59,8 +57,6 @@ app
   .get('/', c => c.redirect('/docs'))
 
 const server = Bun.serve({
-  development: envConfig.isDevelopment,
-  port: Number(Bun.env.PORT),
   fetch: app.fetch,
 })
 
