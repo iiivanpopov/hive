@@ -13,8 +13,8 @@ export function createRedisStore(client: RedisClient): RedisClient & CacheStore 
       }
 
       if (prop === 'set') {
-        return async (key: string, value: unknown, ttlSec: number) => {
-          await target.set(key, JSON.stringify(value), 'EX', ttlSec)
+        return async (key: string, value: unknown, ttl: number) => {
+          await target.set(key, JSON.stringify(value), 'EX', ttl)
         }
       }
       return (target as any)[prop]

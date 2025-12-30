@@ -49,7 +49,7 @@ app
         description: 'API documentation for Hive backend',
       },
       servers: [
-        { url: `http://localhost:5656` },
+        { url: `http://${Bun.env.HOST}:${Bun.env.PORT}` },
       ],
     },
   }))
