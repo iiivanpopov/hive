@@ -1,3 +1,4 @@
+import type { GoogleUser } from '@hono/oauth-providers/google'
 import type { LoginBody, RegisterBody } from './schema'
 import type { User } from '@/db/schema'
 import { eq } from 'drizzle-orm'
@@ -25,7 +26,7 @@ async function sendConfirmEmail(user: User, token: string) {
 }
 
 export async function register(data: RegisterBody, userAgent?: string) {
-  const userExists = await db.query.users.findMany({
+  const [userExists] = await db.query.users.findMany({
     where: {
       OR: [
         { email: data.email },
@@ -33,7 +34,7 @@ export async function register(data: RegisterBody, userAgent?: string) {
       ],
     },
   })
-  if (userExists.length > 0)
+  if (userExists)
     throw ApiException.BadRequest('User with given username or email already exists', 'USER_EXISTS')
 
   const passwordHash = await Bun.password.hash(data.password)
@@ -64,7 +65,7 @@ export async function register(data: RegisterBody, userAgent?: string) {
 export async function confirmEmail(token: string) {
   const confirmationToken = await confirmationTokens.resolve(token)
   if (!confirmationToken)
-    throw ApiException.BadRequest('Invalid confirmation token', 'INVALID_TOKEN')
+    throw ApiException.BadRequest('Invalid confirmation token', 'INVALID_CONFIRMATION_TOKEN')
 
   const user = await db.query.users.findFirst({
     where: { id: confirmationToken.userId },
@@ -107,4 +108,37 @@ export async function logout(sessionToken: string | undefined) {
 
   await sessionTokens.revoke(sessionToken)
   pino.debug(`Deleted session ${sessionToken}`)
+}
+
+const GoogleOAuthUserAgent = 'Google OAuth2'
+
+export async function authenticateGoogleUser(googleUser: GoogleUser) {
+  const [userExists] = await db.query.users.findMany({
+    where: { email: googleUser.email },
+  })
+  if (!userExists) {
+    const password = crypto.getRandomValues(new Uint8Array(8)).toHex()
+    const passwordHash = await Bun.password.hash(password)
+
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: googleUser.email,
+        username: googleUser.email.split('@')[0],
+        emailConfirmed: true,
+        passwordHash,
+      })
+      .returning()
+    pino.debug(`Created user with email ${googleUser.email}`)
+
+    const sessionToken = await sessionTokens.create({ userId: user!.id, userAgent: GoogleOAuthUserAgent })
+    pino.debug(`Created session ${sessionToken}`)
+
+    return sessionToken
+  }
+
+  const sessionToken = await sessionTokens.create({ userId: userExists.id, userAgent: GoogleOAuthUserAgent })
+  pino.debug(`Created session ${sessionToken}`)
+
+  return sessionToken
 }

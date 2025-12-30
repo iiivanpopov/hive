@@ -1,9 +1,11 @@
+import type { GoogleUser } from '@hono/oauth-providers/google'
+import { googleAuth } from '@hono/oauth-providers/google'
 import { describeRoute } from 'hono-openapi'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { authConfig } from '@/config'
 import { factory } from '@/lib/factory'
 import { validator } from '@/middleware'
-import { confirmEmail, login, logout, register } from './auth.service'
+import { authenticateGoogleUser, confirmEmail, login, logout, register } from './auth.service'
 import { ConfirmParamsSchema, LoginBodySchema, RegisterBodySchema } from './schema'
 
 export const authRouter = factory.createApp()
@@ -101,5 +103,46 @@ export const authRouter = factory.createApp()
       await confirmEmail(token)
 
       return c.body(null, 204)
+    },
+  )
+
+authRouter
+  .use(
+    '/google/*',
+    describeRoute({
+      summary: 'Google OAuth2 Authentication',
+      description: 'Authenticate users using Google OAuth2.',
+    }),
+    googleAuth({
+      redirect_uri: `http://localhost:5656/api/auth/google/callback`,
+      client_id: Bun.env.GOOGLE_ID,
+      client_secret: Bun.env.GOOGLE_SECRET,
+      scope: ['openid', 'email', 'profile'],
+    }),
+  )
+  .get(
+    '/google/callback',
+    describeRoute({
+      summary: 'Google OAuth2 Callback',
+      description: 'Handle the callback from Google OAuth2 authentication.',
+      responses: {
+        204: {
+          description: 'User authenticated successfully',
+        },
+      },
+    }),
+    async (c) => {
+      const googleUser = c.get('user-google') as GoogleUser
+
+      const sessionToken = await authenticateGoogleUser(googleUser)
+
+      setCookie(c, authConfig.sessionTokenName, sessionToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: authConfig.sessionTokenTtl,
+      })
+
+      return c.redirect(`${Bun.env.FRONTEND_URL}/auth/set-password`, 302)
     },
   )

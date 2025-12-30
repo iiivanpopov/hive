@@ -21,6 +21,7 @@
     "db:generate": "bun --bun drizzle-kit generate"
   },
   "dependencies": {
+    "@hono/oauth-providers": "^0.8.5",
     "@hono/standard-validator": "^0.2.1",
     "@scalar/hono-api-reference": "^0.9.30",
     "croner": "^9.1.0",
