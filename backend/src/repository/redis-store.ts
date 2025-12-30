@@ -9,29 +9,24 @@ export interface CacheStore {
 }
 
 export class RedisStore implements CacheStore {
-  constructor(private readonly redis: RedisClient) {}
+  constructor(private readonly client: RedisClient) {}
 
   async set(key: string, value: unknown, ttlSec: number): Promise<void> {
-    const wrapped = JSON.stringify({ v: 1, data: value })
-    await this.redis.set(key, wrapped, 'EX', ttlSec)
+    await this.client.set(key, JSON.stringify(value), 'EX', ttlSec)
   }
 
   async get<T>(key: string): Promise<T | null> {
-    const raw = await this.redis.get(key)
-    if (!raw)
-      return null
-
-    const parsed = JSON.parse(raw) as { v: number, data: T }
-    return parsed.data
+    const raw = await this.client.get(key)
+    return raw ? JSON.parse(raw) as T : null
   }
 
   async del(key: string): Promise<void> {
-    await this.redis.del(key)
+    await this.client.del(key)
   }
 
   async expire(key: string, ttlSec: number): Promise<void> {
-    await this.redis.expire(key, ttlSec)
+    await this.client.expire(key, ttlSec)
   }
 }
 
-export const store = new RedisStore(redis)
+export const redisStore = new RedisStore(redis)
