@@ -1,9 +1,9 @@
 import { describeRoute } from 'hono-openapi'
-import { setCookie } from 'hono/cookie'
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { authConfig } from '@/config'
 import { factory } from '@/lib/factory'
 import { validator } from '@/middleware'
-import { confirmEmail, login, register } from './auth.service'
+import { confirmEmail, login, logout, register } from './auth.service'
 import { ConfirmParamsSchema, LoginBodySchema, RegisterBodySchema } from './schema'
 
 export const authRouter = factory.createApp()
@@ -78,6 +78,27 @@ export const authRouter = factory.createApp()
         sameSite: 'lax',
         maxAge: authConfig.sessionTokenTTL,
       })
+
+      return c.body(null, 204)
+    },
+  )
+  .post(
+    '/logout',
+    describeRoute({
+      summary: 'Logout from the current user session',
+      description: 'Invalidate the current user session token.',
+      responses: {
+        204: {
+          description: 'User logged out successfully',
+        },
+      },
+    }),
+    async (c) => {
+      const sessionToken = getCookie(c, authConfig.sessionTokenName)
+
+      await logout(sessionToken)
+
+      deleteCookie(c, authConfig.sessionTokenName)
 
       return c.body(null, 204)
     },

@@ -129,3 +129,13 @@ export async function login(data: LoginBody, userAgent?: string) {
 
   return sessionToken
 }
+
+export async function logout(sessionToken: string | undefined) {
+  if (!sessionToken)
+    return
+
+  await db
+    .delete(sessions)
+    .where(eq(sessions.token, sessionToken))
+  pino.debug(`Deleted session with token: ${sessionToken}`)
+}
