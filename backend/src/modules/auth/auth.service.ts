@@ -1,5 +1,6 @@
 import type { GoogleUser } from '@hono/oauth-providers/google'
-import type { LoginBody, RegisterBody } from './schema'
+import type { LoginBody } from './schema/login.schema'
+import type { RegisterBody } from './schema/register.schema'
 import type { User } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { envConfig } from '@/config'
@@ -9,7 +10,7 @@ import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 import { smtp } from '@/lib/smtp'
 import { normalizeUserAgent } from '@/lib/utils'
-import { confirmationTokens, sessionTokens } from '@/repository'
+import { confirmationTokens, resetPasswordTokens, sessionTokens } from '@/repository'
 
 async function sendConfirmEmail(user: User, token: string) {
   return smtp.sendMail({
@@ -135,10 +136,49 @@ export async function authenticateGoogleUser(googleUser: GoogleUser) {
       passwordHash,
     })
     .returning()
-  pino.debug(`Created user with email ${googleUser.email}`)
+  pino.debug(`Created user with email ${user.email}`)
 
   const sessionToken = await sessionTokens.create({ userId: user!.id, userAgent: GoogleOAuthUserAgent })
   pino.debug(`Created session ${sessionToken}`)
 
   return sessionToken
+}
+
+async function sendPasswordResetEmail(user: User, resetToken: string) {
+  await smtp.sendMail({
+    from: `"Hive" <${Bun.env.SMTP_USER}>`,
+    to: user.email,
+    subject: 'Password Reset Request',
+    html: `
+        <h1>Password Reset Request</h1>
+        <p>We received a request to reset your password.</p>
+        <p>
+          Please reset your password by clicking <a href="${Bun.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}">here</a>.
+        </p>
+        <p>If you did not request a password reset, please ignore this email.</p>`,
+  })
+}
+
+export async function requestPasswordReset(email: string) {
+  const [user] = await db.query.users.findMany({
+    where: { email },
+  })
+  if (!user)
+    throw ApiException.BadRequest('User with given email does not exist', 'USER_NOT_FOUND')
+
+  const existingToken = await resetPasswordTokens.resolve(user.email)
+  if (existingToken && existingToken.try >= 5)
+    throw ApiException.TooManyRequests('Too many password reset attempts', 'TOO_MANY_PASSWORD_RESET_ATTEMPTS')
+
+  const resetToken = await resetPasswordTokens.create({
+    email: user.email,
+    userId: user.id,
+    try: existingToken?.try ? existingToken.try + 1 : 1,
+  })
+  pino.debug(`Created password reset token ${resetToken} for user ${user.id}`)
+
+  if (Bun.env.SMTP_ENABLE === 'true' && !envConfig.isTest) {
+    await sendPasswordResetEmail(user, resetToken)
+    pino.debug(`Sent password reset email to ${user.email}`)
+  }
 }
