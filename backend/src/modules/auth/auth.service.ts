@@ -20,7 +20,7 @@ async function sendConfirmEmail(user: User, token: string) {
       <h1>Welcome to Hive, ${user.username}!</h1>
       <p>Thank you for registering.</p>
       <p>
-        Please confirm your account by clicking <a href="${Bun.env.FRONTEND_URL}/confirm?token=${token}">here</a>.
+        Please confirm your account by clicking <a href="${Bun.env.FRONTEND_URL}/auth/confirm?token=${token}">here</a>.
       </p>`,
   })
 }
@@ -116,28 +116,28 @@ export async function authenticateGoogleUser(googleUser: GoogleUser) {
   const [userExists] = await db.query.users.findMany({
     where: { email: googleUser.email },
   })
-  if (!userExists) {
-    const password = crypto.getRandomValues(new Uint8Array(8)).toHex()
-    const passwordHash = await Bun.password.hash(password)
-
-    const [user] = await db
-      .insert(users)
-      .values({
-        email: googleUser.email,
-        username: googleUser.email.split('@')[0],
-        emailConfirmed: true,
-        passwordHash,
-      })
-      .returning()
-    pino.debug(`Created user with email ${googleUser.email}`)
-
-    const sessionToken = await sessionTokens.create({ userId: user!.id, userAgent: GoogleOAuthUserAgent })
+  if (userExists) {
+    const sessionToken = await sessionTokens.create({ userId: userExists.id, userAgent: GoogleOAuthUserAgent })
     pino.debug(`Created session ${sessionToken}`)
 
     return sessionToken
   }
 
-  const sessionToken = await sessionTokens.create({ userId: userExists.id, userAgent: GoogleOAuthUserAgent })
+  const randomPassword = crypto.getRandomValues(new Uint8Array(8)).toHex()
+  const passwordHash = await Bun.password.hash(randomPassword)
+
+  const [user] = await db
+    .insert(users)
+    .values({
+      email: googleUser.email,
+      username: googleUser.email.split('@')[0],
+      emailConfirmed: true,
+      passwordHash,
+    })
+    .returning()
+  pino.debug(`Created user with email ${googleUser.email}`)
+
+  const sessionToken = await sessionTokens.create({ userId: user!.id, userAgent: GoogleOAuthUserAgent })
   pino.debug(`Created session ${sessionToken}`)
 
   return sessionToken

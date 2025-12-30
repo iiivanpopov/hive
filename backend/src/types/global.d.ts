@@ -7,6 +7,7 @@ declare namespace Bun {
     GOOGLE_SECRET: string
     FRONTEND_URL: string
     PORT: string
+    HOST: string
     SMTP_HOST: string
     SMTP_PORT: string
     SMTP_USER: string

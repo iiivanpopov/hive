@@ -114,7 +114,7 @@ authRouter
       description: 'Authenticate users using Google OAuth2.',
     }),
     googleAuth({
-      redirect_uri: `http://localhost:5656/api/auth/google/callback`,
+      redirect_uri: `http://${Bun.env.HOST}:${Bun.env.PORT}/api/auth/google/callback`,
       client_id: Bun.env.GOOGLE_ID,
       client_secret: Bun.env.GOOGLE_SECRET,
       scope: ['openid', 'email', 'profile'],
