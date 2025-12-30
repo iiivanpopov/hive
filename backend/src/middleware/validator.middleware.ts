@@ -12,21 +12,22 @@ export function validatorMiddleware<
   P extends string = string,
 >(target: Target, schema: Schema) {
   const hook: Hook<StandardSchemaV1.InferOutput<Schema>, Env, P, Target> = (result) => {
-    if (!result.success) {
-      pino.debug(result)
+    if (result.success)
+      return
 
-      if (result.error.length === 0)
-        throw ApiException.BadRequest('Validation Error', 'INVALID_INPUT')
+    pino.debug(result)
 
-      throw ApiException.BadRequest(
-        'Validation Error',
-        'INVALID_INPUT',
-        result.error.map(issue => ({
-          field: issue.path?.map(p => typeof p === 'object' ? p.key : p).join('.') ?? '',
-          message: issue.message,
-        })),
-      )
-    }
+    if (result.error.length === 0)
+      throw ApiException.BadRequest('Validation Error', 'INVALID_INPUT')
+
+    throw ApiException.BadRequest(
+      'Validation Error',
+      'INVALID_INPUT',
+      result.error.map(issue => ({
+        field: issue.path?.map(p => typeof p === 'object' ? p.key : p).join('.') ?? '',
+        message: issue.message,
+      })),
+    )
   }
 
   return validator(target, schema, hook)

@@ -3,8 +3,8 @@ import { setCookie } from 'hono/cookie'
 import { authConfig } from '@/config'
 import { factory } from '@/lib/factory'
 import { validator } from '@/middleware'
-import { confirmEmail, register } from './auth.service'
-import { ConfirmParamsSchema, RegisterBodySchema } from './schema'
+import { confirmEmail, login, register } from './auth.service'
+import { ConfirmParamsSchema, LoginBodySchema, RegisterBodySchema } from './schema'
 
 export const authRouter = factory.createApp()
   .basePath('/auth')
@@ -51,6 +51,33 @@ export const authRouter = factory.createApp()
       const { token } = c.req.valid('param')
 
       await confirmEmail(token)
+
+      return c.body(null, 204)
+    },
+  )
+  .post(
+    '/login',
+    describeRoute({
+      summary: 'Login into an existing user account',
+      description: 'Authenticate a user and return a session token.',
+      responses: {
+        204: {
+          description: 'User logged in successfully',
+        },
+      },
+    }),
+    validator('json', LoginBodySchema),
+    async (c) => {
+      const body = c.req.valid('json')
+
+      const sessionToken = await login(body, c.req.header('User-Agent'))
+
+      setCookie(c, authConfig.sessionTokenName, sessionToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: authConfig.sessionTokenTTL,
+      })
 
       return c.body(null, 204)
     },

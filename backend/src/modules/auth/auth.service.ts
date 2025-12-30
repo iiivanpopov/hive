@@ -1,4 +1,4 @@
-import type { RegisterBody } from './schema'
+import type { LoginBody, RegisterBody } from './schema'
 import type { User } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { envConfig } from '@/config'
@@ -98,4 +98,34 @@ export async function confirmEmail(token: string) {
     .delete(confirmTokens)
     .where(eq(confirmTokens.id, tokenExists.id))
   pino.debug(`Deleted confirmation token ${tokenExists.id}`)
+}
+
+export async function login(data: LoginBody, userAgent?: string) {
+  const [user] = await db.query.users.findMany({
+    where: {
+      OR: [
+        { email: data.identity },
+        { username: data.identity },
+      ],
+    },
+  })
+  if (!user)
+    throw ApiException.Unauthorized('Invalid credentials', 'INVALID_CREDENTIALS')
+
+  const passwordMatch = await Bun.password.verify(data.password, user.passwordHash)
+  if (!passwordMatch)
+    throw ApiException.Unauthorized('Invalid credentials', 'INVALID_CREDENTIALS')
+
+  const sessionToken = generateToken()
+  const [session] = await db
+    .insert(sessions)
+    .values({
+      userId: user.id,
+      userAgent: normalizeUserAgent(userAgent),
+      token: sessionToken,
+    })
+    .returning()
+  pino.debug(`Created session: ${JSON.stringify(session)}`)
+
+  return sessionToken
 }
