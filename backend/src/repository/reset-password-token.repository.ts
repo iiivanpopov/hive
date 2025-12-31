@@ -19,18 +19,21 @@ export class ResetPasswordTokenRepository extends TokenRepository<ResetPasswordP
    */
   async getAttemptCount(email: string): Promise<number> {
     const key = this.serializeAttemptKey(email)
-    const count = await this.store.get<number>(key)
-    return count ?? 0
+    const raw = await (this.store as any).get(key)
+    return raw ? Number.parseInt(raw, 10) : 0
   }
 
   /**
-   * Increment the attempt count for an email address
+   * Increment the attempt count for an email address atomically
    */
   async incrementAttemptCount(email: string): Promise<number> {
     const key = this.serializeAttemptKey(email)
-    const currentCount = await this.getAttemptCount(email)
-    const newCount = currentCount + 1
-    await this.store.set(key, newCount, this.options.ttl)
+    // Use Redis INCR for atomic increment
+    const newCount = await (this.store as any).incr(key)
+    // Set expiration on first increment
+    if (newCount === 1) {
+      await (this.store as any).expire(key, this.options.ttl)
+    }
     return newCount
   }
 
