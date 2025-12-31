@@ -15,7 +15,7 @@ beforeAll(async () => {
   migrate(db, { migrationsFolder: './drizzle' })
 })
 
-test('/auth/register', async () => {
+test('Should register a new user', async () => {
   const response1 = await client.api.auth.register.$post({
     json: {
       email: 'testuser@gmail.com',
@@ -25,8 +25,10 @@ test('/auth/register', async () => {
   })
 
   expect(response1.status).toBe(204)
+})
 
-  const response2 = await client.api.auth.register.$post({
+test('Should not register an existing user', async () => {
+  const response = await client.api.auth.register.$post({
     json: {
       email: 'testuser@gmail.com',
       username: 'testuser',
@@ -34,16 +36,16 @@ test('/auth/register', async () => {
     },
   })
 
-  expect(await response2.json()).toEqual({
+  expect(await response.json()).toEqual({
     error: {
       code: 'USER_EXISTS',
       message: 'User with given username or email already exists',
     },
   })
-  expect(response2.status as unknown).toBe(400)
+  expect(response.status as unknown).toBe(400)
 })
 
-test('/auth/login', async () => {
+test('Should login a user', async () => {
   const response1 = await client.api.auth.login.$post({
     json: {
       identity: 'testuser',
@@ -53,24 +55,26 @@ test('/auth/login', async () => {
 
   expect(response1.status).toBe(204)
   expect(response1.headers.get('Set-Cookie')).toBeDefined()
+})
 
-  const response2 = await client.api.auth.login.$post({
+test('Should not login with invalid credentials', async () => {
+  const response = await client.api.auth.login.$post({
     json: {
       identity: 'testuser',
       password: 'wrongpassword',
     },
   })
 
-  expect(await response2.json()).toEqual({
+  expect(await response.json()).toEqual({
     error: {
       code: 'INVALID_CREDENTIALS',
       message: 'Invalid credentials',
     },
   })
-  expect(response2.status as unknown).toBe(401)
+  expect(response.status as unknown).toBe(401)
 })
 
-test('/auth/logout', async () => {
+test('Should logout a user', async () => {
   const loginResponse = await client.api.auth.login.$post({
     json: {
       identity: 'testuser',
@@ -89,4 +93,54 @@ test('/auth/logout', async () => {
   })
 
   expect(logoutResponse.status).toBe(204)
+})
+
+test('Should request password reset', async () => {
+  const response = await client.api.auth['request-reset'].$post({
+    json: {
+      email: 'testuser@gmail.com',
+    },
+  })
+
+  expect(response.status).toBe(204)
+})
+
+test('Should return 204 for non-existent email (prevent user enumeration)', async () => {
+  const response = await client.api.auth['request-reset'].$post({
+    json: {
+      email: 'nonexistent@gmail.com',
+    },
+  })
+
+  // Should return 204 even for non-existent emails to prevent user enumeration
+  expect(response.status).toBe(204)
+})
+
+test('Should reject after exceeding maximum retry attempts', async () => {
+  // Use a unique email to avoid interference from previous tests
+  const testEmail = 'ratelimit-test@gmail.com'
+  
+  // Make 5 password reset attempts
+  for (let i = 0; i < 5; i++) {
+    await client.api.auth['request-reset'].$post({
+      json: {
+        email: testEmail,
+      },
+    })
+  }
+
+  // 6th attempt should fail
+  const response = await client.api.auth['request-reset'].$post({
+    json: {
+      email: testEmail,
+    },
+  })
+
+  expect(await response.json()).toEqual({
+    error: {
+      code: 'TOO_MANY_PASSWORD_RESET_ATTEMPTS',
+      message: 'Too many password reset attempts',
+    },
+  })
+  expect(response.status as unknown).toBe(429)
 })

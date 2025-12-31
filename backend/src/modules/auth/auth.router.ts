@@ -5,8 +5,11 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { authConfig } from '@/config'
 import { factory } from '@/lib/factory'
 import { validator } from '@/middleware'
-import { authenticateGoogleUser, confirmEmail, login, logout, register } from './auth.service'
-import { ConfirmParamsSchema, LoginBodySchema, RegisterBodySchema } from './schema'
+import { authenticateGoogleUser, confirmEmail, login, logout, register, requestPasswordReset } from './auth.service'
+import { ConfirmParamsSchema } from './schema/confirm.schema'
+import { LoginBodySchema } from './schema/login.schema'
+import { RegisterBodySchema } from './schema/register.schema'
+import { RequestResetSchema } from './schema/request-reset.schema'
 
 export const authRouter = factory.createApp()
   .basePath('/auth')
@@ -86,6 +89,12 @@ export const authRouter = factory.createApp()
     },
   )
   .post(
+    '/confirm/resend',
+    async (c) => {
+      return c.body(null, 204)
+    },
+  )
+  .post(
     '/confirm/:token',
     describeRoute({
       summary: 'Confirm user account',
@@ -103,6 +112,44 @@ export const authRouter = factory.createApp()
       await confirmEmail(token)
 
       return c.body(null, 204)
+    },
+  )
+  .post(
+    '/request-reset',
+    describeRoute({
+      summary: 'Request password reset',
+      description: 'Request a password reset token to be sent to the user email.',
+      responses: {
+        204: {
+          description: 'Password reset token sent successfully',
+        },
+      },
+    }),
+    validator('json', RequestResetSchema),
+    async (c) => {
+      const body = c.req.valid('json')
+
+      await requestPasswordReset(body.email)
+
+      return c.body(null, 204)
+    },
+  )
+  .post(
+    '/reset-password/:token',
+    async (c) => {
+      return c.body(null, 204)
+    },
+  )
+  .patch(
+    '/change-password',
+    async (c) => {
+      return c.body(null, 204)
+    },
+  )
+  .get(
+    '/me',
+    async (c) => {
+      return c.body(null, 200)
     },
   )
 

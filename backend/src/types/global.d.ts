@@ -13,5 +13,6 @@ declare namespace Bun {
     SMTP_USER: string
     SMTP_PASSWORD: string
     SMTP_ENABLE: string
+    HASH_SEED: string
   }
 }

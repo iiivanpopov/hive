@@ -27,6 +27,10 @@ export class ApiException extends HTTPException {
     return new ApiException(404, message, code, details)
   }
 
+  static TooManyRequests(message = 'Too Many Requests', code?: string, details?: unknown) {
+    return new ApiException(429, message, code, details)
+  }
+
   static InternalServerError(message = 'Internal Server Error', code?: string, details?: unknown) {
     return new ApiException(500, message, code, details)
   }

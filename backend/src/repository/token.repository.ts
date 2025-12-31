@@ -12,7 +12,7 @@ export abstract class TokenRepository<TPayload> {
   ) {}
 
   async create(payload: TPayload): Promise<string> {
-    const token = this.generateToken()
+    const token = crypto.randomUUID()
     await this.store.set(this.serializeKey(token), payload, this.options.ttl)
     return token
   }
@@ -25,15 +25,7 @@ export abstract class TokenRepository<TPayload> {
     await this.store.del(this.serializeKey(token))
   }
 
-  async refresh(token: string): Promise<void> {
-    await this.store.expire(this.serializeKey(token), this.options.ttl)
-  }
-
-  protected generateToken(bytes = 32): string {
-    return crypto.getRandomValues(new Uint8Array(bytes)).toHex()
-  }
-
-  protected serializeKey(token: string): string {
+  serializeKey(token: string): string {
     return `${this.options.namespace}:${token}`
   }
 }
