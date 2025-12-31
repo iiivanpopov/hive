@@ -4,7 +4,7 @@ import { db } from '@/db/instance'
 import { ApiException } from '@/lib/api-exception'
 import { factory } from '@/lib/factory'
 import { normalizeUserAgent } from '@/lib/utils'
-import { sessionTokens } from '@/repository'
+import { sessionTokens } from '@/repositories/session-token.repository'
 
 export function sessionMiddleware() {
   return factory.createMiddleware(async (c, next) => {

@@ -10,7 +10,9 @@ import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 import { smtp } from '@/lib/smtp'
 import { normalizeUserAgent } from '@/lib/utils'
-import { confirmationTokens, resetPasswordTokens, sessionTokens } from '@/repository'
+import { confirmationTokens } from '@/repositories/confirmation-token.repository'
+import { resetPasswordTokens } from '@/repositories/reset-password.token.repository'
+import { sessionTokens } from '@/repositories/session-token.repository'
 
 async function sendConfirmEmail(user: User, token: string) {
   return smtp.sendMail({
@@ -163,29 +165,33 @@ export async function requestPasswordReset(email: string) {
   const [user] = await db.query.users.findMany({
     where: { email },
   })
-  
-  // Always return success to prevent user enumeration attacks
-  if (!user) {
-    pino.debug(`Password reset requested for non-existent email: ${email}`)
-    return
-  }
 
-  // Increment attempt count atomically and check limit
-  const newAttemptCount = await resetPasswordTokens.incrementAttemptCount(user.email)
-  if (newAttemptCount > 5) {
-    pino.debug(`Too many password reset attempts for user ${user.id} (attempt ${newAttemptCount})`)
-    throw ApiException.TooManyRequests('Too many password reset attempts', 'TOO_MANY_PASSWORD_RESET_ATTEMPTS')
-  }
+  if (!user)
+    return pino.debug(`Password reset requested for non-existent email: ${email}`)
 
-  const resetToken = await resetPasswordTokens.create({
-    email: user.email,
-    userId: user.id,
-    attemptCount: newAttemptCount,
-  })
-  pino.debug(`Created password reset token ${resetToken} for user ${user.id}`)
+  const attempts = await resetPasswordTokens.incrementAttempt(email)
+  if (attempts > 5)
+    throw ApiException.TooManyRequests('Too many password reset attempts. Please try again later.', 'TOO_MANY_PASSWORD_RESET_ATTEMPTS')
+
+  const resetToken = await resetPasswordTokens.create({ userId: user.id })
 
   if (Bun.env.SMTP_ENABLE === 'true' && !envConfig.isTest) {
     await sendPasswordResetEmail(user, resetToken)
     pino.debug(`Sent password reset email to ${user.email}`)
   }
+}
+
+export async function resetPassword(token: string, newPassword: string) {
+  const resetToken = await resetPasswordTokens.resolve(token)
+  if (!resetToken)
+    throw ApiException.BadRequest('Invalid reset password token', 'INVALID_RESET_PASSWORD_TOKEN')
+
+  const passwordHash = await Bun.password.hash(newPassword)
+  await db
+    .update(users)
+    .set({ passwordHash })
+    .where(eq(users.id, resetToken.userId))
+  pino.debug(`Password reset for user ${resetToken.userId}`)
+
+  await resetPasswordTokens.revoke(token)
 }

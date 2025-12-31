@@ -5,11 +5,12 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { authConfig } from '@/config'
 import { factory } from '@/lib/factory'
 import { validator } from '@/middleware'
-import { authenticateGoogleUser, confirmEmail, login, logout, register, requestPasswordReset } from './auth.service'
+import { authenticateGoogleUser, confirmEmail, login, logout, register, requestPasswordReset, resetPassword } from './auth.service'
 import { ConfirmParamsSchema } from './schema/confirm.schema'
 import { LoginBodySchema } from './schema/login.schema'
 import { RegisterBodySchema } from './schema/register.schema'
 import { RequestResetSchema } from './schema/request-reset.schema'
+import { ResetPasswordBodySchema, ResetPasswordParamsSchema } from './schema/reset-password.schema'
 
 export const authRouter = factory.createApp()
   .basePath('/auth')
@@ -136,7 +137,23 @@ export const authRouter = factory.createApp()
   )
   .post(
     '/reset-password/:token',
+    describeRoute({
+      summary: 'Reset user password',
+      description: 'Reset the user password using the provided reset token.',
+      responses: {
+        204: {
+          description: 'Password reset successfully',
+        },
+      },
+    }),
+    validator('param', ResetPasswordParamsSchema),
+    validator('json', ResetPasswordBodySchema),
     async (c) => {
+      const body = c.req.valid('json')
+      const { token } = c.req.valid('param')
+
+      await resetPassword(token, body.newPassword)
+
       return c.body(null, 204)
     },
   )
@@ -156,15 +173,18 @@ export const authRouter = factory.createApp()
 authRouter
   .use(
     '/google/*',
-    describeRoute({
-      summary: 'Google OAuth2 Authentication',
-      description: 'Authenticate users using Google OAuth2.',
-    }),
     googleAuth({
       redirect_uri: `http://${Bun.env.HOST}:${Bun.env.PORT}/api/auth/google/callback`,
       client_id: Bun.env.GOOGLE_ID,
       client_secret: Bun.env.GOOGLE_SECRET,
       scope: ['openid', 'email', 'profile'],
+    }),
+  )
+  .get(
+    '/google',
+    describeRoute({
+      summary: 'Google OAuth2 Authentication',
+      description: 'Authenticate users using Google OAuth2.',
     }),
   )
   .get(

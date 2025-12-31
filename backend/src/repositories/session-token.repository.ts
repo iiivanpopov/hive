@@ -1,0 +1,41 @@
+import type { RedisClient } from 'bun'
+import { redis } from 'bun'
+import { authConfig } from '@/config'
+
+export interface SessionTokenPayload {
+  userId: number
+  userAgent: string
+}
+
+export class SessionTokenRepository {
+  namespace = 'session-token'
+
+  constructor(private readonly store: RedisClient) {}
+
+  async create(data: SessionTokenPayload) {
+    const token = crypto.randomUUID()
+    await this.store.setex(this.serialize(token), authConfig.sessionTokenTtl, JSON.stringify(data))
+    return token
+  }
+
+  async resolve(token: string) {
+    const data = await this.store.get(this.serialize(token))
+    return data ? JSON.parse(data) as SessionTokenPayload : null
+  }
+
+  async revoke(token: string) {
+    await this.store.del(this.serialize(token))
+  }
+
+  async refresh(token: string) {
+    const data = await this.store.get(this.serialize(token))
+    if (data)
+      await this.store.setex(this.serialize(token), authConfig.sessionTokenTtl, data)
+  }
+
+  serialize(token: string) {
+    return `${this.namespace}:${token}`
+  }
+}
+
+export const sessionTokens = new SessionTokenRepository(redis)
