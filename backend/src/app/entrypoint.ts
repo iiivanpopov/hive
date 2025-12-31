@@ -7,11 +7,10 @@ import nodemailer from 'nodemailer'
 import z from 'zod'
 import { db } from '@/db/instance'
 import { factory } from '@/lib/factory'
+import { MailService } from '@/lib/mail'
 import { pino } from '@/lib/pino'
-import { SmtpService } from '@/lib/smtp'
 import { errorMiddleware, loggerMiddleware } from '@/middleware'
 import { AuthRouter } from '@/modules/auth/auth.router'
-import { AuthService } from '@/modules/auth/auth.service'
 import { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import { SessionTokenRepository } from '@/repositories/session-token.repository'
@@ -30,14 +29,18 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-const smtpService = new SmtpService(transporter)
-const confirmationTokens = new ConfirmationTokenRepository(redis)
-const resetPasswordTokens = new ResetPasswordTokenRepository(redis)
-const sessionTokens = new SessionTokenRepository(redis)
+const mailService = new MailService(transporter)
+const confirmationTokensRepository = new ConfirmationTokenRepository(redis)
+const resetPasswordTokensRepository = new ResetPasswordTokenRepository(redis)
+const sessionTokensRepository = new SessionTokenRepository(redis)
 
 const router = new Router(
   new AuthRouter(
-    new AuthService(db, smtpService, confirmationTokens, resetPasswordTokens, sessionTokens),
+    db,
+    mailService,
+    confirmationTokensRepository,
+    resetPasswordTokensRepository,
+    sessionTokensRepository,
   ),
 ).init()
 

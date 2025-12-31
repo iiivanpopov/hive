@@ -1,9 +1,8 @@
 import { Router } from '@/app/router'
 import { factory } from '@/lib/factory'
-import { SmtpService } from '@/lib/smtp'
+import { MailService } from '@/lib/mail'
 import { errorMiddleware } from '@/middleware'
 import { AuthRouter } from '@/modules/auth/auth.router'
-import { AuthService } from '@/modules/auth/auth.service'
 import { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import { SessionTokenRepository } from '@/repositories/session-token.repository'
@@ -14,7 +13,7 @@ export function createApp() {
   const confirmationTokens = new ConfirmationTokenRepository(memoryCache)
   const resetPasswordTokens = new ResetPasswordTokenRepository(memoryCache)
   const sessionTokens = new SessionTokenRepository(memoryCache)
-  const smtpService = new SmtpService({
+  const smtpService = new MailService({
     async sendMail(options) {
       memoryCache.setex(`${options.to}-last-email`, 3600, JSON.stringify(options))
       return Promise.resolve()
@@ -23,7 +22,11 @@ export function createApp() {
 
   const router = new Router(
     new AuthRouter(
-      new AuthService(memoryDatabase, smtpService, confirmationTokens, resetPasswordTokens, sessionTokens),
+      memoryDatabase,
+      smtpService,
+      confirmationTokens,
+      resetPasswordTokens,
+      sessionTokens,
     ),
   ).init()
 

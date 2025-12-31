@@ -9,7 +9,7 @@ export interface Transporter {
   sendMail: (options: MailOptions) => Promise<any>
 }
 
-export class SmtpService {
+export class MailService {
   constructor(
     private readonly transporter: Transporter,
   ) {}

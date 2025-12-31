@@ -7,7 +7,8 @@ export class Router {
   ) {}
 
   init() {
-    const app = factory.createApp()
+    const app = factory
+      .createApp()
       .route('/', this.authRouter.init())
 
     return app

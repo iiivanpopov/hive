@@ -1,11 +1,16 @@
 import type { GoogleUser } from '@hono/oauth-providers/google'
-import type { AuthService } from './auth.service'
+import type { DrizzleDatabase } from '@/db/instance'
+import type { MailService } from '@/lib/mail'
+import type { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
+import type { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
+import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 import { googleAuth } from '@hono/oauth-providers/google'
 import { describeRoute } from 'hono-openapi'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { authConfig } from '@/config'
 import { factory } from '@/lib/factory'
 import { validator } from '@/middleware'
+import { AuthService } from './auth.service'
 import { ConfirmParamsSchema } from './schema/confirm.schema'
 import { LoginBodySchema } from './schema/login.schema'
 import { RegisterBodySchema } from './schema/register.schema'
@@ -14,10 +19,23 @@ import { ResetPasswordBodySchema, ResetPasswordParamsSchema } from './schema/res
 
 export class AuthRouter {
   basePath = '/auth'
+  authService: AuthService
 
   constructor(
-    private readonly authService: AuthService,
-  ) {}
+    private readonly db: DrizzleDatabase,
+    private readonly smtpService: MailService,
+    private readonly confirmationTokens: ConfirmationTokenRepository,
+    private readonly resetPasswordTokens: ResetPasswordTokenRepository,
+    private readonly sessionTokens: SessionTokenRepository,
+  ) {
+    this.authService = new AuthService(
+      this.db,
+      this.smtpService,
+      this.confirmationTokens,
+      this.resetPasswordTokens,
+      this.sessionTokens,
+    )
+  }
 
   init() {
     const app = factory

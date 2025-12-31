@@ -3,7 +3,7 @@ import type { LoginBody } from './schema/login.schema'
 import type { RegisterBody } from './schema/register.schema'
 import type { DrizzleDatabase } from '@/db/instance'
 import type { User } from '@/db/schema'
-import type { SmtpService } from '@/lib/smtp'
+import type { MailService } from '@/lib/mail'
 import type { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import type { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
@@ -16,7 +16,7 @@ import { normalizeUserAgent } from '@/lib/utils'
 export class AuthService {
   constructor(
     private readonly db: DrizzleDatabase,
-    private readonly smtpService: SmtpService,
+    private readonly smtpService: MailService,
     private readonly confirmationTokens: ConfirmationTokenRepository,
     private readonly resetPasswordTokens: ResetPasswordTokenRepository,
     private readonly sessionTokens: SessionTokenRepository,

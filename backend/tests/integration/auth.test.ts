@@ -1,12 +1,12 @@
-import type { MailOptions } from '@/lib/smtp'
+import type { MailOptions } from '@/lib/mail'
 import { afterEach, beforeAll, expect, test } from 'bun:test'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { testClient } from 'hono/testing'
 import { parse as parseCookie } from 'hono/utils/cookie'
 import * as schema from '@/db/schema'
-import { createApp } from '@/tests/_helpers/create-app'
-import { memoryDatabase, resetDatabase } from '@/tests/_helpers/database'
-import { memoryCache } from '@/tests/_helpers/memory-cache'
+import { createApp } from '@/tests/_utils/create-app'
+import { memoryDatabase, resetDatabase } from '@/tests/_utils/database'
+import { memoryCache } from '@/tests/_utils/memory-cache'
 
 const client = testClient(createApp())
 
