@@ -170,13 +170,13 @@ export async function requestPasswordReset(email: string) {
     return
   }
 
-  const attemptCount = await resetPasswordTokens.getAttemptCount(user.email)
-  if (attemptCount >= 5) {
-    pino.debug(`Too many password reset attempts for user ${user.id}`)
+  // Increment attempt count atomically and check limit
+  const newAttemptCount = await resetPasswordTokens.incrementAttemptCount(user.email)
+  if (newAttemptCount > 5) {
+    pino.debug(`Too many password reset attempts for user ${user.id} (attempt ${newAttemptCount})`)
     throw ApiException.TooManyRequests('Too many password reset attempts', 'TOO_MANY_PASSWORD_RESET_ATTEMPTS')
   }
 
-  const newAttemptCount = await resetPasswordTokens.incrementAttemptCount(user.email)
   const resetToken = await resetPasswordTokens.create({
     email: user.email,
     userId: user.id,
