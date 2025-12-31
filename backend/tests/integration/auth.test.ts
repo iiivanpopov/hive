@@ -45,18 +45,6 @@ test('Should not register an existing user', async () => {
   expect(response.status as unknown).toBe(400)
 })
 
-test('Should login a user', async () => {
-  const response1 = await client.api.auth.login.$post({
-    json: {
-      identity: 'testuser',
-      password: 'password123',
-    },
-  })
-
-  expect(response1.status).toBe(204)
-  expect(response1.headers.get('Set-Cookie')).toBeDefined()
-})
-
 test('Should not login with invalid credentials', async () => {
   const response = await client.api.auth.login.$post({
     json: {
@@ -72,6 +60,18 @@ test('Should not login with invalid credentials', async () => {
     },
   })
   expect(response.status as unknown).toBe(401)
+})
+
+test('Should login a user', async () => {
+  const response1 = await client.api.auth.login.$post({
+    json: {
+      identity: 'testuser',
+      password: 'password123',
+    },
+  })
+
+  expect(response1.status).toBe(204)
+  expect(response1.headers.get('Set-Cookie')).toBeDefined()
 })
 
 test('Should logout a user', async () => {
@@ -105,42 +105,53 @@ test('Should request password reset', async () => {
   expect(response.status).toBe(204)
 })
 
-test('Should return 204 for non-existent email (prevent user enumeration)', async () => {
+test('Should return 204 for non-existent email', async () => {
   const response = await client.api.auth['request-reset'].$post({
     json: {
       email: 'nonexistent@gmail.com',
     },
   })
 
-  // Should return 204 even for non-existent emails to prevent user enumeration
   expect(response.status).toBe(204)
 })
 
-test('Should reject after exceeding maximum retry attempts', async () => {
-  // Use a unique email to avoid interference from previous tests
-  const testEmail = 'ratelimit-test@gmail.com'
-  
-  // Make 5 password reset attempts
+test('Should reject after exceeding maximum retry attempts for existing account', async () => {
   for (let i = 0; i < 5; i++) {
     await client.api.auth['request-reset'].$post({
       json: {
-        email: testEmail,
+        email: 'testuser@gmail.com',
       },
     })
   }
 
-  // 6th attempt should fail
   const response = await client.api.auth['request-reset'].$post({
     json: {
-      email: testEmail,
+      email: 'testuser@gmail.com',
     },
   })
-
   expect(await response.json()).toEqual({
     error: {
       code: 'TOO_MANY_PASSWORD_RESET_ATTEMPTS',
-      message: 'Too many password reset attempts',
+      message: 'Too many password reset attempts. Please try again later.',
     },
   })
   expect(response.status as unknown).toBe(429)
+})
+
+test('Should not reject after exceeding maximum retry attempts for not existing account', async () => {
+  for (let i = 0; i < 5; i++) {
+    await client.api.auth['request-reset'].$post({
+      json: {
+        email: 'ratelimit-test@gmail.com',
+      },
+    })
+  }
+
+  const response = await client.api.auth['request-reset'].$post({
+    json: {
+      email: 'ratelimit-test@gmail.com',
+    },
+  })
+
+  expect(response.status as unknown).toBe(204)
 })
