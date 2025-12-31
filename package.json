@@ -21,6 +21,7 @@
     "db:generate": "bun --filter ./backend db:generate",
     "db:push": "bun --filter ./backend db:push",
     "db:studio": "bun --filter ./backend db:studio",
+    "test": "bun --workspaces test --env-file=./backend/.env.test --env-file=./frontend/.env.test",
     "prepare": "husky || true"
   },
   "devDependencies": {

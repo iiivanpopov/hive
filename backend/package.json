@@ -18,7 +18,8 @@
     "lint": "bun --bun eslint .",
     "db:studio": "bun --bun drizzle-kit studio",
     "db:push": "bun --bun drizzle-kit push",
-    "db:generate": "bun --bun drizzle-kit generate"
+    "db:generate": "bun --bun drizzle-kit generate",
+    "test": "bun test"
   },
   "dependencies": {
     "@hono/oauth-providers": "^0.8.5",

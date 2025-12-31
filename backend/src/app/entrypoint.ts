@@ -1,4 +1,5 @@
 import { redis } from 'bun'
+import path from 'node:path'
 import { Scalar } from '@scalar/hono-api-reference'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { describeRoute, openAPIRouteHandler, resolver } from 'hono-openapi'
@@ -16,7 +17,7 @@ import { ResetPasswordTokenRepository } from '@/repositories/reset-password.toke
 import { SessionTokenRepository } from '@/repositories/session-token.repository'
 import { Router } from './router'
 
-migrate(db, { migrationsFolder: './drizzle' })
+migrate(db, { migrationsFolder: path.resolve(__dirname, '../../drizzle') })
 pino.info('Database migrated successfully')
 
 const transporter = nodemailer.createTransport({

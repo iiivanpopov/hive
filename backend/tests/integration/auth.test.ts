@@ -1,5 +1,6 @@
 import type { MailOptions } from '@/lib/mail'
 import { afterEach, beforeAll, expect, test } from 'bun:test'
+import path from 'node:path'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { testClient } from 'hono/testing'
 import { parse as parseCookie } from 'hono/utils/cookie'
@@ -11,7 +12,7 @@ import { memoryCache } from '@/tests/_utils/memory-cache'
 const client = testClient(createApp())
 
 beforeAll(async () => {
-  migrate(memoryDatabase, { migrationsFolder: './drizzle' })
+  migrate(memoryDatabase, { migrationsFolder: path.resolve(__dirname, '../../drizzle') })
 })
 
 afterEach(() => {
@@ -129,7 +130,7 @@ test('Should request password reset', async () => {
 
   expect(response2.status).toBe(204)
 
-  const lastEmail = await memoryCache.get<MailOptions>('testuser@gmail.com' + '-last-email')
+  const lastEmail = await memoryCache.get('testuser@gmail.com' + '-last-email').then(data => data ? JSON.parse(data) as MailOptions : null)
   expect(lastEmail).not.toBeNull()
 
   const passwordResetToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/backend/tsconfig.tsbuildinfo",
     "target": "ESNext",
     "lib": ["ESNext"],
     "moduleDetection": "force",

@@ -1,5 +1,5 @@
 export class MemoryCache {
-  private store: Map<string, any> = new Map()
+  private store: Map<string, string> = new Map()
 
   async reset(): Promise<void> {
     this.store.clear()
@@ -13,9 +13,8 @@ export class MemoryCache {
     return 'OK'
   }
 
-  async get<T>(key: string): Promise<T | null> {
-    const value = this.store.get(key)
-    return value ? JSON.parse(value) as T : null
+  async get(key: string): Promise<string | null> {
+    return this.store.get(key) ?? null
   }
 
   async del(key: string): Promise<void | number> {
@@ -34,7 +33,7 @@ export class MemoryCache {
   }
 
   async incr(key: string): Promise<number> {
-    const current = Number.parseInt(this.store.get(key)) || 0
+    const current = Number.parseInt(this.store.get(key) || '0')
     const next = current + 1
     this.store.set(key, next.toString())
     return next
