@@ -117,11 +117,14 @@ test('Should return 204 for non-existent email (prevent user enumeration)', asyn
 })
 
 test('Should reject after exceeding maximum retry attempts', async () => {
+  // Use a unique email to avoid interference from previous tests
+  const testEmail = 'ratelimit-test@gmail.com'
+  
   // Make 5 password reset attempts
   for (let i = 0; i < 5; i++) {
     await client.api.auth['request-reset'].$post({
       json: {
-        email: 'testuser@gmail.com',
+        email: testEmail,
       },
     })
   }
@@ -129,7 +132,7 @@ test('Should reject after exceeding maximum retry attempts', async () => {
   // 6th attempt should fail
   const response = await client.api.auth['request-reset'].$post({
     json: {
-      email: 'testuser@gmail.com',
+      email: testEmail,
     },
   })
 
