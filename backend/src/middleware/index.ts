@@ -1,4 +1,3 @@
-export * from './email-confirmed-only.middleware'
 export * from './error.middleware'
 export * from './logger.middleware'
 export * from './session.middleware'

@@ -1,4 +1,4 @@
-export class MemoryStore {
+export class MemoryCache {
   private store: Map<string, any> = new Map()
 
   async reset(): Promise<void> {
@@ -40,3 +40,5 @@ export class MemoryStore {
     return next
   }
 }
+
+export const memoryCache = new MemoryCache()

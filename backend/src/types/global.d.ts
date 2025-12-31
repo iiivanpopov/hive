@@ -13,6 +13,6 @@ declare namespace Bun {
     SMTP_USER: string
     SMTP_PASSWORD: string
     SMTP_ENABLE: string
-    EMAIL_RESET_RATE_LIMIT_KEY: string
+    PASSWORD_RESET_HASH_KEY: string
   }
 }

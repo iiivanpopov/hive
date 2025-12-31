@@ -43,6 +43,7 @@ const router = new Router(
 
 export const app = factory.createApp()
   .onError(errorMiddleware())
+  .use(loggerMiddleware())
   .use(cors({
     origin: [
       'http://localhost:5173',
@@ -51,7 +52,6 @@ export const app = factory.createApp()
     ],
     credentials: true,
   }))
-  .use(loggerMiddleware())
   .route('/api', router)
   .get('/health', describeRoute({
     description: 'Health check',
@@ -82,8 +82,7 @@ app
       ],
     },
   }))
-  .get('/docs', Scalar({ url: '/openapi' }))
-  .get('/', c => c.redirect('/docs'))
+  .get('/', Scalar({ url: '/openapi' }))
 
 const server = Bun.serve({
   fetch: app.fetch,

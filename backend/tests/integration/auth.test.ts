@@ -4,17 +4,19 @@ import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { testClient } from 'hono/testing'
 import { parse as parseCookie } from 'hono/utils/cookie'
 import * as schema from '@/db/schema'
-import { createTestApp, memoryDb, memoryStore, resetDb } from '../_utils'
+import { createApp } from '@/tests/_helpers/create-app'
+import { memoryDatabase, resetDatabase } from '@/tests/_helpers/database'
+import { memoryCache } from '@/tests/_helpers/memory-cache'
 
-const client = testClient(createTestApp())
+const client = testClient(createApp())
 
 beforeAll(async () => {
-  migrate(memoryDb, { migrationsFolder: './drizzle' })
+  migrate(memoryDatabase, { migrationsFolder: './drizzle' })
 })
 
 afterEach(() => {
-  resetDb(memoryDb, schema)
-  memoryStore.reset()
+  resetDatabase(memoryDatabase, schema)
+  memoryCache.reset()
 })
 
 test('Should register a new user', async () => {
@@ -127,7 +129,7 @@ test('Should request password reset', async () => {
 
   expect(response2.status).toBe(204)
 
-  const lastEmail = await memoryStore.get<MailOptions>('testuser@gmail.com' + '-last-email')
+  const lastEmail = await memoryCache.get<MailOptions>('testuser@gmail.com' + '-last-email')
   expect(lastEmail).not.toBeNull()
 
   const passwordResetToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]

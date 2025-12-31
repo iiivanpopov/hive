@@ -28,7 +28,7 @@ export class ResetPasswordTokenRepository {
 
     const attempts = await this.store.incr(key)
     if (attempts === 1)
-      await this.store.expire(key, authConfig.resetPasswordTokenAttemptsTtl)
+      await this.store.expire(key, authConfig.resetPasswordRateLimitTime)
 
     return attempts
   }
@@ -47,7 +47,7 @@ export class ResetPasswordTokenRepository {
   }
 
   hashEmail(email: string) {
-    return new Bun.CryptoHasher('sha256', Bun.env.EMAIL_RESET_RATE_LIMIT_KEY)
+    return new Bun.CryptoHasher('sha256', Bun.env.PASSWORD_RESET_HASH_KEY)
       .update(email)
       .digest('hex')
   }
