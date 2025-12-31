@@ -1,11 +1,20 @@
-import nodemailer from 'nodemailer'
+export interface MailOptions {
+  from: string
+  to: string
+  subject: string
+  html: string
+}
 
-export const smtp = nodemailer.createTransport({
-  host: Bun.env.SMTP_HOST,
-  port: Number(Bun.env.SMTP_PORT),
-  secure: false,
-  auth: {
-    user: Bun.env.SMTP_USER,
-    pass: Bun.env.SMTP_PASSWORD,
-  },
-})
+export interface Transporter {
+  sendMail: (options: MailOptions) => Promise<any>
+}
+
+export class SmtpService {
+  constructor(
+    private readonly transporter: Transporter,
+  ) {}
+
+  async sendMail(options: MailOptions) {
+    await this.transporter.sendMail(options)
+  }
+}

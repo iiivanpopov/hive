@@ -1,6 +1,12 @@
-import type { RedisClient } from 'bun'
-import { redis } from 'bun'
 import { authConfig } from '@/config'
+
+export interface ResetPasswordTokenStore {
+  setex: (key: string, ttl: number, value: string) => Promise<void | 'OK'>
+  get: (key: string) => Promise<string | null>
+  del: (key: string) => Promise<void | number>
+  expire: (key: string, ttl: number) => Promise<void | number>
+  incr: (key: string) => Promise<number>
+}
 
 export interface ResetPasswordTokenPayload {
   userId: number
@@ -9,7 +15,7 @@ export interface ResetPasswordTokenPayload {
 export class ResetPasswordTokenRepository {
   namespace = 'reset-password-token'
 
-  constructor(private readonly store: RedisClient) {}
+  constructor(private readonly store: ResetPasswordTokenStore) {}
 
   async create(data: ResetPasswordTokenPayload) {
     const token = crypto.randomUUID()
@@ -46,5 +52,3 @@ export class ResetPasswordTokenRepository {
       .digest('hex')
   }
 }
-
-export const resetPasswordTokens = new ResetPasswordTokenRepository(redis)

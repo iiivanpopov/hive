@@ -12,7 +12,6 @@ COPY . .
 
 # Fixing symlinks and build in one layer
 RUN bun i --frozen-lockfile && \
-    bun --filter hive-backend build:client && \
     bun --filter hive-frontend build:prod
 
 FROM nginx:mainline-alpine3.23

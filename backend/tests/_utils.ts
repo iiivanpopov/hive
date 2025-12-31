@@ -1,20 +1,41 @@
-import type { Table } from 'drizzle-orm'
-import { getTableName, sql } from 'drizzle-orm'
-import { db } from '@/db/instance'
+import { Database } from 'bun:sqlite'
+import { Router } from '@/app/router'
+import { createDb } from '@/db/instance'
+import { factory } from '@/lib/factory'
+import { SmtpService } from '@/lib/smtp'
+import { errorMiddleware } from '@/middleware'
+import { AuthRouter } from '@/modules/auth/auth.router'
+import { AuthService } from '@/modules/auth/auth.service'
+import { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
+import { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
+import { SessionTokenRepository } from '@/repositories/session-token.repository'
+import { MemoryStore } from './_memory-store'
 
-export function reset(schema: Record<string, Table>) {
-  // ignoring error because this is only for tests
-  try {
-    const tablesToTruncate = Object.values(schema).map(table => getTableName(table))
+export const memoryStore = new MemoryStore()
 
-    db.run(sql`PRAGMA foreign_keys = OFF`)
-    for (const tableName of tablesToTruncate) {
-      db.run(sql.raw(`delete from \`${tableName}\`;`))
-    }
-    db.run(sql`PRAGMA foreign_keys = ON`)
-  }
-  catch {}
-  finally {
-    db.run(sql`PRAGMA foreign_keys = ON`)
-  }
+const memoryClient = new Database(':memory:')
+export const memoryDb = createDb(memoryClient)
+
+export function createTestApp() {
+  const confirmationTokens = new ConfirmationTokenRepository(memoryStore)
+  const resetPasswordTokens = new ResetPasswordTokenRepository(memoryStore)
+  const sessionTokens = new SessionTokenRepository(memoryStore)
+  const smtpService = new SmtpService({
+    sendMail(options) {
+      memoryStore.setex(`${options.to}-last-email`, 3600, JSON.stringify(options))
+      return Promise.resolve()
+    },
+  })
+
+  const router = new Router(
+    new AuthRouter(
+      new AuthService(memoryDb, smtpService, confirmationTokens, resetPasswordTokens, sessionTokens),
+    ),
+  ).init()
+
+  const app = factory.createApp()
+    .onError(errorMiddleware())
+    .route('/api', router)
+
+  return app
 }

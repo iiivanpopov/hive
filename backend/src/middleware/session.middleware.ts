@@ -1,12 +1,12 @@
+import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { authConfig } from '@/config/auth.config'
 import { db } from '@/db/instance'
 import { ApiException } from '@/lib/api-exception'
 import { factory } from '@/lib/factory'
 import { normalizeUserAgent } from '@/lib/utils'
-import { sessionTokens } from '@/repositories/session-token.repository'
 
-export function sessionMiddleware() {
+export function sessionMiddleware(sessionTokens: SessionTokenRepository) {
   return factory.createMiddleware(async (c, next) => {
     const sessionToken = getCookie(c, authConfig.sessionTokenCookie)
     if (!sessionToken)

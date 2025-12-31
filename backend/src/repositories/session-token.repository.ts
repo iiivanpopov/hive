@@ -1,6 +1,10 @@
-import type { RedisClient } from 'bun'
-import { redis } from 'bun'
 import { authConfig } from '@/config'
+
+export interface SessionTokenStore {
+  setex: (key: string, ttl: number, value: string) => Promise<void | 'OK'>
+  get: (key: string) => Promise<string | null>
+  del: (key: string) => Promise<void | number>
+}
 
 export interface SessionTokenPayload {
   userId: number
@@ -10,7 +14,7 @@ export interface SessionTokenPayload {
 export class SessionTokenRepository {
   namespace = 'session-token'
 
-  constructor(private readonly store: RedisClient) {}
+  constructor(private readonly store: SessionTokenStore) {}
 
   async create(data: SessionTokenPayload) {
     const token = crypto.randomUUID()
@@ -37,5 +41,3 @@ export class SessionTokenRepository {
     return `${this.namespace}:${token}`
   }
 }
-
-export const sessionTokens = new SessionTokenRepository(redis)

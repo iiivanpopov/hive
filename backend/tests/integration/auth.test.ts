@@ -1,18 +1,12 @@
-import { redis } from 'bun'
 import { beforeAll, expect, test } from 'bun:test'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { testClient } from 'hono/testing'
-import { app } from '@/app/entrypoint'
-import { db } from '@/db/instance'
-import * as schema from '@/db/schema'
-import { reset } from '../_utils'
+import { createTestApp, memoryDb } from '../_utils'
 
-const client = testClient(app)
+const client = testClient(createTestApp())
 
 beforeAll(async () => {
-  await redis.send('FLUSHALL', [])
-  reset(schema)
-  migrate(db, { migrationsFolder: './drizzle' })
+  migrate(memoryDb, { migrationsFolder: './drizzle' })
 })
 
 test('Should register a new user', async () => {

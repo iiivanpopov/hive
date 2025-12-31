@@ -1,6 +1,10 @@
-import type { RedisClient } from 'bun'
-import { redis } from 'bun'
 import { authConfig } from '@/config'
+
+export interface ConfirmationTokenStore {
+  setex: (key: string, ttl: number, value: string) => Promise<void | 'OK'>
+  get: (key: string) => Promise<string | null>
+  del: (key: string) => Promise<void | number>
+}
 
 export interface ConfirmationTokenPayload {
   userId: number
@@ -9,7 +13,7 @@ export interface ConfirmationTokenPayload {
 export class ConfirmationTokenRepository {
   namespace = 'confirmation-token'
 
-  constructor(private readonly store: RedisClient) {}
+  constructor(private readonly store: ConfirmationTokenStore) {}
 
   async create(data: ConfirmationTokenPayload) {
     const token = crypto.randomUUID()
@@ -30,5 +34,3 @@ export class ConfirmationTokenRepository {
     return `${this.namespace}:${token}`
   }
 }
-
-export const confirmationTokens = new ConfirmationTokenRepository(redis)
