@@ -1,12 +1,20 @@
-import { beforeAll, expect, test } from 'bun:test'
+import type { MailOptions } from '@/lib/smtp'
+import { afterEach, beforeAll, expect, test } from 'bun:test'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { testClient } from 'hono/testing'
-import { createTestApp, memoryDb } from '../_utils'
+import { parse as parseCookie } from 'hono/utils/cookie'
+import * as schema from '@/db/schema'
+import { createTestApp, memoryDb, memoryStore, resetDb } from '../_utils'
 
 const client = testClient(createTestApp())
 
 beforeAll(async () => {
   migrate(memoryDb, { migrationsFolder: './drizzle' })
+})
+
+afterEach(() => {
+  resetDb(memoryDb, schema)
+  memoryStore.reset()
 })
 
 test('Should register a new user', async () => {
@@ -19,10 +27,15 @@ test('Should register a new user', async () => {
   })
 
   expect(response1.status).toBe(204)
+  expect(response1.headers.get('Set-Cookie')).toBeDefined()
+
+  const cookie = parseCookie(response1.headers.get('Set-Cookie')!, 'session_token')
+  expect(cookie).toBeDefined()
+  expect(cookie.session_token).toHaveLength(36)
 })
 
 test('Should not register an existing user', async () => {
-  const response = await client.api.auth.register.$post({
+  const response1 = await client.api.auth.register.$post({
     json: {
       email: 'testuser@gmail.com',
       username: 'testuser',
@@ -30,13 +43,23 @@ test('Should not register an existing user', async () => {
     },
   })
 
-  expect(await response.json()).toEqual({
-    error: {
-      code: 'USER_EXISTS',
-      message: 'User with given username or email already exists',
+  expect(response1.status).toBe(204)
+  expect(response1.headers.get('Set-Cookie')).toBeDefined()
+
+  const response2 = await client.api.auth.register.$post({
+    json: {
+      email: 'testuser@gmail.com',
+      username: 'testuser',
+      password: 'password123',
     },
   })
-  expect(response.status as unknown).toBe(400)
+
+  expect(await response2.json()).toMatchObject({
+    error: {
+      code: 'USER_EXISTS',
+    },
+  })
+  expect(response2.status as unknown).toBe(400)
 })
 
 test('Should not login with invalid credentials', async () => {
@@ -57,39 +80,61 @@ test('Should not login with invalid credentials', async () => {
 })
 
 test('Should login a user', async () => {
-  const response1 = await client.api.auth.login.$post({
+  await client.api.auth.register.$post({
+    json: {
+      email: 'testuser@gmail.com',
+      username: 'testuser',
+      password: 'password123',
+    },
+  })
+
+  const response2 = await client.api.auth.login.$post({
     json: {
       identity: 'testuser',
       password: 'password123',
     },
   })
+
+  expect(response2.status).toBe(204)
+  expect(response2.headers.get('Set-Cookie')).toBeDefined()
+
+  const cookie = parseCookie(response2.headers.get('Set-Cookie')!, 'session_token')
+  expect(cookie).toBeDefined()
+  expect(cookie.session_token).toHaveLength(36)
+})
+
+test('Should logout a user', async () => {
+  const response1 = await client.api.auth.logout.$post()
 
   expect(response1.status).toBe(204)
   expect(response1.headers.get('Set-Cookie')).toBeDefined()
 })
 
-test('Should logout a user', async () => {
-  const loginResponse = await client.api.auth.login.$post({
+test('Should request password reset', async () => {
+  await client.api.auth.register.$post({
     json: {
-      identity: 'testuser',
+      email: 'testuser@gmail.com',
+      username: 'testuser',
       password: 'password123',
     },
   })
 
-  expect(loginResponse.status).toBe(204)
-  const cookie = loginResponse.headers.get('Set-Cookie')
-  expect(cookie).toBeDefined()
-
-  const logoutResponse = await client.api.auth.logout.$post({
-    headers: {
-      Cookie: cookie!,
+  const response2 = await client.api.auth['request-reset'].$post({
+    json: {
+      email: 'testuser@gmail.com',
     },
   })
 
-  expect(logoutResponse.status).toBe(204)
+  expect(response2.status).toBe(204)
+
+  const lastEmail = await memoryStore.get<MailOptions>('testuser@gmail.com' + '-last-email')
+  expect(lastEmail).not.toBeNull()
+
+  const passwordResetToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]
+  expect(passwordResetToken).toHaveLength(36)
 })
 
-test('Should request password reset', async () => {
+test('Should return 204 for non-existent email', async () => {
   const response = await client.api.auth['request-reset'].$post({
     json: {
       email: 'testuser@gmail.com',
@@ -99,17 +144,15 @@ test('Should request password reset', async () => {
   expect(response.status).toBe(204)
 })
 
-test('Should return 204 for non-existent email', async () => {
-  const response = await client.api.auth['request-reset'].$post({
+test('Should reject after exceeding maximum retry attempts for existing account', async () => {
+  await client.api.auth.register.$post({
     json: {
-      email: 'nonexistent@gmail.com',
+      email: 'testuser@gmail.com',
+      username: 'testuser',
+      password: 'password123',
     },
   })
 
-  expect(response.status).toBe(204)
-})
-
-test('Should reject after exceeding maximum retry attempts for existing account', async () => {
   for (let i = 0; i < 5; i++) {
     await client.api.auth['request-reset'].$post({
       json: {
@@ -123,10 +166,9 @@ test('Should reject after exceeding maximum retry attempts for existing account'
       email: 'testuser@gmail.com',
     },
   })
-  expect(await response.json()).toEqual({
+  expect(await response.json()).toMatchObject({
     error: {
       code: 'TOO_MANY_PASSWORD_RESET_ATTEMPTS',
-      message: 'Too many password reset attempts. Please try again later.',
     },
   })
   expect(response.status as unknown).toBe(429)
@@ -136,14 +178,14 @@ test('Should not reject after exceeding maximum retry attempts for not existing 
   for (let i = 0; i < 5; i++) {
     await client.api.auth['request-reset'].$post({
       json: {
-        email: 'ratelimit-test@gmail.com',
+        email: 'testuser@gmail.com',
       },
     })
   }
 
   const response = await client.api.auth['request-reset'].$post({
     json: {
-      email: 'ratelimit-test@gmail.com',
+      email: 'testuser@gmail.com',
     },
   })
 

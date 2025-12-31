@@ -1,6 +1,10 @@
 export class MemoryStore {
   private store: Map<string, any> = new Map()
 
+  async reset(): Promise<void> {
+    this.store.clear()
+  }
+
   async setex(key: string, ttl: number, value: string): Promise<void | 'OK'> {
     this.store.set(key, value)
     setTimeout(() => {
@@ -9,8 +13,9 @@ export class MemoryStore {
     return 'OK'
   }
 
-  async get(key: string): Promise<string | null> {
-    return this.store.get(key) || null
+  async get<T>(key: string): Promise<T | null> {
+    const value = this.store.get(key)
+    return value ? JSON.parse(value) as T : null
   }
 
   async del(key: string): Promise<void | number> {

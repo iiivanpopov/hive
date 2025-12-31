@@ -1,4 +1,7 @@
+import type { Table } from 'drizzle-orm'
+import type { DrizzleDatabase } from '@/db/instance'
 import { Database } from 'bun:sqlite'
+import { getTableName, sql } from 'drizzle-orm'
 import { Router } from '@/app/router'
 import { createDb } from '@/db/instance'
 import { factory } from '@/lib/factory'
@@ -21,7 +24,7 @@ export function createTestApp() {
   const resetPasswordTokens = new ResetPasswordTokenRepository(memoryStore)
   const sessionTokens = new SessionTokenRepository(memoryStore)
   const smtpService = new SmtpService({
-    sendMail(options) {
+    async sendMail(options) {
       memoryStore.setex(`${options.to}-last-email`, 3600, JSON.stringify(options))
       return Promise.resolve()
     },
@@ -38,4 +41,21 @@ export function createTestApp() {
     .route('/api', router)
 
   return app
+}
+
+export function resetDb(db: DrizzleDatabase, schema: Record<string, Table>) {
+  // ignoring error because this is only for tests
+  try {
+    const tablesToTruncate = Object.values(schema).map(table => getTableName(table))
+
+    db.run(sql`PRAGMA foreign_keys = OFF`)
+    for (const tableName of tablesToTruncate) {
+      db.run(sql.raw(`delete from \`${tableName}\`;`))
+    }
+    db.run(sql`PRAGMA foreign_keys = ON`)
+  }
+  catch {}
+  finally {
+    db.run(sql`PRAGMA foreign_keys = ON`)
+  }
 }

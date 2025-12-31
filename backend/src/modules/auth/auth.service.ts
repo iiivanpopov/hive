@@ -8,7 +8,6 @@ import type { ConfirmationTokenRepository } from '@/repositories/confirmation-to
 import type { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 import { eq } from 'drizzle-orm'
-import { envConfig } from '@/config'
 import { users } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
@@ -66,7 +65,7 @@ export class AuthService {
     const confirmationToken = await this.confirmationTokens.create({ userId: user.id })
     pino.debug(`Created confirm token ${confirmationToken}`)
 
-    if (Bun.env.SMTP_ENABLE === 'true' && !envConfig.isTest) {
+    if (Bun.env.SMTP_ENABLE === 'true') {
       await this.sendConfirmEmail(user, confirmationToken)
       pino.debug(`Sent email to ${user.email}`)
     }
@@ -183,7 +182,7 @@ export class AuthService {
       throw ApiException.TooManyRequests('Too many password reset attempts. Please try again later.', 'TOO_MANY_PASSWORD_RESET_ATTEMPTS')
 
     const resetToken = await this.resetPasswordTokens.create({ userId: user.id })
-    if (Bun.env.SMTP_ENABLE === 'true' && !envConfig.isTest) {
+    if (Bun.env.SMTP_ENABLE === 'true') {
       await this.sendPasswordResetEmail(user, resetToken)
       pino.debug(`Sent password reset email to ${user.email}`)
     }
