@@ -5,6 +5,7 @@ import { globalESLintConfig } from '../eslint.config.ts'
 export default antfu({
   ...globalESLintConfig,
   react: true,
+  formatters: true,
   ignores: ['**/routeTree.gen.ts'],
   rules: {
     ...globalESLintConfig.rules,

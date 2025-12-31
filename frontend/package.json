@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
-    "@fontsource/inter": "^5.2.8",
+    "@fontsource/comfortaa": "^5.2.8",
     "@tanstack/react-router": "^1.144.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -36,7 +36,6 @@
     "eslint": "catalog:",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.26",
-    "hive-backend": "workspace:*",
     "shadcn": "^3.6.2",
     "stylelint": "^16.26.1",
     "stylelint-config-standard": "^39.0.1",
