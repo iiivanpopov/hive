@@ -58,7 +58,7 @@ export const app = factory.createApp()
     ],
     credentials: true,
   }))
-  .route('/api', router)
+  .route('/', router)
   .get('/health', describeRoute({
     description: 'Health check',
     responses: {

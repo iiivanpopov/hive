@@ -2,6 +2,8 @@
 .vscode
 node_modules
 .env
-.env.test
+*.test
 dist
-database.sqlite
+*.sqlite
+generated
+*.log

@@ -12,6 +12,8 @@
   "dependencies": {
     "@base-ui/react": "^1.0.0",
     "@fontsource/comfortaa": "^5.2.8",
+    "@siberiacancode/apicraft": "^1.4.1",
+    "@siberiacancode/fetches": "^1.13.2",
     "@tanstack/react-router": "^1.144.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

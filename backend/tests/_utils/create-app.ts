@@ -33,7 +33,7 @@ export function createApp() {
 
   const app = factory.createApp()
     .onError(errorMiddleware())
-    .route('/api', router)
+    .route('/', router)
 
   return app
 }

@@ -23,7 +23,7 @@ afterEach(() => {
 })
 
 test('Should register a new user', async () => {
-  const response1 = await client.api.auth.register.$post({
+  const response1 = await client.auth.register.$post({
     json: {
       email: 'testuser@gmail.com',
       username: 'testuser',
@@ -40,7 +40,7 @@ test('Should register a new user', async () => {
 })
 
 test('Should not register an existing user', async () => {
-  const response1 = await client.api.auth.register.$post({
+  const response1 = await client.auth.register.$post({
     json: {
       email: 'testuser@gmail.com',
       username: 'testuser',
@@ -51,7 +51,7 @@ test('Should not register an existing user', async () => {
   expect(response1.status).toBe(204)
   expect(response1.headers.get('Set-Cookie')).toBeDefined()
 
-  const response2 = await client.api.auth.register.$post({
+  const response2 = await client.auth.register.$post({
     json: {
       email: 'testuser@gmail.com',
       username: 'testuser',
@@ -68,7 +68,7 @@ test('Should not register an existing user', async () => {
 })
 
 test('Should not login with invalid credentials', async () => {
-  const response = await client.api.auth.login.$post({
+  const response = await client.auth.login.$post({
     json: {
       identity: 'testuser',
       password: 'wrongpassword',
@@ -85,7 +85,7 @@ test('Should not login with invalid credentials', async () => {
 })
 
 test('Should login a user', async () => {
-  await client.api.auth.register.$post({
+  await client.auth.register.$post({
     json: {
       email: 'testuser@gmail.com',
       username: 'testuser',
@@ -93,7 +93,7 @@ test('Should login a user', async () => {
     },
   })
 
-  const response2 = await client.api.auth.login.$post({
+  const response2 = await client.auth.login.$post({
     json: {
       identity: 'testuser',
       password: 'password123',
@@ -109,14 +109,14 @@ test('Should login a user', async () => {
 })
 
 test('Should logout a user', async () => {
-  const response1 = await client.api.auth.logout.$post()
+  const response1 = await client.auth.logout.$post()
 
   expect(response1.status).toBe(204)
   expect(response1.headers.get('Set-Cookie')).toBeDefined()
 })
 
 test('Should request password reset', async () => {
-  await client.api.auth.register.$post({
+  await client.auth.register.$post({
     json: {
       email: 'testuser@gmail.com',
       username: 'testuser',
@@ -124,7 +124,7 @@ test('Should request password reset', async () => {
     },
   })
 
-  const response2 = await client.api.auth['request-reset'].$post({
+  const response2 = await client.auth['request-reset'].$post({
     json: {
       email: 'testuser@gmail.com',
     },
@@ -140,7 +140,7 @@ test('Should request password reset', async () => {
 })
 
 test('Should return 204 for non-existent email', async () => {
-  const response = await client.api.auth['request-reset'].$post({
+  const response = await client.auth['request-reset'].$post({
     json: {
       email: 'testuser@gmail.com',
     },
@@ -150,7 +150,7 @@ test('Should return 204 for non-existent email', async () => {
 })
 
 test('Should reject after exceeding maximum retry attempts for existing account', async () => {
-  await client.api.auth.register.$post({
+  await client.auth.register.$post({
     json: {
       email: 'testuser@gmail.com',
       username: 'testuser',
@@ -159,14 +159,14 @@ test('Should reject after exceeding maximum retry attempts for existing account'
   })
 
   for (let i = 0; i < 5; i++) {
-    await client.api.auth['request-reset'].$post({
+    await client.auth['request-reset'].$post({
       json: {
         email: 'testuser@gmail.com',
       },
     })
   }
 
-  const response = await client.api.auth['request-reset'].$post({
+  const response = await client.auth['request-reset'].$post({
     json: {
       email: 'testuser@gmail.com',
     },
@@ -181,14 +181,14 @@ test('Should reject after exceeding maximum retry attempts for existing account'
 
 test('Should not reject after exceeding maximum retry attempts for not existing account', async () => {
   for (let i = 0; i < 5; i++) {
-    await client.api.auth['request-reset'].$post({
+    await client.auth['request-reset'].$post({
       json: {
         email: 'testuser@gmail.com',
       },
     })
   }
 
-  const response = await client.api.auth['request-reset'].$post({
+  const response = await client.auth['request-reset'].$post({
     json: {
       email: 'testuser@gmail.com',
     },

@@ -9,7 +9,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/api/*": ["./generated/api/*"]
     },
     "types": ["vite/client"],
     "allowImportingTsExtensions": true,
