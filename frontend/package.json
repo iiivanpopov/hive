@@ -6,14 +6,15 @@
     "prod": "NODE_ENV=production bun --bun vite preview",
     "build:dev": "bun --bun tsgo -b && NODE_ENV=development bun --bun vite build",
     "build:prod": "NODE_ENV=production bun --bun vite build",
+    "generate:api": "bun heyapi.script.ts",
     "lint": "bun --bun eslint .",
     "lint:css": "bun --bun stylelint \"./src/**/*.css\""
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
     "@fontsource/comfortaa": "^5.2.8",
-    "@siberiacancode/apicraft": "^1.4.1",
-    "@siberiacancode/fetches": "^1.13.2",
+    "@hey-api/openapi-ts": "^0.89.2",
+    "@tanstack/react-query": "^5.90.16",
     "@tanstack/react-router": "^1.144.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

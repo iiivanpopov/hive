@@ -10,7 +10,7 @@
     "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"],
-      "@/api/*": ["./generated/api/*"]
+      "@/api/*": ["./api/*"]
     },
     "types": ["vite/client"],
     "allowImportingTsExtensions": true,
