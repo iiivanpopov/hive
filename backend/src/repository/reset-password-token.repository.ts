@@ -20,7 +20,7 @@ export class ResetPasswordTokenRepository extends TokenRepository<ResetPasswordP
   async getAttemptCount(email: string): Promise<number> {
     const key = this.serializeAttemptKey(email)
     const raw = await (this.store as any).get(key)
-    return raw == null ? 0 : Number(raw)
+    return Number(raw ?? 0)
   }
 
   /**
