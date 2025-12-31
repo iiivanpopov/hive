@@ -163,17 +163,24 @@ export async function requestPasswordReset(email: string) {
   const [user] = await db.query.users.findMany({
     where: { email },
   })
-  if (!user)
-    throw ApiException.BadRequest('User with given email does not exist', 'USER_NOT_FOUND')
+  
+  // Always return success to prevent user enumeration attacks
+  if (!user) {
+    pino.debug(`Password reset requested for non-existent email: ${email}`)
+    return
+  }
 
-  const existingToken = await resetPasswordTokens.resolve(user.email)
-  if (existingToken && existingToken.try >= 5)
+  // Increment attempt count atomically and check limit
+  const newAttemptCount = await resetPasswordTokens.incrementAttemptCount(user.email)
+  if (newAttemptCount > 5) {
+    pino.debug(`Too many password reset attempts for user ${user.id} (attempt ${newAttemptCount})`)
     throw ApiException.TooManyRequests('Too many password reset attempts', 'TOO_MANY_PASSWORD_RESET_ATTEMPTS')
+  }
 
   const resetToken = await resetPasswordTokens.create({
     email: user.email,
     userId: user.id,
-    try: existingToken?.try ? existingToken.try + 1 : 1,
+    attemptCount: newAttemptCount,
   })
   pino.debug(`Created password reset token ${resetToken} for user ${user.id}`)
 

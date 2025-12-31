@@ -1,13 +1,12 @@
 import type { CacheStore } from '@/lib/cache'
 import { authConfig } from '@/config'
 import { redisStore } from '@/lib/cache'
-import { hmac256Hex } from '@/lib/utils'
 import { TokenRepository } from './token.repository'
 
 export interface ResetPasswordPayload {
   userId: number
   email: string
-  try: number
+  attemptCount: number
 }
 
 export class ResetPasswordTokenRepository extends TokenRepository<ResetPasswordPayload> {
@@ -15,20 +14,39 @@ export class ResetPasswordTokenRepository extends TokenRepository<ResetPasswordP
     super(store, { namespace: 'reset-password', ttl: authConfig.resetPasswordTokenTtl })
   }
 
-  async create(payload: ResetPasswordPayload): Promise<string> {
-    const emailHash = hmac256Hex(payload.email)
-    await this.store.set(this.serializeKey(emailHash), payload, this.options.ttl)
-    return emailHash
+  /**
+   * Get the current attempt count for an email address
+   */
+  async getAttemptCount(email: string): Promise<number> {
+    const key = this.serializeAttemptKey(email)
+    const raw = await (this.store as any).get(key)
+    return Number(raw ?? 0)
   }
 
-  async resolve(email: string): Promise<ResetPasswordPayload | null> {
-    const emailHash = hmac256Hex(email)
-    return this.store.get<ResetPasswordPayload>(this.serializeKey(emailHash))
+  /**
+   * Increment the attempt count for an email address atomically
+   */
+  async incrementAttemptCount(email: string): Promise<number> {
+    const key = this.serializeAttemptKey(email)
+    // Use Redis INCR for atomic increment
+    const newCount = await (this.store as any).incr(key)
+    // Set expiration on first increment
+    if (newCount === 1) {
+      await (this.store as any).expire(key, this.options.ttl)
+    }
+    return newCount
   }
 
-  async revoke(email: string): Promise<void> {
-    const emailHash = hmac256Hex(email)
-    await this.store.del(this.serializeKey(emailHash))
+  /**
+   * Clear the attempt count for an email address
+   */
+  async clearAttemptCount(email: string): Promise<void> {
+    const key = this.serializeAttemptKey(email)
+    await this.store.del(key)
+  }
+
+  private serializeAttemptKey(email: string): string {
+    return `${this.options.namespace}:attempts:${email}`
   }
 }
 
