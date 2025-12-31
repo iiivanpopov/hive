@@ -1,5 +1,7 @@
 import type { ErrorHandler } from 'hono'
+
 import { HTTPException } from 'hono/http-exception'
+
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 

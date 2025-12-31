@@ -1,4 +1,5 @@
 import type { AuthRouter } from '@/modules/auth/auth.router'
+
 import { factory } from '@/lib/factory'
 
 export class Router {

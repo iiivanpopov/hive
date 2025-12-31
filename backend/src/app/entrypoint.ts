@@ -1,11 +1,12 @@
-import { redis } from 'bun'
-import path from 'node:path'
 import { Scalar } from '@scalar/hono-api-reference'
+import { redis } from 'bun'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { describeRoute, openAPIRouteHandler, resolver } from 'hono-openapi'
 import { cors } from 'hono/cors'
+import path from 'node:path'
 import nodemailer from 'nodemailer'
 import z from 'zod'
+
 import { db } from '@/db/instance'
 import { factory } from '@/lib/factory'
 import { MailService } from '@/lib/mail'
@@ -15,6 +16,7 @@ import { AuthRouter } from '@/modules/auth/auth.router'
 import { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import { SessionTokenRepository } from '@/repositories/session-token.repository'
+
 import { Router } from './router'
 
 migrate(db, { migrationsFolder: path.resolve(__dirname, '../../drizzle') })

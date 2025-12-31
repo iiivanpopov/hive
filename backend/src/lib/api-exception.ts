@@ -1,4 +1,5 @@
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
+
 import { HTTPException } from 'hono/http-exception'
 
 export class ApiException extends HTTPException {

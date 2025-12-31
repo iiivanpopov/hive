@@ -1,4 +1,5 @@
 import path from 'node:path'
+
 import { envConfig } from '@/config/env.config'
 import { pino } from '@/lib/pino'
 

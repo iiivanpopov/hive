@@ -1,4 +1,5 @@
 import z from 'zod'
+
 import { EmailSchema } from '@/shared/zod'
 
 export const RequestResetSchema = z.object({

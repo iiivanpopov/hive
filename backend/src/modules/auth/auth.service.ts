@@ -1,17 +1,21 @@
 import type { GoogleUser } from '@hono/oauth-providers/google'
-import type { LoginBody } from './schema/login.schema'
-import type { RegisterBody } from './schema/register.schema'
+
+import { eq } from 'drizzle-orm'
+
 import type { DrizzleDatabase } from '@/db/instance'
 import type { User } from '@/db/schema'
 import type { MailService } from '@/lib/mail'
 import type { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import type { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
-import { eq } from 'drizzle-orm'
+
 import { users } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 import { normalizeUserAgent } from '@/lib/utils'
+
+import type { LoginBody } from './schema/login.schema'
+import type { RegisterBody } from './schema/register.schema'
 
 export class AuthService {
   constructor(

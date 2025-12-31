@@ -1,4 +1,5 @@
 import z from 'zod'
+
 import { EmailSchema } from '@/shared/zod'
 
 const USERNAME_MIN = 5

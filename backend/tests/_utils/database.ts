@@ -1,7 +1,10 @@
 import type { Table } from 'drizzle-orm'
-import type { DrizzleDatabase } from '@/db/instance'
+
 import { Database } from 'bun:sqlite'
 import { getTableName, sql } from 'drizzle-orm'
+
+import type { DrizzleDatabase } from '@/db/instance'
+
 import { createDatabase } from '@/db/instance'
 
 const memoryClient = new Database(':memory:')

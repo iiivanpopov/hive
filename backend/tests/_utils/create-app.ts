@@ -6,6 +6,7 @@ import { AuthRouter } from '@/modules/auth/auth.router'
 import { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import { SessionTokenRepository } from '@/repositories/session-token.repository'
+
 import { memoryDatabase } from './database'
 import { memoryCache } from './memory-cache'
 

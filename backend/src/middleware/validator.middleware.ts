@@ -1,8 +1,11 @@
 import type { Hook } from '@hono/standard-validator'
 import type { StandardSchemaV1 } from '@standard-schema/spec'
 import type { ValidationTargets } from 'hono'
-import type { Env } from '@/lib/factory'
+
 import { validator } from 'hono-openapi'
+
+import type { Env } from '@/lib/factory'
+
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 

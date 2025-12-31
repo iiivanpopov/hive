@@ -1,5 +1,6 @@
 import { Database } from 'bun:sqlite'
 import { drizzle } from 'drizzle-orm/bun-sqlite'
+
 import { relations } from './relations'
 
 export function createDatabase(client: Database) {
