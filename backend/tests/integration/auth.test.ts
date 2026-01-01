@@ -205,6 +205,39 @@ describe('/request-reset', () => {
   })
 })
 
+describe('/reset-password/:token', () => {
+  test('Should reset password with valid token', async () => {
+    await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+
+    await client.auth['request-reset'].$post({
+      json: {
+        email: 'testuser@gmail.com',
+      },
+    })
+
+    const lastEmail = JSON.parse((await memoryCache.get('testuser@gmail.com' + '-last-email'))!)
+
+    const passwordResetToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]
+
+    const responseResetPassword = await client.auth['reset-password'][':token'].$post({
+      json: {
+        newPassword: 'password456',
+      },
+      param: {
+        token: passwordResetToken!,
+      },
+    })
+
+    expect(responseResetPassword.status).toBe(204)
+  })
+})
+
 describe('/change-password', () => {
   test('Should change password', async () => {
     const client = testClient(createApp())
@@ -223,7 +256,7 @@ describe('/change-password', () => {
       {
         json: {
           currentPassword: 'password123',
-          newPassword: 'newpassword456',
+          newPassword: 'password456',
         },
       },
       {
@@ -252,7 +285,7 @@ describe('/change-password', () => {
       {
         json: {
           currentPassword: 'wrongpassword',
-          newPassword: 'newpassword456',
+          newPassword: 'password456',
         },
       },
       {
