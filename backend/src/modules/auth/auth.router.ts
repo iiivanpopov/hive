@@ -212,23 +212,7 @@ export class AuthRouter {
         }),
       )
       .get(
-        '/google',
-        describeRoute({
-          summary: 'Google OAuth2 Authentication',
-          description: 'Authenticate users using Google OAuth2.',
-        }),
-      )
-      .get(
         '/google/callback',
-        describeRoute({
-          summary: 'Google OAuth2 Callback',
-          description: 'Handle the callback from Google OAuth2 authentication.',
-          responses: {
-            204: {
-              description: 'User authenticated successfully',
-            },
-          },
-        }),
         async (c) => {
           const googleUser = c.get('user-google') as GoogleUser
 

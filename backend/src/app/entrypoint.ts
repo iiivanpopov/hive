@@ -1,11 +1,10 @@
 import { Scalar } from '@scalar/hono-api-reference'
 import { redis } from 'bun'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
-import { describeRoute, openAPIRouteHandler, resolver } from 'hono-openapi'
+import { openAPIRouteHandler } from 'hono-openapi'
 import { cors } from 'hono/cors'
 import path from 'node:path'
 import nodemailer from 'nodemailer'
-import z from 'zod'
 
 import { db } from '@/db/instance'
 import { factory } from '@/lib/factory'
@@ -59,21 +58,7 @@ export const app = factory.createApp()
     credentials: true,
   }))
   .route('/', router)
-  .get('/health', describeRoute({
-    description: 'Health check',
-    responses: {
-      200: {
-        description: 'Successful response',
-        content: {
-          'application/json': {
-            schema: resolver(z.object({
-              status: z.literal('ok'),
-            })),
-          },
-        },
-      },
-    },
-  }), c => c.json({ status: 'ok' }))
+  .get('/health', c => c.json({ status: 'ok' }))
 
 app
   .get('/openapi', openAPIRouteHandler(app, {
