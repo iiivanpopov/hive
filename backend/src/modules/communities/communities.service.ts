@@ -1,3 +1,5 @@
+import { eq } from 'drizzle-orm'
+
 import type { DrizzleDatabase } from '@/db/instance'
 
 import { communities, communityMembers } from '@/db/schema'
@@ -11,6 +13,30 @@ export class CommunitiesService {
     private readonly db: DrizzleDatabase,
   ) {}
 
+  async deleteCommunity(communityId: number, userId: number) {
+    const [community] = await this.db.query.communities.findMany({
+      where: {
+        id: communityId,
+      },
+    })
+
+    if (!community)
+      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
+
+    if (community.ownerId !== userId)
+      throw ApiException.Forbidden('You do not have permission to delete this community', 'FORBIDDEN')
+
+    await this.db.transaction(async (tx) => {
+      await tx
+        .delete(communityMembers)
+        .where(eq(communityMembers.communityId, communityId))
+
+      await tx
+        .delete(communities)
+        .where(eq(communities.id, communityId))
+    })
+  }
+
   async createCommunity(body: CreateCommunityBody, ownerId: number) {
     const [communityExists] = await this.db.query.communities.findMany({
       where: {
@@ -21,7 +47,7 @@ export class CommunitiesService {
     if (communityExists)
       throw ApiException.BadRequest('Community with this name already exists', 'COMMUNITY_EXISTS')
 
-    const joinId = await this.db.transaction(async (tx) => {
+    const community = await this.db.transaction(async (tx) => {
       const joinId = generateJoinId()
 
       const [community] = await tx
@@ -41,9 +67,9 @@ export class CommunitiesService {
           role: 'owner',
         })
 
-      return joinId
+      return community
     })
 
-    return joinId
+    return community
   }
 }

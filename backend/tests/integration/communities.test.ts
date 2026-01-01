@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'bun:test
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import path from 'node:path'
 
-import { users } from '@/db/schema'
+import { communities, users } from '@/db/schema'
 
 import { client } from '../_utils/client'
 import { getSessionTokenCookie } from '../_utils/cookies'
@@ -16,7 +16,7 @@ beforeAll(async () => {
 })
 
 afterEach(() => {
-  resetDatabase(memoryDatabase, { users })
+  resetDatabase(memoryDatabase, { users, communities })
   memoryCache.reset()
 })
 
@@ -48,7 +48,7 @@ describe('/', () => {
     )
 
     expect(createCommunityResponse.status).toBe(201)
-    expect((await createCommunityResponse.json()).joinId).toHaveLength(16)
+    expect((await createCommunityResponse.json()).community.joinId).toHaveLength(16)
   })
 
   it('should not create a community with same name for same user', async () => {
@@ -84,5 +84,37 @@ describe('/', () => {
         code: 'COMMUNITY_EXISTS',
       },
     })
+  })
+
+  it('should delete a community', async () => {
+    const createCommunityResponse = await client.communities.$post(
+      {
+        json: {
+          name: 'Test community',
+        },
+      },
+      {
+        headers: {
+          Cookie: authCookie,
+        },
+      },
+    )
+
+    const { community } = await createCommunityResponse.json()
+
+    const deleteCommunityResponse = await client.communities[':id'].$delete(
+      {
+        param: {
+          id: `${community.id}`,
+        },
+      },
+      {
+        headers: {
+          Cookie: authCookie,
+        },
+      },
+    )
+
+    expect(deleteCommunityResponse.status).toBe(204)
   })
 })
