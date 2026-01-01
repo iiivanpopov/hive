@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'bun:test
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import path from 'node:path'
 
-import { communities, communityMembers, invitations, users } from '@/db/schema'
+import { communities, communityMembers, users } from '@/db/schema'
 
 import { client } from '../_utils/client'
 import { getSessionTokenCookie } from '../_utils/cookies'
@@ -20,7 +20,6 @@ afterEach(() => {
     users,
     communities,
     communityMembers,
-    communityJoinLinks: invitations,
   })
   memoryCache.reset()
 })

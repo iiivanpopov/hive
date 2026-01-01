@@ -8,7 +8,7 @@ import { factory } from '@/lib/factory'
 import { sessionMiddleware, validator } from '@/middleware'
 
 import { InvitationsService } from './invitations.service'
-import { CreateInvitationBodySchema, CreateInvitationParamSchema, InvitationResponseSchema } from './schema/create-invitation.schema'
+import { CreateInvitationBodySchema, CreateInvitationParamSchema, CreateInvitationResponseSchema } from './schema/create-invitation.schema'
 
 export class InvitationsRouter implements BaseRouter {
   readonly basePath = '/'
@@ -37,7 +37,7 @@ export class InvitationsRouter implements BaseRouter {
               description: 'Invitation created successfully',
               content: {
                 'application/json': {
-                  schema: resolver(InvitationResponseSchema),
+                  schema: resolver(CreateInvitationResponseSchema),
                 },
               },
             },

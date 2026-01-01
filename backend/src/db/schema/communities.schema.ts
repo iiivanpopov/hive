@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm'
 import * as s from 'drizzle-orm/sqlite-core'
 import z from 'zod'
 
-import { IdSchema, IsoDateTimeSchema } from '@/shared/zod'
+import { IdSchema } from '@/shared/zod'
 
 import { users } from './users.schema'
 
@@ -17,11 +17,11 @@ export const communities = s.sqliteTable('communities', {
     .notNull(),
 })
 
+export type Community = typeof communities.$inferSelect
+
 export const CommunitySchema = z.object({
   id: IdSchema,
   ownerId: IdSchema,
   name: z.string(),
-  createdAt: IsoDateTimeSchema,
+  createdAt: z.iso.datetime(),
 })
-
-export type Community = typeof communities.$inferSelect

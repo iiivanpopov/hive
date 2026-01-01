@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm'
 import * as s from 'drizzle-orm/sqlite-core'
 import z from 'zod'
 
-import { IdSchema, IsoDateTimeSchema } from '@/shared/zod'
+import { IdSchema } from '@/shared/zod'
 
 export const users = s.sqliteTable('users', {
   id: s.integer('id').primaryKey({ autoIncrement: true }),
@@ -34,9 +34,10 @@ export const UserDtoSchema = z.object({
   username: z.string(),
   email: z.email(),
   emailConfirmed: z.boolean(),
-  createdAt: IsoDateTimeSchema,
-  updatedAt: IsoDateTimeSchema,
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 })
+
 export type UserDto = z.infer<typeof UserDtoSchema>
 
 export function toUserDto(user: User): UserDto {

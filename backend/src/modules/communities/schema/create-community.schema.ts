@@ -14,5 +14,3 @@ export type CreateCommunityBody = z.infer<typeof CreateCommunityBodySchema>
 export const CreateCommunityResponseSchema = z.object({
   community: CommunitySchema,
 })
-
-export type CreateCommunityResponse = z.infer<typeof CreateCommunityResponseSchema>
