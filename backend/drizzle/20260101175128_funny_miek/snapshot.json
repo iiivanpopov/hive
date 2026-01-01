@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "c2aa541a-bd9c-40b8-866c-b870b5765892",
+  "id": "ef8eb00c-38a2-45d0-97fe-14aa1e8955fd",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -12,6 +12,10 @@
     },
     {
       "name": "community_members",
+      "entityType": "tables"
+    },
+    {
+      "name": "invitation_links",
       "entityType": "tables"
     },
     {
@@ -35,16 +39,6 @@
       "default": null,
       "generated": null,
       "name": "owner_id",
-      "entityType": "columns",
-      "table": "communities"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "join_id",
       "entityType": "columns",
       "table": "communities"
     },
@@ -117,6 +111,56 @@
       "name": "created_at",
       "entityType": "columns",
       "table": "community_members"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": true,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "invitation_links"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "community_id",
+      "entityType": "columns",
+      "table": "invitation_links"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "link",
+      "entityType": "columns",
+      "table": "invitation_links"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "expires_at",
+      "entityType": "columns",
+      "table": "invitation_links"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(unixepoch())",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "invitation_links"
     },
     {
       "type": "integer",
@@ -245,6 +289,21 @@
     },
     {
       "columns": [
+        "community_id"
+      ],
+      "tableTo": "communities",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_invitation_links_community_id_communities_id_fk",
+      "entityType": "fks",
+      "table": "invitation_links"
+    },
+    {
+      "columns": [
         "id"
       ],
       "nameExplicit": false,
@@ -266,18 +325,27 @@
         "id"
       ],
       "nameExplicit": false,
+      "name": "invitation_links_pk",
+      "table": "invitation_links",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
       "name": "users_pk",
       "table": "users",
       "entityType": "pks"
     },
     {
       "columns": [
-        "join_id"
+        "link"
       ],
       "nameExplicit": false,
-      "name": "communities_join_id_unique",
+      "name": "invitation_links_link_unique",
       "entityType": "uniques",
-      "table": "communities"
+      "table": "invitation_links"
     },
     {
       "columns": [

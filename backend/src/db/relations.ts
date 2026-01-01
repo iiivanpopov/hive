@@ -1,11 +1,17 @@
 import { defineRelations } from 'drizzle-orm'
 
-import { communities, communityMembers, users } from './schema'
+import {
+  communities,
+  communityMembers,
+  invitations,
+  users,
+} from './schema'
 
 export const relations = defineRelations({
   users,
   communities,
   communityMembers,
+  communityJoinLinks: invitations,
 }, r => ({
   communities: {
     owner: r.one.users({
@@ -15,6 +21,10 @@ export const relations = defineRelations({
     members: r.many.communityMembers({
       from: r.communities.id,
       to: r.communityMembers.communityId,
+    }),
+    invitations: r.many.communityJoinLinks({
+      from: r.communities.id,
+      to: r.communityJoinLinks.communityId,
     }),
   },
   users: {

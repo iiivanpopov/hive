@@ -13,7 +13,7 @@ import { DeleteCommunityParamSchema } from './schema/delete-community.schema'
 
 export class CommunitiesRouter implements BaseRouter {
   readonly basePath = '/communities'
-  readonly communitiesService: CommunitiesService
+  private readonly communitiesService: CommunitiesService
 
   constructor(
     private readonly db: DrizzleDatabase,
@@ -73,18 +73,6 @@ export class CommunitiesRouter implements BaseRouter {
 
           await this.communitiesService.deleteCommunity(params.id, user.id)
 
-          return c.body(null, 204)
-        },
-      )
-      .post(
-        '/join/:id',
-        async (c) => {
-          return c.body(null, 204)
-        },
-      )
-      .post(
-        '/leave/:id',
-        async (c) => {
           return c.body(null, 204)
         },
       )

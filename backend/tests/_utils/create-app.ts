@@ -4,6 +4,7 @@ import { MailService } from '@/lib/mail'
 import { errorMiddleware } from '@/middleware'
 import { AuthRouter } from '@/modules/auth/auth.router'
 import { CommunitiesRouter } from '@/modules/communities/communities.router'
+import { InvitationsRouter } from '@/modules/invitations'
 import { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import { SessionTokenRepository } from '@/repositories/session-token.repository'
@@ -31,6 +32,10 @@ export function createApp() {
       sessionTokens,
     ),
     new CommunitiesRouter(
+      memoryDatabase,
+      sessionTokens,
+    ),
+    new InvitationsRouter(
       memoryDatabase,
       sessionTokens,
     ),

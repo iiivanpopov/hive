@@ -13,6 +13,8 @@ import { pino } from '@/lib/pino'
 import { errorMiddleware, loggerMiddleware } from '@/middleware'
 import { AuthRouter } from '@/modules/auth/auth.router'
 import { CommunitiesRouter } from '@/modules/communities/communities.router'
+import { InvitationsCron } from '@/modules/invitations/invitations.cron'
+import { InvitationsRouter } from '@/modules/invitations/invitations.router'
 import { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import { SessionTokenRepository } from '@/repositories/session-token.repository'
@@ -49,7 +51,14 @@ const router = new Router(
     db,
     sessionTokensRepository,
   ),
+  new InvitationsRouter(
+    db,
+    sessionTokensRepository,
+  ),
 ).init()
+
+const invitationsCron = new InvitationsCron(db)
+invitationsCron.init()
 
 export const app = factory.createApp()
   .onError(errorMiddleware())

@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'bun:test
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import path from 'node:path'
 
-import { communities, users } from '@/db/schema'
+import { communities, communityMembers, invitations, users } from '@/db/schema'
 
 import { client } from '../_utils/client'
 import { getSessionTokenCookie } from '../_utils/cookies'
@@ -16,7 +16,12 @@ beforeAll(async () => {
 })
 
 afterEach(() => {
-  resetDatabase(memoryDatabase, { users, communities })
+  resetDatabase(memoryDatabase, {
+    users,
+    communities,
+    communityMembers,
+    communityJoinLinks: invitations,
+  })
   memoryCache.reset()
 })
 
@@ -48,7 +53,6 @@ describe('/', () => {
     )
 
     expect(createCommunityResponse.status).toBe(201)
-    expect((await createCommunityResponse.json()).community.joinId).toHaveLength(16)
   })
 
   it('should not create a community with same name for same user', async () => {

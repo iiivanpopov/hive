@@ -1,12 +1,12 @@
 import { describe, expect, expectTypeOf, it } from 'bun:test'
 
-import { generateJoinId } from '@/lib/utils'
+import { generateInvitationId } from '@/lib/utils'
 
-describe('generateJoinId', () => {
+describe('generateInvitationId', () => {
   it('should return a string of length 16', () => {
-    const joinId = generateJoinId()
+    const invitationId = generateInvitationId()
 
-    expectTypeOf(joinId).toBeString()
-    expect(joinId).toHaveLength(16)
+    expectTypeOf(invitationId).toBeString()
+    expect(invitationId).toHaveLength(16)
   })
 })

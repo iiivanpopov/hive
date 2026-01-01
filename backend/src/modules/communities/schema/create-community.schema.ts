@@ -1,6 +1,7 @@
 import z from 'zod'
 
 import { validationConfig } from '@/config'
+import { CommunitySchema } from '@/db/schema'
 
 export const CreateCommunityBodySchema = z.object({
   name: z.string()
@@ -11,7 +12,7 @@ export const CreateCommunityBodySchema = z.object({
 export type CreateCommunityBody = z.infer<typeof CreateCommunityBodySchema>
 
 export const CreateCommunityResponseSchema = z.object({
-  joinId: z.string().length(16),
+  community: CommunitySchema,
 })
 
 export type CreateCommunityResponse = z.infer<typeof CreateCommunityResponseSchema>

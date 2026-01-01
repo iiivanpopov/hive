@@ -4,7 +4,6 @@ import type { DrizzleDatabase } from '@/db/instance'
 
 import { communities, communityMembers } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
-import { generateJoinId } from '@/lib/utils'
 
 import type { CreateCommunityBody } from './schema/create-community.schema'
 
@@ -48,13 +47,10 @@ export class CommunitiesService {
       throw ApiException.BadRequest('Community with this name already exists', 'COMMUNITY_EXISTS')
 
     const community = await this.db.transaction(async (tx) => {
-      const joinId = generateJoinId()
-
       const [community] = await tx
         .insert(communities)
         .values({
           ownerId,
-          joinId,
           name: body.name,
         })
         .returning()
