@@ -1,14 +1,68 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "c5e84acc-d4f8-4341-9fed-d20725b32eb6",
+  "id": "9fb32791-99c9-4c11-8652-6be9bfdcb0d8",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
   "ddl": [
     {
+      "name": "communities",
+      "entityType": "tables"
+    },
+    {
       "name": "users",
       "entityType": "tables"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": true,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "communities"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "owner_id",
+      "entityType": "columns",
+      "table": "communities"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "communities"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(unixepoch())",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "communities"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(unixepoch())",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "communities"
     },
     {
       "type": "integer",
@@ -54,7 +108,7 @@
       "type": "integer",
       "notNull": true,
       "autoincrement": false,
-      "default": "0",
+      "default": "false",
       "generated": null,
       "name": "email_confirmed",
       "entityType": "columns",
@@ -89,6 +143,30 @@
       "name": "updated_at",
       "entityType": "columns",
       "table": "users"
+    },
+    {
+      "columns": [
+        "owner_id"
+      ],
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "name": "fk_communities_owner_id_users_id_fk",
+      "entityType": "fks",
+      "table": "communities"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "communities_pk",
+      "table": "communities",
+      "entityType": "pks"
     },
     {
       "columns": [
