@@ -14,7 +14,8 @@ export const users = s.sqliteTable('users', {
   emailConfirmed: s.integer('email_confirmed', { mode: 'boolean' })
     .default(false)
     .notNull(),
-  passwordHash: s.text('password_hash').notNull(),
+  passwordHash: s.text('password_hash')
+    .notNull(),
   createdAt: s.integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),

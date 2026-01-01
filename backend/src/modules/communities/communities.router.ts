@@ -1,7 +1,7 @@
 import { describeRoute, resolver } from 'hono-openapi'
 
 import type { DrizzleDatabase } from '@/db/instance'
-import type { BaseRouter } from '@/lib/base-router'
+import type { BaseRouter } from '@/lib/base-router.interface'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { factory } from '@/lib/factory'
