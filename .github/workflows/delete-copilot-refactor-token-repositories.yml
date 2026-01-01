@@ -1,0 +1,34 @@
+name: Delete branch copilot/refactor-token-repositories
+
+on:
+  push:
+    branches:
+      - copilot/delete-token-repositories-branch
+
+permissions:
+  contents: write
+
+jobs:
+  delete-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete target branch if it exists
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const ref = 'heads/copilot/refactor-token-repositories';
+            try {
+              await github.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref,
+              });
+              core.info(`Deleted ${ref}`);
+            } catch (error) {
+              if (error.status === 422) {
+                core.info(`Branch ${ref} not found; nothing to delete.`);
+              } else {
+                throw error;
+              }
+            }
