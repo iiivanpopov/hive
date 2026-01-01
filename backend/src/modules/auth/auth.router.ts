@@ -16,6 +16,7 @@ import { factory } from '@/lib/factory'
 import { sessionMiddleware, validator } from '@/middleware'
 
 import { AuthService } from './auth.service'
+import { ChangePasswordBodySchema } from './schema/change-password.schema'
 import { ConfirmParamsSchema } from './schema/confirm.schema'
 import { LoginBodySchema } from './schema/login.schema'
 import { MeResponseSchema } from './schema/me.schema'
@@ -192,7 +193,31 @@ export class AuthRouter {
       )
       .patch(
         '/change-password',
+        describeRoute({
+          summary: 'Change user password',
+          description: 'Change the password of the currently authenticated user.',
+          responses: {
+            204: {
+              description: 'Password changed successfully',
+            },
+          },
+        }),
+        sessionMiddleware(this.db, this.sessionTokens),
+        validator('json', ChangePasswordBodySchema),
         async (c) => {
+          const body = c.req.valid('json')
+          const user = c.get('user')
+          const userAgent = c.req.header('User-Agent')
+
+          const sessionToken = await this.authService.changePassword(user.id, body, userAgent)
+
+          setCookie(c, authConfig.sessionTokenCookie, sessionToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: authConfig.sessionTokenTtl,
+          })
+
           return c.body(null, 204)
         },
       )

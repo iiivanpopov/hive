@@ -14,6 +14,7 @@ import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 import { normalizeUserAgent } from '@/lib/utils'
 
+import type { ChangePasswordBody } from './schema/change-password.schema'
 import type { LoginBody } from './schema/login.schema'
 import type { RegisterBody } from './schema/register.schema'
 
@@ -205,5 +206,30 @@ export class AuthService {
     pino.debug(`Password reset for user ${resetToken.userId}`)
 
     await this.resetPasswordTokens.revoke(token)
+  }
+
+  async changePassword(userId: number, body: ChangePasswordBody, userAgent?: string) {
+    const existingUser = await this.db.query.users.findFirst({
+      where: { id: userId },
+    })
+
+    const passwordMatch = await Bun.password.verify(body.currentPassword, existingUser!.passwordHash)
+    if (!passwordMatch)
+      throw ApiException.Unauthorized('Current password is incorrect', 'INVALID_CURRENT_PASSWORD')
+
+    const newPasswordHash = await Bun.password.hash(body.newPassword)
+    await this.db
+      .update(users)
+      .set({ passwordHash: newPasswordHash })
+      .where(eq(users.id, userId))
+    pino.debug(`Password changed for user ${userId}`)
+
+    const sessionToken = await this.sessionTokens.create({
+      userId,
+      userAgent: normalizeUserAgent(userAgent),
+    })
+    pino.debug(`Created new session ${sessionToken} after password change`)
+
+    return sessionToken
   }
 }

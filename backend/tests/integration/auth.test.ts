@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, expect, test } from 'bun:test'
+import { afterEach, beforeAll, describe, expect, test } from 'bun:test'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { testClient } from 'hono/testing'
 import { parse as parseCookie } from 'hono/utils/cookie'
@@ -195,4 +195,70 @@ test('Should not reject after exceeding maximum retry attempts for not existing 
   })
 
   expect(response.status as unknown).toBe(204)
+})
+
+describe('/change-password', () => {
+  test('Should change password', async () => {
+    const client = testClient(createApp())
+
+    const loginResponse = await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+
+    const sessionTokenCookie = parseCookie(loginResponse.headers.get('Set-Cookie')!, 'session_token')
+
+    const changePasswordResponse = await client.auth['change-password'].$patch(
+      {
+        json: {
+          currentPassword: 'password123',
+          newPassword: 'newpassword456',
+        },
+      },
+      {
+        headers: {
+          Cookie: `session_token=${sessionTokenCookie.session_token}`,
+        },
+      },
+    )
+
+    expect(changePasswordResponse.status).toBe(204)
+  })
+
+  test('Should not change password with invalid current password', async () => {
+    const registerResponse = await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+
+    })
+
+    const cookie = parseCookie(registerResponse.headers.get('Set-Cookie')!, 'session_token')
+
+    const response = await client.auth['change-password'].$patch(
+      {
+        json: {
+          currentPassword: 'wrongpassword',
+          newPassword: 'newpassword456',
+        },
+      },
+      {
+        headers: {
+          Cookie: `session_token=${cookie.session_token}`,
+        },
+      },
+    )
+
+    expect(response.status as unknown).toBe(401)
+    expect(await response.json()).toMatchObject({
+      error: {
+        code: 'INVALID_CURRENT_PASSWORD',
+      },
+    })
+  })
 })
