@@ -1,13 +1,17 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "9fb32791-99c9-4c11-8652-6be9bfdcb0d8",
+  "id": "c2aa541a-bd9c-40b8-866c-b870b5765892",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
   "ddl": [
     {
       "name": "communities",
+      "entityType": "tables"
+    },
+    {
+      "name": "community_members",
       "entityType": "tables"
     },
     {
@@ -40,6 +44,16 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
+      "name": "join_id",
+      "entityType": "columns",
+      "table": "communities"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
       "name": "name",
       "entityType": "columns",
       "table": "communities"
@@ -56,13 +70,53 @@
     },
     {
       "type": "integer",
+      "notNull": false,
+      "autoincrement": true,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "community_members"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "community_id",
+      "entityType": "columns",
+      "table": "community_members"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "table": "community_members"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'member'",
+      "generated": null,
+      "name": "role",
+      "entityType": "columns",
+      "table": "community_members"
+    },
+    {
+      "type": "integer",
       "notNull": true,
       "autoincrement": false,
       "default": "(unixepoch())",
       "generated": null,
-      "name": "updated_at",
+      "name": "created_at",
       "entityType": "columns",
-      "table": "communities"
+      "table": "community_members"
     },
     {
       "type": "integer",
@@ -161,6 +215,36 @@
     },
     {
       "columns": [
+        "community_id"
+      ],
+      "tableTo": "communities",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_community_members_community_id_communities_id_fk",
+      "entityType": "fks",
+      "table": "community_members"
+    },
+    {
+      "columns": [
+        "user_id"
+      ],
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_community_members_user_id_users_id_fk",
+      "entityType": "fks",
+      "table": "community_members"
+    },
+    {
+      "columns": [
         "id"
       ],
       "nameExplicit": false,
@@ -173,9 +257,27 @@
         "id"
       ],
       "nameExplicit": false,
+      "name": "community_members_pk",
+      "table": "community_members",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
       "name": "users_pk",
       "table": "users",
       "entityType": "pks"
+    },
+    {
+      "columns": [
+        "join_id"
+      ],
+      "nameExplicit": false,
+      "name": "communities_join_id_unique",
+      "entityType": "uniques",
+      "table": "communities"
     },
     {
       "columns": [

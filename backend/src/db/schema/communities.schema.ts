@@ -8,11 +8,11 @@ export const communities = s.sqliteTable('communities', {
   ownerId: s.integer('owner_id')
     .notNull()
     .references(() => users.id),
+  joinId: s.text('join_id')
+    .notNull()
+    .unique(),
   name: s.text('name').notNull(),
   createdAt: s.integer('created_at', { mode: 'timestamp' })
-    .default(sql`(unixepoch())`)
-    .notNull(),
-  updatedAt: s.integer('updated_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
 })

@@ -12,6 +12,7 @@ import { MailService } from '@/lib/mail'
 import { pino } from '@/lib/pino'
 import { errorMiddleware, loggerMiddleware } from '@/middleware'
 import { AuthRouter } from '@/modules/auth/auth.router'
+import { CommunitiesRouter } from '@/modules/communities/communities.router'
 import { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import { SessionTokenRepository } from '@/repositories/session-token.repository'
@@ -42,6 +43,10 @@ const router = new Router(
     mailService,
     confirmationTokensRepository,
     resetPasswordTokensRepository,
+    sessionTokensRepository,
+  ),
+  new CommunitiesRouter(
+    db,
     sessionTokensRepository,
   ),
 ).init()

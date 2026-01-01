@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, describe, expect, test } from 'bun:test'
+import { afterEach, beforeAll, describe, expect, it as test } from 'bun:test'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { testClient } from 'hono/testing'
 import { parse as parseCookie } from 'hono/utils/cookie'
@@ -8,10 +8,10 @@ import type { MailOptions } from '@/lib/mail'
 
 import { users } from '@/db/schema'
 import { createApp } from '@/tests/_utils/create-app'
-import { memoryDatabase, resetDatabase } from '@/tests/_utils/database'
 import { memoryCache } from '@/tests/_utils/memory-cache'
 
-const client = testClient(createApp())
+import { client } from '../_utils/client'
+import { memoryDatabase, resetDatabase } from '../_utils/database'
 
 beforeAll(async () => {
   migrate(memoryDatabase, { migrationsFolder: path.resolve(__dirname, '../../drizzle') })
@@ -23,7 +23,7 @@ afterEach(() => {
 })
 
 describe('/register', () => {
-  test('Should register a new user', async () => {
+  test('should register a new user', async () => {
     const responseRegister = await client.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
@@ -40,7 +40,7 @@ describe('/register', () => {
     expect(cookie.session_token).toHaveLength(36)
   })
 
-  test('Should not register an existing user', async () => {
+  test('should not register an existing user', async () => {
     const responseRegister = await client.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
@@ -70,7 +70,7 @@ describe('/register', () => {
 })
 
 describe('/confirm-email', () => {
-  test('Should confirm email with valid token', async () => {
+  test('should confirm email with valid token', async () => {
     const responseRegister = await client.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
@@ -92,7 +92,7 @@ describe('/confirm-email', () => {
     expect(responseConfirmEmail.status).toBe(204)
   })
 
-  test('Should resend confirmation email', async () => {
+  test('should resend confirmation email', async () => {
     await client.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
@@ -116,7 +116,7 @@ describe('/confirm-email', () => {
     expect(emailConfirmationToken).toHaveLength(36)
   })
 
-  test('Should rate limit resend confirmation email', async () => {
+  test('should rate limit resend confirmation email', async () => {
     await client.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
@@ -143,7 +143,7 @@ describe('/confirm-email', () => {
 })
 
 describe('/login', () => {
-  test('Should not login with invalid credentials', async () => {
+  test('should not login with invalid credentials', async () => {
     const responseLoginIncorrect = await client.auth.login.$post({
       json: {
         identity: 'testuser',
@@ -160,7 +160,7 @@ describe('/login', () => {
     expect(responseLoginIncorrect.status as unknown).toBe(401)
   })
 
-  test('Should login a user', async () => {
+  test('should login a user', async () => {
     await client.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
@@ -186,7 +186,7 @@ describe('/login', () => {
 })
 
 describe('/logout', () => {
-  test('Should logout a user', async () => {
+  test('should logout a user', async () => {
     const responseLogout = await client.auth.logout.$post()
 
     expect(responseLogout.status).toBe(204)
@@ -195,7 +195,7 @@ describe('/logout', () => {
 })
 
 describe('/request-reset', () => {
-  test('Should request password reset', async () => {
+  test('should request password reset', async () => {
     await client.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
@@ -219,7 +219,7 @@ describe('/request-reset', () => {
     expect(passwordResetToken).toHaveLength(36)
   })
 
-  test('Should return 204 for non-existent email', async () => {
+  test('should return 204 for non-existent email', async () => {
     const responseRequestReset = await client.auth['request-reset'].$post({
       json: {
         email: 'testuser@gmail.com',
@@ -229,7 +229,7 @@ describe('/request-reset', () => {
     expect(responseRequestReset.status).toBe(204)
   })
 
-  test('Should reject after exceeding maximum retry attempts for existing account', async () => {
+  test('should reject after exceeding maximum retry attempts for existing account', async () => {
     await client.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
@@ -259,7 +259,7 @@ describe('/request-reset', () => {
     expect(responseRequestReset.status as unknown).toBe(429)
   })
 
-  test('Should not reject after exceeding maximum retry attempts for not existing account', async () => {
+  test('should not reject after exceeding maximum retry attempts for not existing account', async () => {
     for (let i = 0; i < 5; i++) {
       await client.auth['request-reset'].$post({
         json: {
@@ -279,7 +279,7 @@ describe('/request-reset', () => {
 })
 
 describe('/reset-password', () => {
-  test('Should reset password with valid token', async () => {
+  test('should reset password with valid token', async () => {
     await client.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
@@ -312,7 +312,7 @@ describe('/reset-password', () => {
 })
 
 describe('/change-password', () => {
-  test('Should change password', async () => {
+  test('should change password', async () => {
     const client = testClient(createApp())
 
     const loginResponse = await client.auth.register.$post({
@@ -342,7 +342,7 @@ describe('/change-password', () => {
     expect(changePasswordResponse.status).toBe(204)
   })
 
-  test('Should not change password with invalid current password', async () => {
+  test('should not change password with invalid current password', async () => {
     const registerResponse = await client.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
