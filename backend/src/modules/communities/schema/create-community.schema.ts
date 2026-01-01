@@ -1,7 +1,7 @@
 import z from 'zod'
 
 import { validationConfig } from '@/config'
-import { CommunitySchema } from '@/db/schema'
+import { CommunitySchema } from '@/db/tables/communities'
 
 export const CreateCommunityBodySchema = z.object({
   name: z.string()

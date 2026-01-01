@@ -1,10 +1,7 @@
 import { sql } from 'drizzle-orm'
 import * as s from 'drizzle-orm/sqlite-core'
-import z from 'zod'
 
-import { IdSchema } from '@/shared/zod'
-
-import { communities } from './communities.schema'
+import { communities } from '../communities/communities.table'
 
 export const invitations = s.sqliteTable('invitation_links', {
   id: s.integer('id').primaryKey({ autoIncrement: true }),
@@ -21,11 +18,3 @@ export const invitations = s.sqliteTable('invitation_links', {
 })
 
 export type Invitation = typeof invitations.$inferSelect
-
-export const InvitationSchema = z.object({
-  id: IdSchema,
-  communityId: IdSchema,
-  link: z.url(),
-  expiresAt: z.iso.datetime().nullable(),
-  createdAt: z.iso.datetime(),
-})

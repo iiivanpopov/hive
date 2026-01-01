@@ -2,7 +2,10 @@ import { afterEach, beforeAll, beforeEach, describe, expect, expectTypeOf, it } 
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import path from 'node:path'
 
-import { communities, communityMembers, invitations, users } from '@/db/schema'
+import { communities } from '@/db/tables/communities'
+import { communityMembers } from '@/db/tables/community-members'
+import { invitations } from '@/db/tables/invitations'
+import { users } from '@/db/tables/users'
 
 import { client } from '../_utils/client'
 import { getSessionTokenCookie } from '../_utils/cookies'

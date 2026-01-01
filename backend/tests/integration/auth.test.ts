@@ -6,7 +6,7 @@ import path from 'node:path'
 
 import type { MailOptions } from '@/lib/mail'
 
-import { users } from '@/db/schema'
+import { users } from '@/db/tables/users'
 import { createApp } from '@/tests/_utils/create-app'
 import { memoryCache } from '@/tests/_utils/memory-cache'
 

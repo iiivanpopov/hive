@@ -3,7 +3,7 @@ import { and, isNotNull, lt, sql } from 'drizzle-orm'
 
 import type { DrizzleDatabase } from '@/db/instance'
 
-import { invitations } from '@/db/schema'
+import { invitations } from '@/db/tables/invitations'
 import { pino } from '@/lib/pino'
 
 export class InvitationsCron {

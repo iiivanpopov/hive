@@ -1,10 +1,7 @@
 import { sql } from 'drizzle-orm'
 import * as s from 'drizzle-orm/sqlite-core'
-import z from 'zod'
 
-import { IdSchema } from '@/shared/zod'
-
-import { users } from './users.schema'
+import { users } from '../users/users.table'
 
 export const communities = s.sqliteTable('communities', {
   id: s.integer('id').primaryKey({ autoIncrement: true }),
@@ -18,10 +15,3 @@ export const communities = s.sqliteTable('communities', {
 })
 
 export type Community = typeof communities.$inferSelect
-
-export const CommunitySchema = z.object({
-  id: IdSchema,
-  ownerId: IdSchema,
-  name: z.string(),
-  createdAt: z.iso.datetime(),
-})
