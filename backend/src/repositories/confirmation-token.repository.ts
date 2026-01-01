@@ -28,7 +28,7 @@ export class ConfirmationTokenRepository {
 
     const attempts = await this.store.incr(key)
     if (attempts === 1)
-      await this.store.expire(key, authConfig.resetPasswordRateLimitTime)
+      await this.store.expire(key, authConfig.confirmationEmailRateLimitTime)
 
     return attempts
   }

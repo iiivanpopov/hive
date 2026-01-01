@@ -9,6 +9,7 @@ import type { ConfirmationTokenRepository } from '@/repositories/confirmation-to
 import type { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
+import { authConfig } from '@/config'
 import { users } from '@/db/schema'
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
@@ -183,7 +184,7 @@ export class AuthService {
       return pino.debug(`Password reset requested for non-existent email: ${email}`)
 
     const attempts = await this.resetPasswordTokens.incrementAttempt(email)
-    if (attempts > 5)
+    if (attempts > authConfig.resetPasswordRateLimitCount)
       throw ApiException.TooManyRequests('Too many password reset attempts. Please try again later.', 'TOO_MANY_PASSWORD_RESET_ATTEMPTS')
 
     const resetToken = await this.resetPasswordTokens.create({ userId: user.id })
@@ -242,7 +243,7 @@ export class AuthService {
       return pino.debug(`Confirmation email resend requested for non-existent email: ${email}`)
 
     const attempts = await this.confirmationTokens.incrementAttempt(email)
-    if (attempts > 5)
+    if (attempts > authConfig.confirmationEmailRateLimitCount)
       throw ApiException.TooManyRequests('Too many confirmation email resend attempts. Please try again later.', 'TOO_MANY_CONFIRMATION_EMAIL_RESEND_ATTEMPTS')
 
     const confirmationToken = await this.confirmationTokens.create({ userId: user.id })
