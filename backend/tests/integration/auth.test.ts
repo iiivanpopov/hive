@@ -69,7 +69,7 @@ describe('/register', () => {
   })
 })
 
-describe('/confirm-email/:token', () => {
+describe('/confirm-email', () => {
   test('Should confirm email with valid token', async () => {
     const responseRegister = await client.auth.register.$post({
       json: {
@@ -90,6 +90,55 @@ describe('/confirm-email/:token', () => {
     })
 
     expect(responseConfirmEmail.status).toBe(204)
+  })
+
+  test('Should resend confirmation email', async () => {
+    await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+
+    const responseResendConfirmation = await client.auth['confirm-email'].resend.$post({
+      json: {
+        email: 'testuser@gmail.com',
+      },
+    })
+
+    expect(responseResendConfirmation.status).toBe(204)
+
+    const lastEmail = JSON.parse((await memoryCache.get('testuser@gmail.com' + '-last-email'))!)
+
+    const emailConfirmationToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]
+
+    expect(emailConfirmationToken).toHaveLength(36)
+  })
+
+  test('Should rate limit resend confirmation email', async () => {
+    await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+
+    for (let i = 0; i < 5; i++) {
+      await client.auth['confirm-email'].resend.$post({
+        json: {
+          email: 'testuser@gmail.com',
+        },
+      })
+    }
+
+    const responseResendConfirmation = await client.auth['confirm-email'].resend.$post({
+      json: {
+        email: 'testuser@gmail.com',
+      },
+    })
+    expect(responseResendConfirmation.status as unknown).toBe(429)
   })
 })
 
@@ -229,7 +278,7 @@ describe('/request-reset', () => {
   })
 })
 
-describe('/reset-password/:token', () => {
+describe('/reset-password', () => {
   test('Should reset password with valid token', async () => {
     await client.auth.register.$post({
       json: {
