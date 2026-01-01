@@ -22,179 +22,187 @@ afterEach(() => {
   memoryCache.reset()
 })
 
-test('Should register a new user', async () => {
-  const response1 = await client.auth.register.$post({
-    json: {
-      email: 'testuser@gmail.com',
-      username: 'testuser',
-      password: 'password123',
-    },
+describe('/register', () => {
+  test('Should register a new user', async () => {
+    const responseRegister = await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+
+    expect(responseRegister.status).toBe(204)
+    expect(responseRegister.headers.get('Set-Cookie')).toBeDefined()
+
+    const cookie = parseCookie(responseRegister.headers.get('Set-Cookie')!, 'session_token')
+    expect(cookie).toBeDefined()
+    expect(cookie.session_token).toHaveLength(36)
   })
 
-  expect(response1.status).toBe(204)
-  expect(response1.headers.get('Set-Cookie')).toBeDefined()
+  test('Should not register an existing user', async () => {
+    const responseRegister = await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
 
-  const cookie = parseCookie(response1.headers.get('Set-Cookie')!, 'session_token')
-  expect(cookie).toBeDefined()
-  expect(cookie.session_token).toHaveLength(36)
+    expect(responseRegister.status).toBe(204)
+    expect(responseRegister.headers.get('Set-Cookie')).toBeDefined()
+
+    const responseRegisterIncorrect = await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+
+    expect(await responseRegisterIncorrect.json()).toMatchObject({
+      error: {
+        code: 'USER_EXISTS',
+      },
+    })
+    expect(responseRegisterIncorrect.status as unknown).toBe(400)
+  })
 })
 
-test('Should not register an existing user', async () => {
-  const response1 = await client.auth.register.$post({
-    json: {
-      email: 'testuser@gmail.com',
-      username: 'testuser',
-      password: 'password123',
-    },
+describe('/login', () => {
+  test('Should not login with invalid credentials', async () => {
+    const responseLoginIncorrect = await client.auth.login.$post({
+      json: {
+        identity: 'testuser',
+        password: 'wrongpassword',
+      },
+    })
+
+    expect(await responseLoginIncorrect.json()).toEqual({
+      error: {
+        code: 'INVALID_CREDENTIALS',
+        message: 'Invalid credentials',
+      },
+    })
+    expect(responseLoginIncorrect.status as unknown).toBe(401)
   })
 
-  expect(response1.status).toBe(204)
-  expect(response1.headers.get('Set-Cookie')).toBeDefined()
+  test('Should login a user', async () => {
+    await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
 
-  const response2 = await client.auth.register.$post({
-    json: {
-      email: 'testuser@gmail.com',
-      username: 'testuser',
-      password: 'password123',
-    },
-  })
+    const responseLogin = await client.auth.login.$post({
+      json: {
+        identity: 'testuser',
+        password: 'password123',
+      },
+    })
 
-  expect(await response2.json()).toMatchObject({
-    error: {
-      code: 'USER_EXISTS',
-    },
+    expect(responseLogin.status).toBe(204)
+    expect(responseLogin.headers.get('Set-Cookie')).toBeDefined()
+
+    const cookie = parseCookie(responseLogin.headers.get('Set-Cookie')!, 'session_token')
+    expect(cookie).toBeDefined()
+    expect(cookie.session_token).toHaveLength(36)
   })
-  expect(response2.status as unknown).toBe(400)
 })
 
-test('Should not login with invalid credentials', async () => {
-  const response = await client.auth.login.$post({
-    json: {
-      identity: 'testuser',
-      password: 'wrongpassword',
-    },
-  })
+describe('/logout', () => {
+  test('Should logout a user', async () => {
+    const responseLogout = await client.auth.logout.$post()
 
-  expect(await response.json()).toEqual({
-    error: {
-      code: 'INVALID_CREDENTIALS',
-      message: 'Invalid credentials',
-    },
+    expect(responseLogout.status).toBe(204)
+    expect(responseLogout.headers.get('Set-Cookie')).toBeDefined()
   })
-  expect(response.status as unknown).toBe(401)
 })
 
-test('Should login a user', async () => {
-  await client.auth.register.$post({
-    json: {
-      email: 'testuser@gmail.com',
-      username: 'testuser',
-      password: 'password123',
-    },
-  })
+describe('/request-reset', () => {
+  test('Should request password reset', async () => {
+    await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
 
-  const response2 = await client.auth.login.$post({
-    json: {
-      identity: 'testuser',
-      password: 'password123',
-    },
-  })
-
-  expect(response2.status).toBe(204)
-  expect(response2.headers.get('Set-Cookie')).toBeDefined()
-
-  const cookie = parseCookie(response2.headers.get('Set-Cookie')!, 'session_token')
-  expect(cookie).toBeDefined()
-  expect(cookie.session_token).toHaveLength(36)
-})
-
-test('Should logout a user', async () => {
-  const response1 = await client.auth.logout.$post()
-
-  expect(response1.status).toBe(204)
-  expect(response1.headers.get('Set-Cookie')).toBeDefined()
-})
-
-test('Should request password reset', async () => {
-  await client.auth.register.$post({
-    json: {
-      email: 'testuser@gmail.com',
-      username: 'testuser',
-      password: 'password123',
-    },
-  })
-
-  const response2 = await client.auth['request-reset'].$post({
-    json: {
-      email: 'testuser@gmail.com',
-    },
-  })
-
-  expect(response2.status).toBe(204)
-
-  const lastEmail = await memoryCache.get('testuser@gmail.com' + '-last-email').then(data => data ? JSON.parse(data) as MailOptions : null)
-  expect(lastEmail).not.toBeNull()
-
-  const passwordResetToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]
-  expect(passwordResetToken).toHaveLength(36)
-})
-
-test('Should return 204 for non-existent email', async () => {
-  const response = await client.auth['request-reset'].$post({
-    json: {
-      email: 'testuser@gmail.com',
-    },
-  })
-
-  expect(response.status).toBe(204)
-})
-
-test('Should reject after exceeding maximum retry attempts for existing account', async () => {
-  await client.auth.register.$post({
-    json: {
-      email: 'testuser@gmail.com',
-      username: 'testuser',
-      password: 'password123',
-    },
-  })
-
-  for (let i = 0; i < 5; i++) {
-    await client.auth['request-reset'].$post({
+    const responseRequestReset = await client.auth['request-reset'].$post({
       json: {
         email: 'testuser@gmail.com',
       },
     })
-  }
 
-  const response = await client.auth['request-reset'].$post({
-    json: {
-      email: 'testuser@gmail.com',
-    },
-  })
-  expect(await response.json()).toMatchObject({
-    error: {
-      code: 'TOO_MANY_PASSWORD_RESET_ATTEMPTS',
-    },
-  })
-  expect(response.status as unknown).toBe(429)
-})
+    expect(responseRequestReset.status).toBe(204)
 
-test('Should not reject after exceeding maximum retry attempts for not existing account', async () => {
-  for (let i = 0; i < 5; i++) {
-    await client.auth['request-reset'].$post({
+    const lastEmail = await memoryCache.get('testuser@gmail.com' + '-last-email').then(data => data ? JSON.parse(data) as MailOptions : null)
+    expect(lastEmail).not.toBeNull()
+
+    const passwordResetToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]
+    expect(passwordResetToken).toHaveLength(36)
+  })
+
+  test('Should return 204 for non-existent email', async () => {
+    const responseRequestReset = await client.auth['request-reset'].$post({
       json: {
         email: 'testuser@gmail.com',
       },
     })
-  }
 
-  const response = await client.auth['request-reset'].$post({
-    json: {
-      email: 'testuser@gmail.com',
-    },
+    expect(responseRequestReset.status).toBe(204)
   })
 
-  expect(response.status as unknown).toBe(204)
+  test('Should reject after exceeding maximum retry attempts for existing account', async () => {
+    await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+
+    for (let i = 0; i < 5; i++) {
+      await client.auth['request-reset'].$post({
+        json: {
+          email: 'testuser@gmail.com',
+        },
+      })
+    }
+
+    const responseRequestReset = await client.auth['request-reset'].$post({
+      json: {
+        email: 'testuser@gmail.com',
+      },
+    })
+    expect(await responseRequestReset.json()).toMatchObject({
+      error: {
+        code: 'TOO_MANY_PASSWORD_RESET_ATTEMPTS',
+      },
+    })
+    expect(responseRequestReset.status as unknown).toBe(429)
+  })
+
+  test('Should not reject after exceeding maximum retry attempts for not existing account', async () => {
+    for (let i = 0; i < 5; i++) {
+      await client.auth['request-reset'].$post({
+        json: {
+          email: 'testuser@gmail.com',
+        },
+      })
+    }
+
+    const responseRequestReset = await client.auth['request-reset'].$post({
+      json: {
+        email: 'testuser@gmail.com',
+      },
+    })
+
+    expect(responseRequestReset.status as unknown).toBe(204)
+  })
 })
 
 describe('/change-password', () => {
@@ -240,7 +248,7 @@ describe('/change-password', () => {
 
     const cookie = parseCookie(registerResponse.headers.get('Set-Cookie')!, 'session_token')
 
-    const response = await client.auth['change-password'].$patch(
+    const responseChangePasswordIncorrect = await client.auth['change-password'].$patch(
       {
         json: {
           currentPassword: 'wrongpassword',
@@ -254,8 +262,8 @@ describe('/change-password', () => {
       },
     )
 
-    expect(response.status as unknown).toBe(401)
-    expect(await response.json()).toMatchObject({
+    expect(responseChangePasswordIncorrect.status as unknown).toBe(401)
+    expect(await responseChangePasswordIncorrect.json()).toMatchObject({
       error: {
         code: 'INVALID_CURRENT_PASSWORD',
       },
