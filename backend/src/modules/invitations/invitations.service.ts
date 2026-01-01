@@ -37,7 +37,7 @@ export class InvitationsService {
       .insert(invitations)
       .values({
         communityId,
-        expiresAt: data.expiresAt,
+        expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
         link,
       })
       .returning()

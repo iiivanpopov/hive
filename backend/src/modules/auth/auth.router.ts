@@ -279,7 +279,7 @@ export class AuthRouter {
         async (c) => {
           const googleUser = c.get('user-google') as GoogleUser
 
-          const sessionToken = await this.authService.authenticateGoogleUser(googleUser)
+          const sessionToken = await this.authService.authenticateGoogleUser(googleUser, c.req.header('User-Agent'))
 
           setCookie(c, authConfig.sessionTokenCookie, sessionToken, {
             httpOnly: true,

@@ -127,14 +127,12 @@ export class AuthService {
     pino.debug(`Deleted session ${sessionToken}`)
   }
 
-  GoogleOAuthUserAgent = 'Google OAuth2'
-
-  async authenticateGoogleUser(googleUser: GoogleUser) {
+  async authenticateGoogleUser(googleUser: GoogleUser, userAgent?: string) {
     const [userExists] = await this.db.query.users.findMany({
       where: { email: googleUser.email },
     })
     if (userExists) {
-      const sessionToken = await this.sessionTokens.create({ userId: userExists.id, userAgent: this.GoogleOAuthUserAgent })
+      const sessionToken = await this.sessionTokens.create({ userId: userExists.id, userAgent: normalizeUserAgent(userAgent) })
       pino.debug(`Created session ${sessionToken}`)
 
       return sessionToken
@@ -154,7 +152,7 @@ export class AuthService {
       .returning()
     pino.debug(`Created user with email ${user.email}`)
 
-    const sessionToken = await this.sessionTokens.create({ userId: user!.id, userAgent: this.GoogleOAuthUserAgent })
+    const sessionToken = await this.sessionTokens.create({ userId: user!.id, userAgent: normalizeUserAgent(userAgent) })
     pino.debug(`Created session ${sessionToken}`)
 
     return sessionToken

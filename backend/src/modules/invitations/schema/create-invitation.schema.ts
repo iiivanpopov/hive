@@ -4,7 +4,7 @@ import { InvitationSchema } from '@/db/schema'
 import { IdSchema } from '@/shared/zod'
 
 export const CreateInvitationBodySchema = z.object({
-  expiresAt: z.coerce.date().optional(),
+  expiresAt: z.iso.datetime().optional(),
 })
 
 export type CreateInvitationBody = z.infer<typeof CreateInvitationBodySchema>
