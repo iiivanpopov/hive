@@ -4,6 +4,8 @@ export interface ConfirmationTokenStore {
   setex: (key: string, ttl: number, value: string) => Promise<void | 'OK'>
   get: (key: string) => Promise<string | null>
   del: (key: string) => Promise<void | number>
+  expire: (key: string, ttl: number) => Promise<void | number>
+  incr: (key: string) => Promise<number>
 }
 
 export interface ConfirmationTokenPayload {
@@ -21,6 +23,16 @@ export class ConfirmationTokenRepository {
     return token
   }
 
+  async incrementAttempt(email: string) {
+    const key = this.serialize(`${this.hashEmail(email)}:attempts`)
+
+    const attempts = await this.store.incr(key)
+    if (attempts === 1)
+      await this.store.expire(key, authConfig.resetPasswordRateLimitTime)
+
+    return attempts
+  }
+
   async resolve(token: string) {
     const data = await this.store.get(this.serialize(token))
     return data ? JSON.parse(data) as ConfirmationTokenPayload : null
@@ -32,5 +44,11 @@ export class ConfirmationTokenRepository {
 
   serialize(token: string) {
     return `${this.namespace}:${token}`
+  }
+
+  hashEmail(email: string) {
+    return new Bun.CryptoHasher('sha256', Bun.env.PASSWORD_RESET_HASH_KEY)
+      .update(email)
+      .digest('hex')
   }
 }

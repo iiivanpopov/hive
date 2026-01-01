@@ -232,4 +232,25 @@ export class AuthService {
 
     return sessionToken
   }
+
+  async resendConfirmationEmail(email: string) {
+    const [user] = await this.db.query.users.findMany({
+      where: { email },
+    })
+
+    if (!user)
+      return pino.debug(`Confirmation email resend requested for non-existent email: ${email}`)
+
+    const attempts = await this.confirmationTokens.incrementAttempt(email)
+    if (attempts > 5)
+      throw ApiException.TooManyRequests('Too many confirmation email resend attempts. Please try again later.', 'TOO_MANY_CONFIRMATION_EMAIL_RESEND_ATTEMPTS')
+
+    const confirmationToken = await this.confirmationTokens.create({ userId: user.id })
+    pino.debug(`Created confirm token ${confirmationToken} for email resend`)
+
+    if (Bun.env.SMTP_ENABLE === 'true') {
+      await this.sendConfirmEmail(user, confirmationToken)
+      pino.debug(`Resent confirmation email to ${user.email}`)
+    }
+  }
 }

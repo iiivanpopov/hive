@@ -5,3 +5,7 @@ export const ConfirmParamsSchema = z.object({
 })
 
 export type ConfirmParams = z.infer<typeof ConfirmParamsSchema>
+
+export const ConfirmEmailResendBodySchema = z.object({
+  email: z.email(),
+})

@@ -17,7 +17,7 @@ import { sessionMiddleware, validator } from '@/middleware'
 
 import { AuthService } from './auth.service'
 import { ChangePasswordBodySchema } from './schema/change-password.schema'
-import { ConfirmParamsSchema } from './schema/confirm.schema'
+import { ConfirmEmailResendBodySchema, ConfirmParamsSchema } from './schema/confirm-email.schema'
 import { LoginBodySchema } from './schema/login.schema'
 import { MeResponseSchema } from './schema/me.schema'
 import { RegisterBodySchema } from './schema/register.schema'
@@ -125,7 +125,21 @@ export class AuthRouter {
       )
       .post(
         '/confirm-email/resend',
+        describeRoute({
+          summary: 'Resend confirmation email',
+          description: 'Resend the account confirmation email to the user.',
+          responses: {
+            204: {
+              description: 'Confirmation email resent successfully',
+            },
+          },
+        }),
+        validator('json', ConfirmEmailResendBodySchema),
         async (c) => {
+          const body = c.req.valid('json')
+
+          await this.authService.resendConfirmationEmail(body.email)
+
           return c.body(null, 204)
         },
       )
