@@ -6,7 +6,7 @@ import path from 'node:path'
 
 import type { MailOptions } from '@/lib/mail'
 
-import * as schema from '@/db/schema'
+import { users } from '@/db/schema'
 import { createApp } from '@/tests/_utils/create-app'
 import { memoryDatabase, resetDatabase } from '@/tests/_utils/database'
 import { memoryCache } from '@/tests/_utils/memory-cache'
@@ -18,7 +18,7 @@ beforeAll(async () => {
 })
 
 afterEach(() => {
-  resetDatabase(memoryDatabase, schema)
+  resetDatabase(memoryDatabase, { users })
   memoryCache.reset()
 })
 

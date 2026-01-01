@@ -1,7 +1,7 @@
 import type { GoogleUser } from '@hono/oauth-providers/google'
 
 import { googleAuth } from '@hono/oauth-providers/google'
-import { describeRoute } from 'hono-openapi'
+import { describeRoute, resolver } from 'hono-openapi'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 
 import type { DrizzleDatabase } from '@/db/instance'
@@ -11,12 +11,14 @@ import type { ResetPasswordTokenRepository } from '@/repositories/reset-password
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { authConfig } from '@/config'
+import { toUserDto } from '@/db/schema'
 import { factory } from '@/lib/factory'
-import { validator } from '@/middleware'
+import { sessionMiddleware, validator } from '@/middleware'
 
 import { AuthService } from './auth.service'
 import { ConfirmParamsSchema } from './schema/confirm.schema'
 import { LoginBodySchema } from './schema/login.schema'
+import { MeResponseSchema } from './schema/me.schema'
 import { RegisterBodySchema } from './schema/register.schema'
 import { RequestResetSchema } from './schema/request-reset.schema'
 import { ResetPasswordBodySchema, ResetPasswordParamsSchema } from './schema/reset-password.schema'
@@ -196,9 +198,22 @@ export class AuthRouter {
       )
       .get(
         '/me',
-        async (c) => {
-          return c.body(null, 200)
-        },
+        sessionMiddleware(this.db, this.sessionTokens),
+        describeRoute({
+          summary: 'Get current authenticated user',
+          description: 'Retrieve the details of the currently authenticated user.',
+          responses: {
+            200: {
+              description: 'Current user retrieved successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(MeResponseSchema),
+                },
+              },
+            },
+          },
+        }),
+        async c => c.json({ user: toUserDto(c.get('user')) }, 200),
       )
 
     app
