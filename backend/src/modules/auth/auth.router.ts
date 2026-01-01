@@ -11,7 +11,7 @@ import type { ResetPasswordTokenRepository } from '@/repositories/reset-password
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { authConfig } from '@/config'
-import { toUserDto } from '@/db/schema'
+import { toUserDto } from '@/db/tables/users'
 import { factory } from '@/lib/factory'
 import { sessionMiddleware, validator } from '@/middleware'
 

@@ -1,6 +1,6 @@
 import z from 'zod'
 
-import { InvitationSchema } from '@/db/schema'
+import { InvitationSchema } from '@/db/tables/invitations'
 import { IdSchema } from '@/shared/zod'
 
 export const CreateInvitationBodySchema = z.object({

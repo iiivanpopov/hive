@@ -2,7 +2,8 @@ import { eq } from 'drizzle-orm'
 
 import type { DrizzleDatabase } from '@/db/instance'
 
-import { communities, communityMembers } from '@/db/schema'
+import { communities } from '@/db/tables/communities'
+import { communityMembers } from '@/db/tables/community-members'
 import { ApiException } from '@/lib/api-exception'
 
 import type { CreateCommunityBody } from './schema/create-community.schema'

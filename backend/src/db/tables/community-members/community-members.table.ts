@@ -1,8 +1,8 @@
 import { sql } from 'drizzle-orm'
 import * as s from 'drizzle-orm/sqlite-core'
 
-import { communities } from './communities.schema'
-import { users } from './users.schema'
+import { communities } from '../communities'
+import { users } from '../users'
 
 const communityMemberRoles = ['owner', 'member'] as const
 export type CommunityMemberRole = (typeof communityMemberRoles)[number]

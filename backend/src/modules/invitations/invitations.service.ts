@@ -1,6 +1,6 @@
 import type { DrizzleDatabase } from '@/db/instance'
 
-import { invitations } from '@/db/schema'
+import { invitations } from '@/db/tables/invitations'
 import { ApiException } from '@/lib/api-exception'
 import { generateInvitationId } from '@/lib/utils'
 
