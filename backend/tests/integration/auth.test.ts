@@ -69,6 +69,30 @@ describe('/register', () => {
   })
 })
 
+describe('/confirm-email/:token', () => {
+  test('Should confirm email with valid token', async () => {
+    const responseRegister = await client.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+    expect(responseRegister.status).toBe(204)
+
+    const lastEmail = JSON.parse((await memoryCache.get('testuser@gmail.com' + '-last-email'))!)
+    const emailConfirmationToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]
+
+    const responseConfirmEmail = await client.auth['confirm-email'][':token'].$post({
+      param: {
+        token: emailConfirmationToken!,
+      },
+    })
+
+    expect(responseConfirmEmail.status).toBe(204)
+  })
+})
+
 describe('/login', () => {
   test('Should not login with invalid credentials', async () => {
     const responseLoginIncorrect = await client.auth.login.$post({

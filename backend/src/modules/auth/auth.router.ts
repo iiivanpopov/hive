@@ -124,13 +124,13 @@ export class AuthRouter {
         },
       )
       .post(
-        '/confirm/resend',
+        '/confirm-email/resend',
         async (c) => {
           return c.body(null, 204)
         },
       )
       .post(
-        '/confirm/:token',
+        '/confirm-email/:token',
         describeRoute({
           summary: 'Confirm user account',
           description: 'Confirm a user account using the provided confirmation token.',
