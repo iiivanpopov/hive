@@ -4,7 +4,7 @@ import { googleAuth } from '@hono/oauth-providers/google'
 import { describeRoute, resolver } from 'hono-openapi'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 
-import type { DrizzleDatabase } from '@/db/instance'
+import type { DrizzleDatabase } from '@/db/utils'
 import type { MailService } from '@/lib/mail'
 import type { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import type { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'

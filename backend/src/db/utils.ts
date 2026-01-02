@@ -1,9 +1,11 @@
+import type Database from 'bun:sqlite'
+
 import { getTableName, sql } from 'drizzle-orm'
+import { drizzle } from 'drizzle-orm/bun-sqlite'
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import path from 'node:path'
 
-import type { DrizzleDatabase } from './instance'
-
+import { relations } from './relations'
 import { communities } from './tables/communities'
 import { communityMembers } from './tables/community-members'
 import { invitations } from './tables/invitations'
@@ -34,3 +36,9 @@ export function resetDatabase(db: DrizzleDatabase) {
     db.run(sql`PRAGMA foreign_keys = ON`)
   }
 }
+
+export function createDatabase(client: Database) {
+  return drizzle({ client, relations })
+}
+
+export type DrizzleDatabase = ReturnType<typeof createDatabase>

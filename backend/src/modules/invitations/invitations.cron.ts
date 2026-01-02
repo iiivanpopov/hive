@@ -1,7 +1,7 @@
 import { Cron } from 'croner'
 import { and, isNotNull, lt } from 'drizzle-orm'
 
-import type { DrizzleDatabase } from '@/db/instance'
+import type { DrizzleDatabase } from '@/db/utils'
 
 import { invitations } from '@/db/tables/invitations'
 import { pino } from '@/lib/pino'

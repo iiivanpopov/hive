@@ -1,6 +1,6 @@
 import { describeRoute, resolver } from 'hono-openapi'
 
-import type { DrizzleDatabase } from '@/db/instance'
+import type { DrizzleDatabase } from '@/db/utils'
 import type { BaseRouter } from '@/lib/base-router.interface'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
@@ -10,7 +10,6 @@ import { sessionMiddleware, validator } from '@/middleware'
 import { CommunitiesService } from './communities.service'
 import { CreateCommunityBodySchema, CreateCommunityResponseSchema } from './schema/create-community.schema'
 import { DeleteCommunityParamsSchema } from './schema/delete-community.schema'
-import { GetCommunityMembersParamsSchema, GetCommunityMembersResponseSchema } from './schema/get-community-members.schema'
 import { GetJoinedCommunitiesResponseSchema } from './schema/get-joined-communities.schema'
 import { LeaveCommunityParamsSchema } from './schema/leave-community.schema'
 import { UpdateCommunityBodySchema, UpdateCommunityParamsSchema, UpdateCommunityResponseSchema } from './schema/update-community.schema'
@@ -103,32 +102,6 @@ export class CommunitiesRouter implements BaseRouter {
           await this.communitiesService.leaveCommunity(params.id, user.id)
 
           return c.body(null, 204)
-        },
-      )
-      .get(
-        '/:id/members',
-        describeRoute({
-          tags: ['Communities'],
-          summary: 'Get community members',
-          description: 'Retrieve a list of members for a specific community by its ID.',
-          responses: {
-            200: {
-              description: 'List of community members retrieved successfully',
-              content: {
-                'application/json': {
-                  schema: resolver(GetCommunityMembersResponseSchema),
-                },
-              },
-            },
-          },
-        }),
-        validator('param', GetCommunityMembersParamsSchema),
-        async (c) => {
-          const { id } = c.req.valid('param')
-
-          const members = await this.communitiesService.getCommunityMembers(id)
-
-          return c.json({ members })
         },
       )
       .delete(

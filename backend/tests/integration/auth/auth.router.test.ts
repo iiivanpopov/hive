@@ -5,7 +5,7 @@ import { cacheMock } from '@/tests/mocks/cache.mock'
 import { clientMock } from '@/tests/mocks/client.mock'
 import { databaseMock } from '@/tests/mocks/database.mock'
 import { sendMailMock } from '@/tests/mocks/mail-service.mock'
-import { extractTokenFromMail } from '@/tests/utils'
+import { extractSessionTokenCookie, extractTokenFromMail } from '@/tests/utils'
 
 beforeAll(() => {
   migrateDatabase(databaseMock)
@@ -92,7 +92,7 @@ describe('/confirm-email', () => {
     expect(sendMailMock).toHaveBeenCalledTimes(1)
 
     const mail = sendMailMock.mock.calls[0][0]
-    const token = extractTokenFromMail(mail)
+    const token = extractTokenFromMail(mail)!
 
     const response = await clientMock.auth['confirm-email'][':token'].$post({
       param: { token },
@@ -281,7 +281,7 @@ describe('/reset-password', () => {
     })
 
     const mail = sendMailMock.mock.calls.at(-1)![0]
-    const token = extractTokenFromMail(mail)
+    const token = extractTokenFromMail(mail)!
 
     const response = await clientMock.auth['reset-password'][':token'].$post({
       param: { token },
@@ -302,7 +302,7 @@ describe('/change-password', () => {
       },
     })
 
-    const cookie = registerResponse.headers.get('Set-Cookie')
+    const cookie = extractSessionTokenCookie(registerResponse.headers)
     expect(cookie).toBeTruthy()
 
     const response = await clientMock.auth['change-password'].$patch(
@@ -313,7 +313,7 @@ describe('/change-password', () => {
         },
       },
       {
-        headers: { Cookie: cookie! },
+        headers: { Cookie: cookie },
       },
     )
 
@@ -329,7 +329,7 @@ describe('/change-password', () => {
       },
     })
 
-    const cookie = registerResponse.headers.get('Set-Cookie')
+    const cookie = extractSessionTokenCookie(registerResponse.headers)
     expect(cookie).toBeTruthy()
 
     const response = await clientMock.auth['change-password'].$patch(
@@ -339,9 +339,7 @@ describe('/change-password', () => {
           newPassword: 'password456',
         },
       },
-      {
-        headers: { Cookie: cookie! },
-      },
+      { headers: { Cookie: cookie } },
     )
 
     expect(response.status).toBe(401)

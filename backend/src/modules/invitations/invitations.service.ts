@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 
-import type { DrizzleDatabase } from '@/db/instance'
+import type { DrizzleDatabase } from '@/db/utils'
 
 import { communityMembers } from '@/db/tables/community-members'
 import { invitations } from '@/db/tables/invitations'

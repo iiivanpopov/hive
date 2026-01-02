@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm'
 import * as s from 'drizzle-orm/sqlite-core'
 
-import { users } from '../users/users.table'
+import { users } from '../users'
 
 export const communities = s.sqliteTable('communities', {
   id: s.integer('id').primaryKey({ autoIncrement: true }),

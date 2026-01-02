@@ -1,8 +1,10 @@
 import { defineRelations } from 'drizzle-orm'
 
+import { channels } from './tables/channels'
 import { communities } from './tables/communities'
 import { communityMembers } from './tables/community-members'
 import { invitations } from './tables/invitations'
+import { messages } from './tables/messages'
 import { users } from './tables/users'
 
 export const relations = defineRelations({
@@ -10,6 +12,8 @@ export const relations = defineRelations({
   communities,
   communityMembers,
   invitations,
+  channels,
+  messages,
 }, r => ({
   communities: {
     owner: r.one.users({
@@ -24,6 +28,14 @@ export const relations = defineRelations({
       from: r.communities.id,
       to: r.invitations.communityId,
     }),
+    messages: r.many.messages({
+      from: r.communities.id,
+      to: r.messages.channelId,
+    }),
+    channels: r.many.channels({
+      from: r.communities.id,
+      to: r.channels.communityId,
+    }),
   },
   users: {
     ownedCommunities: r.many.communities({
@@ -33,6 +45,10 @@ export const relations = defineRelations({
     communityMemberships: r.many.communityMembers({
       from: r.users.id,
       to: r.communityMembers.userId,
+    }),
+    messages: r.many.messages({
+      from: r.users.id,
+      to: r.messages.userId,
     }),
   },
   communityMembers: {

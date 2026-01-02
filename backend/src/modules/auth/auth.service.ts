@@ -2,8 +2,8 @@ import type { GoogleUser } from '@hono/oauth-providers/google'
 
 import { eq } from 'drizzle-orm'
 
-import type { DrizzleDatabase } from '@/db/instance'
 import type { User } from '@/db/tables/users'
+import type { DrizzleDatabase } from '@/db/utils'
 import type { MailService } from '@/lib/mail'
 import type { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import type { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'

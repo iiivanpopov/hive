@@ -1,6 +1,6 @@
 import { deleteCookie, getCookie } from 'hono/cookie'
 
-import type { DrizzleDatabase } from '@/db/instance'
+import type { DrizzleDatabase } from '@/db/utils'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { authConfig } from '@/config/auth.config'

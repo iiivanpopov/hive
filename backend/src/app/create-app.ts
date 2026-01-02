@@ -1,6 +1,6 @@
 import { cors } from 'hono/cors'
 
-import type { DrizzleDatabase } from '@/db/instance'
+import type { DrizzleDatabase } from '@/db/utils'
 import type { MailService } from '@/lib/mail'
 import type { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import type { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
@@ -10,6 +10,7 @@ import { factory } from '@/lib/factory'
 import { errorMiddleware, loggerMiddleware } from '@/middleware'
 import { AuthRouter } from '@/modules/auth'
 import { CommunitiesRouter } from '@/modules/communities'
+import { CommunityMembersRouter } from '@/modules/community-members'
 import { InvitationsRouter } from '@/modules/invitations'
 
 import { Router } from './router'
@@ -34,6 +35,10 @@ export function createApp(
       sessionTokensRepository,
     ),
     new InvitationsRouter(
+      db,
+      sessionTokensRepository,
+    ),
+    new CommunityMembersRouter(
       db,
       sessionTokensRepository,
     ),
