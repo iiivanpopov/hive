@@ -12,6 +12,8 @@ import { MailService } from '@/lib/mail'
 import { pino } from '@/lib/pino'
 import { errorMiddleware, loggerMiddleware } from '@/middleware'
 import { AuthRouter } from '@/modules/auth/auth.router'
+import { CommunitiesRouter } from '@/modules/communities'
+import { InvitationsCron, InvitationsRouter } from '@/modules/invitations'
 import { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import { SessionTokenRepository } from '@/repositories/session-token.repository'
@@ -44,7 +46,18 @@ const router = new Router(
     resetPasswordTokensRepository,
     sessionTokensRepository,
   ),
+  new CommunitiesRouter(
+    db,
+    sessionTokensRepository,
+  ),
+  new InvitationsRouter(
+    db,
+    sessionTokensRepository,
+  ),
 ).init()
+
+const invitationsCron = new InvitationsCron(db)
+invitationsCron.init()
 
 export const app = factory.createApp()
   .onError(errorMiddleware())

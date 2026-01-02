@@ -1,10 +1,10 @@
 import z from 'zod'
 
-const PASSWORD_MIN = 6
+import { validationConfig } from '@/config'
 
 export const ChangePasswordBodySchema = z.object({
-  currentPassword: z.string().min(PASSWORD_MIN),
-  newPassword: z.string().min(PASSWORD_MIN),
+  currentPassword: z.string().min(validationConfig.passwordMin),
+  newPassword: z.string().min(validationConfig.passwordMin),
 })
 
 export type ChangePasswordBody = z.infer<typeof ChangePasswordBodySchema>

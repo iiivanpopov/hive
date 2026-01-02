@@ -1,2 +1,2 @@
-bun run test
+bun test
 bun lint-staged

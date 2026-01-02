@@ -3,14 +3,14 @@ import type { GoogleUser } from '@hono/oauth-providers/google'
 import { eq } from 'drizzle-orm'
 
 import type { DrizzleDatabase } from '@/db/instance'
-import type { User } from '@/db/schema'
+import type { User } from '@/db/tables/users'
 import type { MailService } from '@/lib/mail'
 import type { ConfirmationTokenRepository } from '@/repositories/confirmation-token.repository'
 import type { ResetPasswordTokenRepository } from '@/repositories/reset-password.token.repository'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { authConfig } from '@/config'
-import { users } from '@/db/schema'
+import { users } from '@/db/tables/users'
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 import { normalizeUserAgent } from '@/lib/utils'
@@ -127,14 +127,12 @@ export class AuthService {
     pino.debug(`Deleted session ${sessionToken}`)
   }
 
-  GoogleOAuthUserAgent = 'Google OAuth2'
-
-  async authenticateGoogleUser(googleUser: GoogleUser) {
+  async authenticateGoogleUser(googleUser: GoogleUser, userAgent?: string) {
     const [userExists] = await this.db.query.users.findMany({
       where: { email: googleUser.email },
     })
     if (userExists) {
-      const sessionToken = await this.sessionTokens.create({ userId: userExists.id, userAgent: this.GoogleOAuthUserAgent })
+      const sessionToken = await this.sessionTokens.create({ userId: userExists.id, userAgent: normalizeUserAgent(userAgent) })
       pino.debug(`Created session ${sessionToken}`)
 
       return sessionToken
@@ -154,7 +152,7 @@ export class AuthService {
       .returning()
     pino.debug(`Created user with email ${user.email}`)
 
-    const sessionToken = await this.sessionTokens.create({ userId: user!.id, userAgent: this.GoogleOAuthUserAgent })
+    const sessionToken = await this.sessionTokens.create({ userId: user!.id, userAgent: normalizeUserAgent(userAgent) })
     pino.debug(`Created session ${sessionToken}`)
 
     return sessionToken

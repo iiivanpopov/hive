@@ -1,6 +1,6 @@
 import { createFactory } from 'hono/factory'
 
-import type { User } from '@/db/schema'
+import type { User } from '@/db/tables/users'
 
 export interface Env {
   Bindings: undefined

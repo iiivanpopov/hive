@@ -11,7 +11,7 @@ import type { ResetPasswordTokenRepository } from '@/repositories/reset-password
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { authConfig } from '@/config'
-import { toUserDto } from '@/db/schema'
+import { toUserDto } from '@/db/tables/users'
 import { factory } from '@/lib/factory'
 import { sessionMiddleware, validator } from '@/middleware'
 
@@ -51,6 +51,7 @@ export class AuthRouter {
       .post(
         '/register',
         describeRoute({
+          tags: ['Auth'],
           summary: 'Register a new user',
           description: 'Create a new user account and return a session token.',
           responses: {
@@ -78,6 +79,7 @@ export class AuthRouter {
       .post(
         '/login',
         describeRoute({
+          tags: ['Auth'],
           summary: 'Login into an account',
           description: 'Authenticate a user and return a session token.',
           responses: {
@@ -105,6 +107,7 @@ export class AuthRouter {
       .post(
         '/logout',
         describeRoute({
+          tags: ['Auth'],
           summary: 'Logout from current session',
           description: 'Invalidate the current user session token.',
           responses: {
@@ -126,6 +129,7 @@ export class AuthRouter {
       .post(
         '/confirm-email/resend',
         describeRoute({
+          tags: ['Auth'],
           summary: 'Resend confirmation email',
           description: 'Resend the account confirmation email to the user.',
           responses: {
@@ -146,6 +150,7 @@ export class AuthRouter {
       .post(
         '/confirm-email/:token',
         describeRoute({
+          tags: ['Auth'],
           summary: 'Confirm user account',
           description: 'Confirm a user account using the provided confirmation token.',
           responses: {
@@ -166,6 +171,7 @@ export class AuthRouter {
       .post(
         '/request-reset',
         describeRoute({
+          tags: ['Auth'],
           summary: 'Request password reset',
           description: 'Request a password reset token to be sent to the user email.',
           responses: {
@@ -186,6 +192,7 @@ export class AuthRouter {
       .post(
         '/reset-password/:token',
         describeRoute({
+          tags: ['Auth'],
           summary: 'Reset user password',
           description: 'Reset the user password using the provided reset token.',
           responses: {
@@ -208,6 +215,7 @@ export class AuthRouter {
       .patch(
         '/change-password',
         describeRoute({
+          tags: ['Auth'],
           summary: 'Change user password',
           description: 'Change the password of the currently authenticated user.',
           responses: {
@@ -239,6 +247,7 @@ export class AuthRouter {
         '/me',
         sessionMiddleware(this.db, this.sessionTokens),
         describeRoute({
+          tags: ['Auth'],
           summary: 'Get current authenticated user',
           description: 'Retrieve the details of the currently authenticated user.',
           responses: {
@@ -259,7 +268,7 @@ export class AuthRouter {
       .use(
         '/google/*',
         googleAuth({
-          redirect_uri: `http://${Bun.env.HOST}:${Bun.env.PORT}/api/auth/google/callback`,
+          redirect_uri: `http://${Bun.env.HOST}:${Bun.env.PORT}/auth/google/callback`,
           client_id: Bun.env.GOOGLE_ID,
           client_secret: Bun.env.GOOGLE_SECRET,
           scope: ['openid', 'email', 'profile'],
@@ -270,7 +279,7 @@ export class AuthRouter {
         async (c) => {
           const googleUser = c.get('user-google') as GoogleUser
 
-          const sessionToken = await this.authService.authenticateGoogleUser(googleUser)
+          const sessionToken = await this.authService.authenticateGoogleUser(googleUser, c.req.header('User-Agent'))
 
           setCookie(c, authConfig.sessionTokenCookie, sessionToken, {
             httpOnly: true,

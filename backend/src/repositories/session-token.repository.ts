@@ -31,12 +31,6 @@ export class SessionTokenRepository {
     await this.store.del(this.serialize(token))
   }
 
-  async refresh(token: string) {
-    const data = await this.store.get(this.serialize(token))
-    if (data)
-      await this.store.setex(this.serialize(token), authConfig.sessionTokenTtl, data)
-  }
-
   serialize(token: string) {
     return `${this.namespace}:${token}`
   }

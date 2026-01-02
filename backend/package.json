@@ -2,21 +2,22 @@
   "name": "hive-backend",
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development bun --hot ./src/app/entrypoint.ts",
+    "dev": "NODE_ENV=development bun --watch ./src/app/entrypoint.ts",
     "prod": "NODE_ENV=production bun ./dist/index.js",
-    "build:dev": "bun --bun tsgo -b && NODE_ENV=development bun build.script.ts",
-    "build:prod": "NODE_ENV=production bun build.script.ts",
+    "build:dev": "bun --bun tsgo -b && NODE_ENV=development bun ./scripts/build.script.ts",
+    "build:prod": "NODE_ENV=production bun ./scripts/build.script.ts",
     "build:client": "bun --bun tsgo -p ./tsconfig.build.json",
     "lint": "bun --bun eslint .",
     "db:studio": "bun --bun drizzle-kit studio",
     "db:push": "bun --bun drizzle-kit push",
     "db:generate": "bun --bun drizzle-kit generate",
-    "test": "bun test"
+    "db:regenerate": "bun ./scripts/db.regenerate.script.ts"
   },
   "dependencies": {
     "@hono/oauth-providers": "^0.8.5",
     "@hono/standard-validator": "^0.2.1",
     "@scalar/hono-api-reference": "^0.9.30",
+    "croner": "^9.1.0",
     "drizzle-orm": "^1.0.0-beta.7-c32811f",
     "hono": "4.11.0",
     "hono-openapi": "^1.1.2",

@@ -1,4 +1,4 @@
-import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
+import { deleteCookie, getCookie } from 'hono/cookie'
 
 import type { DrizzleDatabase } from '@/db/instance'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
@@ -32,15 +32,6 @@ export function sessionMiddleware(db: DrizzleDatabase, sessionTokens: SessionTok
       deleteCookie(c, authConfig.sessionTokenCookie)
       throw ApiException.Unauthorized('User not found', 'USER_NOT_FOUND')
     }
-
-    await sessionTokens.refresh(sessionToken)
-
-    setCookie(c, authConfig.sessionTokenCookie, sessionToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: authConfig.sessionTokenTtl,
-    })
 
     c.set('user', user)
 
