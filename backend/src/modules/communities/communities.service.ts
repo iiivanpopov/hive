@@ -4,6 +4,7 @@ import type { DrizzleDatabase } from '@/db/instance'
 
 import { communities } from '@/db/tables/communities'
 import { communityMembers } from '@/db/tables/community-members'
+import { toUserDto } from '@/db/tables/users/users.utils'
 import { ApiException } from '@/lib/api-exception'
 
 import type { CreateCommunityBody } from './schema/create-community.schema'
@@ -13,6 +14,47 @@ export class CommunitiesService {
   constructor(
     private readonly db: DrizzleDatabase,
   ) {}
+
+  async getCommunityMembers(communityId: number) {
+    const community = await this.db.query.communities.findFirst({
+      where: {
+        id: communityId,
+      },
+    })
+    if (!community)
+      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
+
+    const members = await this.db.query.communityMembers.findMany({
+      where: {
+        communityId,
+      },
+      with: {
+        user: true,
+      },
+    })
+
+    return members.map(member => toUserDto(member.user!))
+  }
+
+  async getJoinedCommunities(userId: number) {
+    const user = await this.db.query.users.findFirst({
+      where: {
+        id: userId,
+      },
+    })
+    if (!user)
+      throw ApiException.NotFound('User not found', 'USER_NOT_FOUND')
+
+    const communities = await this.db.query.communities.findMany({
+      where: {
+        members: {
+          userId,
+        },
+      },
+    })
+
+    return communities
+  }
 
   async leaveCommunity(communityId: number, userId: number) {
     const community = await this.db.query.communities.findFirst({

@@ -9,11 +9,11 @@ export const CreateInvitationBodySchema = z.object({
 
 export type CreateInvitationBody = z.infer<typeof CreateInvitationBodySchema>
 
-export const CreateInvitationParamSchema = z.object({
+export const CreateInvitationParamsSchema = z.object({
   id: IdSchema,
 })
 
-export type CreateInvitationParam = z.infer<typeof CreateInvitationParamSchema>
+export type CreateInvitationParam = z.infer<typeof CreateInvitationParamsSchema>
 
 export const CreateInvitationResponseSchema = z.object({
   invitation: InvitationSchema,

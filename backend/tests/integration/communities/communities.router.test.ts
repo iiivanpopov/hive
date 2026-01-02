@@ -50,6 +50,34 @@ describe('/', () => {
   })
 })
 
+describe('/joined', () => {
+  it('should get joined communities', async () => {
+    await clientMock.communities.$post({
+      json: {
+        name: 'Test Community',
+      },
+    }, { headers: { Cookie: authCookie } })
+
+    await clientMock.communities.$post({
+      json: {
+        name: 'Test Community 2',
+      },
+    }, { headers: { Cookie: authCookie } })
+
+    const getJoinedCommunitiesResponse = await clientMock.communities.joined.$get({}, { headers: { Cookie: authCookie } })
+
+    expect(getJoinedCommunitiesResponse.status).toBe(200)
+
+    const body = await getJoinedCommunitiesResponse.json()
+
+    expect(body.communities).toHaveLength(2)
+    expect(body.communities[0]).toMatchObject({
+      id: 1,
+      name: 'Test Community',
+    })
+  })
+})
+
 describe('/:id', () => {
   it('should delete community', async () => {
     await clientMock.communities.$post({
@@ -97,6 +125,28 @@ describe('/:id', () => {
     })
 
     expect(community!.name).toBe('Updated Community')
+  })
+
+  it('should get community members', async () => {
+    await clientMock.communities.$post({
+      json: {
+        name: 'Test Community',
+      },
+    }, { headers: { Cookie: authCookie } })
+
+    const getCommunityMembersResponse = await clientMock.communities[':id'].members.$get({
+      param: { id: '1' },
+    }, { headers: { Cookie: authCookie } })
+
+    expect(getCommunityMembersResponse.status).toBe(200)
+
+    const body = await getCommunityMembersResponse.json()
+
+    expect(body.members).toHaveLength(1)
+    expect(body.members[0]).toMatchObject({
+      id: 1,
+      username: 'testuser',
+    })
   })
 })
 

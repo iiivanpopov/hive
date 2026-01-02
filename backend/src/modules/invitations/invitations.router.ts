@@ -8,9 +8,9 @@ import { factory } from '@/lib/factory'
 import { sessionMiddleware, validator } from '@/middleware'
 
 import { InvitationsService } from './invitations.service'
-import { CreateInvitationBodySchema, CreateInvitationParamSchema, CreateInvitationResponseSchema } from './schema/create-invitation.schema'
-import { DeleteInvitationParamSchema } from './schema/delete-invitation.schema'
-import { JoinInvitationParamSchema, JoinInvitationSchema } from './schema/join-invitation.schema'
+import { CreateInvitationBodySchema, CreateInvitationParamsSchema, CreateInvitationResponseSchema } from './schema/create-invitation.schema'
+import { DeleteInvitationParamsSchema } from './schema/delete-invitation.schema'
+import { JoinInvitationParamsSchema, JoinInvitationSchema } from './schema/join-invitation.schema'
 
 export class InvitationsRouter implements BaseRouter {
   readonly basePath = '/'
@@ -45,7 +45,7 @@ export class InvitationsRouter implements BaseRouter {
           },
         }),
         sessionMiddleware(this.db, this.sessionTokens),
-        validator('param', CreateInvitationParamSchema),
+        validator('param', CreateInvitationParamsSchema),
         validator('json', CreateInvitationBodySchema),
         async (c) => {
           const { id } = c.req.valid('param')
@@ -70,7 +70,7 @@ export class InvitationsRouter implements BaseRouter {
           },
         }),
         sessionMiddleware(this.db, this.sessionTokens),
-        validator('param', JoinInvitationParamSchema),
+        validator('param', JoinInvitationParamsSchema),
         async (c) => {
           const { token } = c.req.valid('param')
           const user = c.get('user')
@@ -98,7 +98,7 @@ export class InvitationsRouter implements BaseRouter {
           },
         }),
         sessionMiddleware(this.db, this.sessionTokens),
-        validator('param', DeleteInvitationParamSchema),
+        validator('param', DeleteInvitationParamsSchema),
         async (c) => {
           const { id } = c.req.valid('param')
           const user = c.get('user')

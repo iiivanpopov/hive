@@ -2,8 +2,8 @@ import z from 'zod'
 
 import { IdSchema } from '@/shared/zod'
 
-export const DeleteCommunityParamSchema = z.object({
+export const DeleteCommunityParamsSchema = z.object({
   id: IdSchema,
 })
 
-export type DeleteCommunityParam = z.infer<typeof DeleteCommunityParamSchema>
+export type DeleteCommunityParam = z.infer<typeof DeleteCommunityParamsSchema>
