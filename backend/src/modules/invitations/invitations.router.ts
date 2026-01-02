@@ -9,6 +9,8 @@ import { sessionMiddleware, validator } from '@/middleware'
 
 import { InvitationsService } from './invitations.service'
 import { CreateInvitationBodySchema, CreateInvitationParamSchema, CreateInvitationResponseSchema } from './schema/create-invitation.schema'
+import { DeleteInvitationParamSchema } from './schema/delete-invitation.schema'
+import { JoinInvitationParamSchema, JoinInvitationSchema } from './schema/join-invitation.schema'
 
 export class InvitationsRouter implements BaseRouter {
   readonly basePath = '/'
@@ -53,6 +55,57 @@ export class InvitationsRouter implements BaseRouter {
           const invitation = await this.invitationsService.createCommunityInvitation(communityId, body, user.id)
 
           return c.json({ invitation }, 201)
+        },
+      )
+      .post(
+        '/join/:token',
+        sessionMiddleware(this.db, this.sessionTokens),
+        describeRoute({
+          tags: ['Invitations'],
+          summary: 'Join a community via invitation',
+          description: 'Join a community using an invitation ID.',
+          responses: {
+            204: {
+              description: 'Joined community successfully',
+            },
+          },
+        }),
+        validator('param', JoinInvitationParamSchema),
+        async (c) => {
+          const { token } = c.req.valid('param')
+          const user = c.get('user')
+
+          await this.invitationsService.joinCommunityViaInvitation(token, user.id)
+
+          return c.body(null, 204)
+        },
+      )
+      .delete(
+        '/invitations/:id',
+        sessionMiddleware(this.db, this.sessionTokens),
+        describeRoute({
+          tags: ['Invitations'],
+          summary: 'Revoke an invitation',
+          description: 'Revoke an existing community invitation.',
+          responses: {
+            200: {
+              description: 'Invitation revoked successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(JoinInvitationSchema),
+                },
+              },
+            },
+          },
+        }),
+        validator('param', DeleteInvitationParamSchema),
+        async (c) => {
+          const { id } = c.req.valid('param')
+          const user = c.get('user')
+
+          const invitation = await this.invitationsService.revokeInvitation(id, user.id)
+
+          return c.json({ invitation }, 200)
         },
       )
 
