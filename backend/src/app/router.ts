@@ -1,4 +1,5 @@
 import type { AuthRouter } from '@/modules/auth'
+import type { ChannelsRouter } from '@/modules/channels/channels.router'
 import type { CommunitiesRouter } from '@/modules/communities'
 import type { CommunityMembersRouter } from '@/modules/community-members'
 import type { InvitationsRouter } from '@/modules/invitations'
@@ -11,6 +12,7 @@ export class Router {
     private readonly communitiesRouter: CommunitiesRouter,
     private readonly invitationsRouter: InvitationsRouter,
     private readonly communityMembersRouter: CommunityMembersRouter,
+    private readonly channelsRouter: ChannelsRouter,
   ) {}
 
   init() {
@@ -20,6 +22,7 @@ export class Router {
       .route('/', this.communitiesRouter.init())
       .route('/', this.communityMembersRouter.init())
       .route('/', this.invitationsRouter.init())
+      .route('/', this.channelsRouter.init())
 
     return app
   }

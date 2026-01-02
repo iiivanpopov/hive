@@ -9,7 +9,7 @@ export const ResetPasswordParamsSchema = z.object({
 export type ResetPasswordParams = z.infer<typeof ResetPasswordParamsSchema>
 
 export const ResetPasswordBodySchema = z.object({
-  newPassword: z.string().min(validationConfig.passwordMin),
+  newPassword: z.string().min(validationConfig.minPassword),
 })
 
 export type ResetPasswordBody = z.infer<typeof ResetPasswordBodySchema>

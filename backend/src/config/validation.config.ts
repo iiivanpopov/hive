@@ -3,5 +3,10 @@ export const validationConfig = {
   maxCommunityName: 50,
 
   minUsername: 5,
-  passwordMin: 6,
+  minPassword: 6,
+
+  minChannelName: 3,
+  maxChannelName: 20,
+
+  maxChannelDescription: 500,
 }

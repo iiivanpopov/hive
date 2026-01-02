@@ -67,4 +67,24 @@ export const relations = defineRelations({
       to: r.communities.id,
     }),
   },
+  channels: {
+    community: r.one.communities({
+      from: r.channels.communityId,
+      to: r.communities.id,
+    }),
+    messages: r.many.messages({
+      from: r.channels.id,
+      to: r.messages.channelId,
+    }),
+  },
+  messages: {
+    channel: r.one.channels({
+      from: r.messages.channelId,
+      to: r.channels.id,
+    }),
+    user: r.one.users({
+      from: r.messages.userId,
+      to: r.users.id,
+    }),
+  },
 }))

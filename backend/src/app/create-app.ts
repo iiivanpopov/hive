@@ -9,6 +9,7 @@ import type { SessionTokenRepository } from '@/repositories/session-token.reposi
 import { factory } from '@/lib/factory'
 import { errorMiddleware, loggerMiddleware } from '@/middleware'
 import { AuthRouter } from '@/modules/auth'
+import { ChannelsRouter } from '@/modules/channels/channels.router'
 import { CommunitiesRouter } from '@/modules/communities'
 import { CommunityMembersRouter } from '@/modules/community-members'
 import { InvitationsRouter } from '@/modules/invitations'
@@ -39,6 +40,10 @@ export function createApp(
       sessionTokensRepository,
     ),
     new CommunityMembersRouter(
+      db,
+      sessionTokensRepository,
+    ),
+    new ChannelsRouter(
       db,
       sessionTokensRepository,
     ),

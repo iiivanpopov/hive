@@ -25,7 +25,6 @@ export class CommunityMembersRouter implements BaseRouter {
     const app = factory
       .createApp()
       .basePath(this.basePath)
-      .use(sessionMiddleware(this.db, this.sessionTokens))
       .get(
         '/communities/:id/members',
         describeRoute({
@@ -43,6 +42,7 @@ export class CommunityMembersRouter implements BaseRouter {
             },
           },
         }),
+        sessionMiddleware(this.db, this.sessionTokens),
         validator('param', GetCommunityMembersParamsSchema),
         async (c) => {
           const { id } = c.req.valid('param')
