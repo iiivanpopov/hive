@@ -45,4 +45,10 @@ export const relations = defineRelations({
       to: r.users.id,
     }),
   },
+  invitations: {
+    community: r.one.communities({
+      from: r.invitations.communityId,
+      to: r.communities.id,
+    }),
+  },
 }))
