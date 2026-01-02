@@ -51,7 +51,7 @@ export class AuthRouter {
       .post(
         '/register',
         describeRoute({
-          tags: ['Auth'],
+          tags: ['Authentication'],
           summary: 'Register a new user',
           description: 'Create a new user account and return a session token.',
           responses: {
@@ -79,7 +79,7 @@ export class AuthRouter {
       .post(
         '/login',
         describeRoute({
-          tags: ['Auth'],
+          tags: ['Authentication'],
           summary: 'Login into an account',
           description: 'Authenticate a user and return a session token.',
           responses: {
@@ -107,7 +107,7 @@ export class AuthRouter {
       .post(
         '/logout',
         describeRoute({
-          tags: ['Auth'],
+          tags: ['Authentication'],
           summary: 'Logout from current session',
           description: 'Invalidate the current user session token.',
           responses: {
@@ -129,7 +129,7 @@ export class AuthRouter {
       .post(
         '/confirm-email/resend',
         describeRoute({
-          tags: ['Auth'],
+          tags: ['Authentication'],
           summary: 'Resend confirmation email',
           description: 'Resend the account confirmation email to the user.',
           responses: {
@@ -150,7 +150,7 @@ export class AuthRouter {
       .post(
         '/confirm-email/:token',
         describeRoute({
-          tags: ['Auth'],
+          tags: ['Authentication'],
           summary: 'Confirm user account',
           description: 'Confirm a user account using the provided confirmation token.',
           responses: {
@@ -171,7 +171,7 @@ export class AuthRouter {
       .post(
         '/request-reset',
         describeRoute({
-          tags: ['Auth'],
+          tags: ['Authentication'],
           summary: 'Request password reset',
           description: 'Request a password reset token to be sent to the user email.',
           responses: {
@@ -192,7 +192,7 @@ export class AuthRouter {
       .post(
         '/reset-password/:token',
         describeRoute({
-          tags: ['Auth'],
+          tags: ['Authentication'],
           summary: 'Reset user password',
           description: 'Reset the user password using the provided reset token.',
           responses: {
@@ -215,7 +215,7 @@ export class AuthRouter {
       .patch(
         '/change-password',
         describeRoute({
-          tags: ['Auth'],
+          tags: ['Authentication'],
           summary: 'Change user password',
           description: 'Change the password of the currently authenticated user.',
           responses: {
@@ -247,7 +247,7 @@ export class AuthRouter {
         '/me',
         sessionMiddleware(this.db, this.sessionTokens),
         describeRoute({
-          tags: ['Auth'],
+          tags: ['Authentication'],
           summary: 'Get current authenticated user',
           description: 'Retrieve the details of the currently authenticated user.',
           responses: {
@@ -278,8 +278,9 @@ export class AuthRouter {
         '/google/callback',
         async (c) => {
           const googleUser = c.get('user-google') as GoogleUser
+          const userAgent = c.req.header('User-Agent')
 
-          const sessionToken = await this.authService.authenticateGoogleUser(googleUser, c.req.header('User-Agent'))
+          const sessionToken = await this.authService.authenticateGoogleUser(googleUser, userAgent)
 
           setCookie(c, authConfig.sessionTokenCookie, sessionToken, {
             httpOnly: true,
