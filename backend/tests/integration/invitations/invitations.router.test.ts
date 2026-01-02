@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import { clientMock } from '@/tests/mocks/client.mock'
 import { databaseMock } from '@/tests/mocks/database.mock'
+import { extractSessionTokenCookie } from '@/tests/utils'
 
 let authCookie: string
 
@@ -13,7 +14,7 @@ beforeEach(async () => {
       password: 'password123',
     },
   })
-  authCookie = response.headers.getSetCookie()[0].split(';')[0]
+  authCookie = extractSessionTokenCookie(response.headers)
 
   await clientMock.communities.$post({
     json: {
@@ -61,7 +62,7 @@ describe('/communities/join/:token', () => {
         password: 'password123',
       },
     })
-    authCookie = registerResponse.headers.getSetCookie()[0].split(';')[0]
+    authCookie = extractSessionTokenCookie(registerResponse.headers)
 
     const joinInvitationResponse = await clientMock.communities.join[':token'].$post({
       param: { token: invitation.token },

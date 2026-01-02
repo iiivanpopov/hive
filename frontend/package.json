@@ -9,7 +9,7 @@
     "generate:api": "bun heyapi.script.ts",
     "lint": "bun --bun eslint .",
     "lint:css": "bun --bun stylelint \"./src/**/*.css\"",
-    "test": "true"
+    "test": "echo \"Frontend tests are not yet implemented\""
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
