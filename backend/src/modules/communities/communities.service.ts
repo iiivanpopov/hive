@@ -15,7 +15,7 @@ export class CommunitiesService {
   ) {}
 
   async updateCommunity(communityId: number, data: UpdateCommunityBody, userId: number) {
-    const [community] = await this.db.query.communities.findMany({
+    const community = await this.db.query.communities.findFirst({
       where: {
         id: communityId,
       },
@@ -35,7 +35,7 @@ export class CommunitiesService {
   }
 
   async deleteCommunity(communityId: number, userId: number) {
-    const [community] = await this.db.query.communities.findMany({
+    const community = await this.db.query.communities.findFirst({
       where: {
         id: communityId,
       },
@@ -47,19 +47,13 @@ export class CommunitiesService {
     if (community.ownerId !== userId)
       throw ApiException.Forbidden('You do not have permission to delete this community', 'FORBIDDEN')
 
-    await this.db.transaction(async (tx) => {
-      await tx
-        .delete(communityMembers)
-        .where(eq(communityMembers.communityId, communityId))
-
-      await tx
-        .delete(communities)
-        .where(eq(communities.id, communityId))
-    })
+    await this.db
+      .delete(communities)
+      .where(eq(communities.id, communityId))
   }
 
   async createCommunity(body: CreateCommunityBody, ownerId: number) {
-    const [communityExists] = await this.db.query.communities.findMany({
+    const communityExists = await this.db.query.communities.findFirst({
       where: {
         name: body.name,
       },

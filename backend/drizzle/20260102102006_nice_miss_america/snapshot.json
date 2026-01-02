@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "7e450f42-d17f-4f5f-8741-89e3d7819187",
+  "id": "a2188e76-a195-4cad-8cc7-097906650e53",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -15,7 +15,7 @@
       "entityType": "tables"
     },
     {
-      "name": "invitation_links",
+      "name": "invitation",
       "entityType": "tables"
     },
     {
@@ -120,7 +120,7 @@
       "generated": null,
       "name": "id",
       "entityType": "columns",
-      "table": "invitation_links"
+      "table": "invitation"
     },
     {
       "type": "integer",
@@ -130,7 +130,7 @@
       "generated": null,
       "name": "community_id",
       "entityType": "columns",
-      "table": "invitation_links"
+      "table": "invitation"
     },
     {
       "type": "text",
@@ -138,9 +138,9 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "link",
+      "name": "token",
       "entityType": "columns",
-      "table": "invitation_links"
+      "table": "invitation"
     },
     {
       "type": "integer",
@@ -150,7 +150,7 @@
       "generated": null,
       "name": "expires_at",
       "entityType": "columns",
-      "table": "invitation_links"
+      "table": "invitation"
     },
     {
       "type": "integer",
@@ -160,7 +160,7 @@
       "generated": null,
       "name": "created_at",
       "entityType": "columns",
-      "table": "invitation_links"
+      "table": "invitation"
     },
     {
       "type": "integer",
@@ -298,9 +298,9 @@
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
-      "name": "fk_invitation_links_community_id_communities_id_fk",
+      "name": "fk_invitation_community_id_communities_id_fk",
       "entityType": "fks",
-      "table": "invitation_links"
+      "table": "invitation"
     },
     {
       "columns": [
@@ -325,8 +325,8 @@
         "id"
       ],
       "nameExplicit": false,
-      "name": "invitation_links_pk",
-      "table": "invitation_links",
+      "name": "invitation_pk",
+      "table": "invitation",
       "entityType": "pks"
     },
     {
@@ -340,12 +340,12 @@
     },
     {
       "columns": [
-        "link"
+        "token"
       ],
       "nameExplicit": false,
-      "name": "invitation_links_link_unique",
+      "name": "invitation_token_unique",
       "entityType": "uniques",
-      "table": "invitation_links"
+      "table": "invitation"
     },
     {
       "columns": [

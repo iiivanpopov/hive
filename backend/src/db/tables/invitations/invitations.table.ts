@@ -3,12 +3,12 @@ import * as s from 'drizzle-orm/sqlite-core'
 
 import { communities } from '../communities/communities.table'
 
-export const invitations = s.sqliteTable('invitation_links', {
+export const invitations = s.sqliteTable('invitation', {
   id: s.integer('id').primaryKey({ autoIncrement: true }),
   communityId: s.integer('community_id')
     .notNull()
     .references(() => communities.id, { onDelete: 'cascade' }),
-  link: s.text('link')
+  token: s.text('token')
     .unique()
     .notNull(),
   expiresAt: s.integer('expires_at', { mode: 'timestamp' }),

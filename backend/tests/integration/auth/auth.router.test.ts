@@ -1,24 +1,20 @@
 import { afterEach, beforeAll, describe, expect, it as test } from 'bun:test'
-import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { testClient } from 'hono/testing'
 import { parse as parseCookie } from 'hono/utils/cookie'
-import path from 'node:path'
 
 import type { MailOptions } from '@/lib/mail'
 
-import { users } from '@/db/tables/users'
+import { client } from '@/tests/_utils/client'
 import { createApp } from '@/tests/_utils/create-app'
+import { memoryDatabase, migrateDatabase, resetDatabase } from '@/tests/_utils/database'
 import { memoryCache } from '@/tests/_utils/memory-cache'
 
-import { client } from '../_utils/client'
-import { memoryDatabase, resetDatabase } from '../_utils/database'
-
-beforeAll(async () => {
-  migrate(memoryDatabase, { migrationsFolder: path.resolve(__dirname, '../../drizzle') })
+beforeAll(() => {
+  migrateDatabase(memoryDatabase)
 })
 
 afterEach(() => {
-  resetDatabase(memoryDatabase, { users })
+  resetDatabase(memoryDatabase)
   memoryCache.reset()
 })
 

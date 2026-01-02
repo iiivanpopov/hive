@@ -43,7 +43,7 @@ export class AuthService {
   }
 
   async register(data: RegisterBody, userAgent?: string) {
-    const [userExists] = await this.db.query.users.findMany({
+    const userExists = await this.db.query.users.findFirst({
       where: {
         OR: [
           { email: data.email },
@@ -98,7 +98,7 @@ export class AuthService {
   }
 
   async login(data: LoginBody, userAgent?: string) {
-    const [user] = await this.db.query.users.findMany({
+    const user = await this.db.query.users.findFirst({
       where: {
         OR: [
           { email: data.identity },
@@ -128,7 +128,7 @@ export class AuthService {
   }
 
   async authenticateGoogleUser(googleUser: GoogleUser, userAgent?: string) {
-    const [userExists] = await this.db.query.users.findMany({
+    const userExists = await this.db.query.users.findFirst({
       where: { email: googleUser.email },
     })
     if (userExists) {
@@ -174,7 +174,7 @@ export class AuthService {
   }
 
   async requestPasswordReset(email: string) {
-    const [user] = await this.db.query.users.findMany({
+    const user = await this.db.query.users.findFirst({
       where: { email },
     })
 
@@ -233,7 +233,7 @@ export class AuthService {
   }
 
   async resendConfirmationEmail(email: string) {
-    const [user] = await this.db.query.users.findMany({
+    const user = await this.db.query.users.findFirst({
       where: { email },
     })
 

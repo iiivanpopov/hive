@@ -16,13 +16,13 @@ CREATE TABLE `community_members` (
 	CONSTRAINT `fk_community_members_user_id_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
-CREATE TABLE `invitation_links` (
+CREATE TABLE `invitation` (
 	`id` integer PRIMARY KEY AUTOINCREMENT,
 	`community_id` integer NOT NULL,
-	`link` text NOT NULL UNIQUE,
+	`token` text NOT NULL UNIQUE,
 	`expires_at` integer,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
-	CONSTRAINT `fk_invitation_links_community_id_communities_id_fk` FOREIGN KEY (`community_id`) REFERENCES `communities`(`id`) ON DELETE CASCADE
+	CONSTRAINT `fk_invitation_community_id_communities_id_fk` FOREIGN KEY (`community_id`) REFERENCES `communities`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
 CREATE TABLE `users` (

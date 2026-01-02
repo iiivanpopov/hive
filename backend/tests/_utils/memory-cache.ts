@@ -10,7 +10,6 @@ export class MemoryCache {
     setTimeout(() => {
       this.store.delete(key)
     }, ttl * 1000)
-    return 'OK'
   }
 
   async get(key: string): Promise<string | null> {

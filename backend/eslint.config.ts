@@ -7,5 +7,6 @@ export default antfu({
   rules: {
     ...globalESLintConfig.rules,
     'unicorn/throw-new-error': 'off',
+    'no-new': 'off',
   },
 })

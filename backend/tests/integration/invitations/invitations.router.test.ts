@@ -1,30 +1,18 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, expectTypeOf, it } from 'bun:test'
-import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
-import path from 'node:path'
 
-import { communities } from '@/db/tables/communities'
-import { communityMembers } from '@/db/tables/community-members'
-import { invitations } from '@/db/tables/invitations'
-import { users } from '@/db/tables/users'
-
-import { client } from '../_utils/client'
-import { getSessionTokenCookie } from '../_utils/cookies'
-import { memoryDatabase, resetDatabase } from '../_utils/database'
-import { memoryCache } from '../_utils/memory-cache'
+import { client } from '@/tests/_utils/client'
+import { getSessionTokenCookie } from '@/tests/_utils/cookies'
+import { memoryDatabase, migrateDatabase, resetDatabase } from '@/tests/_utils/database'
+import { memoryCache } from '@/tests/_utils/memory-cache'
 
 let authCookie: string
 
-beforeAll(async () => {
-  migrate(memoryDatabase, { migrationsFolder: path.resolve(__dirname, '../../drizzle') })
+beforeAll(() => {
+  migrateDatabase(memoryDatabase)
 })
 
 afterEach(() => {
-  resetDatabase(memoryDatabase, {
-    users,
-    communities,
-    communityMembers,
-    invitations,
-  })
+  resetDatabase(memoryDatabase)
   memoryCache.reset()
 })
 
@@ -77,7 +65,7 @@ describe('/communities/:communityId/invitations', () => {
 
     expect(createInvitationResponse.status).toBe(201)
     expect(invitation).toHaveProperty('id')
-    expectTypeOf(invitation.link).toBeString()
+    expectTypeOf(invitation.token).toBeString()
     expect(invitation).toHaveProperty('expiresAt')
   })
 })
