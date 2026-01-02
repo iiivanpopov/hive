@@ -90,7 +90,9 @@ describe('/', () => {
       },
     })
   })
+})
 
+describe('/communities/:id', () => {
   it('should delete a community', async () => {
     const createCommunityResponse = await client.communities.$post(
       {
@@ -121,5 +123,43 @@ describe('/', () => {
     )
 
     expect(deleteCommunityResponse.status).toBe(204)
+  })
+
+  it('should update a community', async () => {
+    const createCommunityResponse = await client.communities.$post(
+      {
+        json: {
+          name: 'Initial Community Name',
+        },
+      },
+      {
+        headers: {
+          Cookie: authCookie,
+        },
+      },
+    )
+
+    const { community } = await createCommunityResponse.json()
+
+    const updateCommunityResponse = await client.communities[':id'].$patch(
+      {
+        param: {
+          id: `${community.id}`,
+        },
+        json: {
+          name: 'Updated Community Name',
+        },
+      },
+      {
+        headers: {
+          Cookie: authCookie,
+        },
+      },
+    )
+
+    expect(updateCommunityResponse.status).toBe(200)
+
+    const updatedCommunityData = await updateCommunityResponse.json()
+    expect(updatedCommunityData.community.name).toBe('Updated Community Name')
   })
 })

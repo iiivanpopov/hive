@@ -10,6 +10,7 @@ import { sessionMiddleware, validator } from '@/middleware'
 import { CommunitiesService } from './communities.service'
 import { CreateCommunityBodySchema, CreateCommunityResponseSchema } from './schema/create-community.schema'
 import { DeleteCommunityParamSchema } from './schema/delete-community.schema'
+import { UpdateCommunityBodySchema, UpdateCommunityParamSchema, UpdateCommunityResponseSchema } from './schema/update-community.schema'
 
 export class CommunitiesRouter implements BaseRouter {
   readonly basePath = '/communities'
@@ -74,6 +75,35 @@ export class CommunitiesRouter implements BaseRouter {
           await this.communitiesService.deleteCommunity(params.id, user.id)
 
           return c.body(null, 204)
+        },
+      )
+      .patch(
+        '/:id',
+        describeRoute({
+          tags: ['Communities'],
+          summary: 'Update a community',
+          description: 'Update a community by its ID.',
+          responses: {
+            200: {
+              description: 'Community updated successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(UpdateCommunityResponseSchema),
+                },
+              },
+            },
+          },
+        }),
+        validator('param', UpdateCommunityParamSchema),
+        validator('json', UpdateCommunityBodySchema),
+        async (c) => {
+          const { id } = c.req.valid('param')
+          const body = c.req.valid('json')
+          const user = c.get('user')
+
+          const community = await this.communitiesService.updateCommunity(id, body, user.id)
+
+          return c.json({ community })
         },
       )
 

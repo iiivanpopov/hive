@@ -7,11 +7,32 @@ import { communityMembers } from '@/db/tables/community-members'
 import { ApiException } from '@/lib/api-exception'
 
 import type { CreateCommunityBody } from './schema/create-community.schema'
+import type { UpdateCommunityBody } from './schema/update-community.schema'
 
 export class CommunitiesService {
   constructor(
     private readonly db: DrizzleDatabase,
   ) {}
+
+  async updateCommunity(communityId: number, data: UpdateCommunityBody, userId: number) {
+    const [community] = await this.db.query.communities.findMany({
+      where: {
+        id: communityId,
+      },
+    })
+    if (!community)
+      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
+
+    if (community.ownerId !== userId)
+      throw ApiException.Forbidden('You do not have permission to update this community', 'FORBIDDEN')
+    const [updatedCommunity] = await this.db
+      .update(communities)
+      .set({ name: data.name })
+      .where(eq(communities.id, communityId))
+      .returning()
+
+    return updatedCommunity
+  }
 
   async deleteCommunity(communityId: number, userId: number) {
     const [community] = await this.db.query.communities.findMany({
