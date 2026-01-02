@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import { clientMock } from '@/tests/mocks/client.mock'
 import { databaseMock } from '@/tests/mocks/database.mock'

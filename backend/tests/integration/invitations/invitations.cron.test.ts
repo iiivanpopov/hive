@@ -1,4 +1,4 @@
-import { beforeEach, expect, it } from 'bun:test'
+import { beforeEach, expect, it } from 'vitest'
 
 import { communities } from '@/db/tables/communities'
 import { invitations } from '@/db/tables/invitations'

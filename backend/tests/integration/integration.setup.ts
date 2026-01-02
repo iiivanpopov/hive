@@ -1,4 +1,4 @@
-import { afterEach, beforeAll } from 'bun:test'
+import { afterEach, beforeAll } from 'vitest'
 
 import { migrateDatabase, resetDatabase } from '@/db/utils'
 import { cacheMock } from '@/tests/mocks/cache.mock'

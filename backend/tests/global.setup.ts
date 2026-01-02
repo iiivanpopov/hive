@@ -1,4 +1,5 @@
-import { afterEach, mock } from 'bun:test'
+import { mock } from 'bun:test'
+import { afterEach } from 'vitest'
 
 afterEach(() => {
   mock.clearAllMocks()

@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, describe, expect, it } from 'bun:test'
+import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 
 import { migrateDatabase, resetDatabase } from '@/db/utils'
 import { cacheMock } from '@/tests/mocks/cache.mock'
@@ -64,7 +64,6 @@ describe('/register', () => {
     const response = await clientMock.auth.register.$post({ json: payload })
     const body = await response.json()
 
-    // @ts-expect-error-next-line
     expect(response.status).toBe(400)
     expect(body).toMatchObject({
       error: { code: 'USER_EXISTS' },
@@ -146,7 +145,6 @@ describe('/confirm-email', () => {
       json: { email: payload.email },
     })
 
-    // @ts-expect-error-next-line
     expect(response.status).toBe(429)
   })
 })
@@ -162,7 +160,6 @@ describe('/login', () => {
 
     const body = await response.json()
 
-    // @ts-expect-error-next-line
     expect(response.status).toBe(401)
     expect(body).toMatchObject({
       error: { code: 'INVALID_CREDENTIALS' },
@@ -252,7 +249,6 @@ describe('/request-reset', () => {
       json: { email: 'testuser@gmail.com' },
     })
 
-    // @ts-expect-error-next-line
     expect(response.status).toBe(429)
     expect(await response.json()).toMatchObject({
       error: { code: 'TOO_MANY_PASSWORD_RESET_ATTEMPTS' },
@@ -348,7 +344,6 @@ describe('/change-password', () => {
       },
     )
 
-    // @ts-expect-error-next-line
     expect(response.status).toBe(401)
     expect(await response.json()).toMatchObject({
       error: { code: 'INVALID_CURRENT_PASSWORD' },

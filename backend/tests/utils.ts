@@ -1,7 +1,7 @@
 import type { ClientResponse } from 'hono/client'
 
-import { expect } from 'bun:test'
 import { parse as parseCookie } from 'hono/utils/cookie'
+import { expect } from 'vitest'
 
 import { authConfig } from '@/config'
 
