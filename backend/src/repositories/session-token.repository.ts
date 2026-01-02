@@ -1,10 +1,6 @@
-import { authConfig } from '@/config'
+import type { KeyValueStore } from '@/types/interfaces'
 
-export interface SessionTokenStore {
-  setex: (key: string, ttl: number, value: string) => Promise<void | 'OK'>
-  get: (key: string) => Promise<string | null>
-  del: (key: string) => Promise<void | number>
-}
+import { authConfig } from '@/config'
 
 export interface SessionTokenPayload {
   userId: number
@@ -14,7 +10,7 @@ export interface SessionTokenPayload {
 export class SessionTokenRepository {
   namespace = 'session-token'
 
-  constructor(private readonly store: SessionTokenStore) {}
+  constructor(private readonly store: KeyValueStore) {}
 
   async create(data: SessionTokenPayload) {
     const token = crypto.randomUUID()

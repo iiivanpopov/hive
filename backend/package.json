@@ -11,7 +11,10 @@
     "db:studio": "bun --bun drizzle-kit studio",
     "db:push": "bun --bun drizzle-kit push",
     "db:generate": "bun --bun drizzle-kit generate",
-    "db:regenerate": "bun ./scripts/db.regenerate.script.ts"
+    "db:regenerate": "bun ./scripts/db.regenerate.script.ts",
+    "test:integration": "bun test ./tests/integration --preload ./tests/global.setup.ts --preload ./tests/integration/integration.setup.ts",
+    "test:unit": "bun test ./tests/unit --preload ./tests/global.setup.ts",
+    "test": "bun run test:integration && bun run test:unit"
   },
   "dependencies": {
     "@hono/oauth-providers": "^0.8.5",

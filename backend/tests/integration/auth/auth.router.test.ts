@@ -1,163 +1,176 @@
-import { afterEach, beforeAll, describe, expect, it as test } from 'bun:test'
-import { testClient } from 'hono/testing'
-import { parse as parseCookie } from 'hono/utils/cookie'
+import { afterEach, beforeAll, describe, expect, it } from 'bun:test'
 
-import type { MailOptions } from '@/lib/mail'
-
-import { client } from '@/tests/_utils/client'
-import { createApp } from '@/tests/_utils/create-app'
-import { memoryDatabase, migrateDatabase, resetDatabase } from '@/tests/_utils/database'
-import { memoryCache } from '@/tests/_utils/memory-cache'
+import { migrateDatabase, resetDatabase } from '@/db/utils'
+import { cacheMock } from '@/tests/mocks/cache.mock'
+import { clientMock } from '@/tests/mocks/client.mock'
+import { databaseMock } from '@/tests/mocks/database.mock'
+import { sendMailMock } from '@/tests/mocks/mail-service.mock'
+import { extractTokenFromMail } from '@/tests/utils'
 
 beforeAll(() => {
-  migrateDatabase(memoryDatabase)
+  migrateDatabase(databaseMock)
 })
 
 afterEach(() => {
-  resetDatabase(memoryDatabase)
-  memoryCache.reset()
+  resetDatabase(databaseMock)
+  cacheMock.reset()
 })
 
 describe('/register', () => {
-  test('should register a new user', async () => {
-    const responseRegister = await client.auth.register.$post({
-      json: {
-        email: 'testuser@gmail.com',
-        username: 'testuser',
-        password: 'password123',
-      },
+  it('should register a new user', async () => {
+    const payload = {
+      email: 'testuser@gmail.com',
+      username: 'testuser',
+      password: 'password123',
+    }
+
+    await clientMock.auth.register.$post({ json: payload })
+
+    expect(sendMailMock).toHaveBeenCalledTimes(1)
+
+    const mail = sendMailMock.mock.calls[0][0]
+
+    expect(mail).toMatchObject({
+      to: payload.email,
+      subject: expect.any(String),
+      from: expect.any(String),
     })
 
-    expect(responseRegister.status).toBe(204)
-    expect(responseRegister.headers.get('Set-Cookie')).toBeDefined()
+    const token = extractTokenFromMail(mail)
 
-    const cookie = parseCookie(responseRegister.headers.get('Set-Cookie')!, 'session_token')
-    expect(cookie).toBeDefined()
-    expect(cookie.session_token).toHaveLength(36)
+    expect(token).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    )
+
+    const user = await databaseMock.query.users.findFirst({
+      where: { email: payload.email },
+    })
+
+    expect(user).toBeDefined()
+    expect(user!.email).toBe(payload.email)
+    expect(user!.username).toBe(payload.username)
+    expect(user!.passwordHash).not.toBe(payload.password)
   })
 
-  test('should not register an existing user', async () => {
-    const responseRegister = await client.auth.register.$post({
-      json: {
-        email: 'testuser@gmail.com',
-        username: 'testuser',
-        password: 'password123',
-      },
+  it('should not register an existing user', async () => {
+    const payload = {
+      email: 'testuser@gmail.com',
+      username: 'testuser',
+      password: 'password123',
+    }
+
+    await clientMock.auth.register.$post({ json: payload })
+
+    const response = await clientMock.auth.register.$post({ json: payload })
+    const body = await response.json()
+
+    // @ts-expect-error-next-line
+    expect(response.status).toBe(400)
+    expect(body).toMatchObject({
+      error: { code: 'USER_EXISTS' },
     })
 
-    expect(responseRegister.status).toBe(204)
-    expect(responseRegister.headers.get('Set-Cookie')).toBeDefined()
-
-    const responseRegisterIncorrect = await client.auth.register.$post({
-      json: {
-        email: 'testuser@gmail.com',
-        username: 'testuser',
-        password: 'password123',
-      },
+    const users = await databaseMock.query.users.findMany({
+      where: { email: payload.email },
     })
 
-    expect(await responseRegisterIncorrect.json()).toMatchObject({
-      error: {
-        code: 'USER_EXISTS',
-      },
-    })
-    expect(responseRegisterIncorrect.status as unknown).toBe(400)
+    expect(users).toHaveLength(1)
+    expect(response.headers.get('Set-Cookie')).toBeNull()
+    expect(sendMailMock).toHaveBeenCalledTimes(1)
   })
 })
 
 describe('/confirm-email', () => {
-  test('should confirm email with valid token', async () => {
-    const responseRegister = await client.auth.register.$post({
-      json: {
-        email: 'testuser@gmail.com',
-        username: 'testuser',
-        password: 'password123',
-      },
+  it('confirms email with valid token', async () => {
+    const payload = {
+      email: 'testuser@gmail.com',
+      username: 'testuser',
+      password: 'password123',
+    }
+
+    await clientMock.auth.register.$post({ json: payload })
+
+    expect(sendMailMock).toHaveBeenCalledTimes(1)
+
+    const mail = sendMailMock.mock.calls[0][0]
+    const token = extractTokenFromMail(mail)
+
+    const response = await clientMock.auth['confirm-email'][':token'].$post({
+      param: { token },
     })
-    expect(responseRegister.status).toBe(204)
 
-    const lastEmail = JSON.parse((await memoryCache.get('testuser@gmail.com' + '-last-email'))!)
-    const emailConfirmationToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]
-
-    const responseConfirmEmail = await client.auth['confirm-email'][':token'].$post({
-      param: {
-        token: emailConfirmationToken!,
-      },
-    })
-
-    expect(responseConfirmEmail.status).toBe(204)
+    expect(response.status).toBe(204)
   })
 
-  test('should resend confirmation email', async () => {
-    await client.auth.register.$post({
-      json: {
-        email: 'testuser@gmail.com',
-        username: 'testuser',
-        password: 'password123',
-      },
+  it('should resend confirmation email', async () => {
+    const payload = {
+      email: 'testuser@gmail.com',
+      username: 'testuser',
+      password: 'password123',
+    }
+
+    await clientMock.auth.register.$post({ json: payload })
+    expect(sendMailMock).toHaveBeenCalledTimes(1)
+
+    const response = await clientMock.auth['confirm-email'].resend.$post({
+      json: { email: payload.email },
     })
 
-    const responseResendConfirmation = await client.auth['confirm-email'].resend.$post({
-      json: {
-        email: 'testuser@gmail.com',
-      },
-    })
+    expect(response.status).toBe(204)
+    expect(sendMailMock).toHaveBeenCalledTimes(2)
 
-    expect(responseResendConfirmation.status).toBe(204)
+    const mail = sendMailMock.mock.calls.at(-1)![0]
+    const token = extractTokenFromMail(mail)
 
-    const lastEmail = JSON.parse((await memoryCache.get('testuser@gmail.com' + '-last-email'))!)
-
-    const emailConfirmationToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]
-
-    expect(emailConfirmationToken).toHaveLength(36)
+    expect(token).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    )
   })
 
-  test('should rate limit resend confirmation email', async () => {
-    await client.auth.register.$post({
-      json: {
-        email: 'testuser@gmail.com',
-        username: 'testuser',
-        password: 'password123',
-      },
-    })
+  it('rate limits resend confirmation email', async () => {
+    const payload = {
+      email: 'testuser@gmail.com',
+      username: 'testuser',
+      password: 'password123',
+    }
+
+    await clientMock.auth.register.$post({ json: payload })
 
     for (let i = 0; i < 5; i++) {
-      await client.auth['confirm-email'].resend.$post({
-        json: {
-          email: 'testuser@gmail.com',
-        },
+      await clientMock.auth['confirm-email'].resend.$post({
+        json: { email: payload.email },
       })
     }
 
-    const responseResendConfirmation = await client.auth['confirm-email'].resend.$post({
-      json: {
-        email: 'testuser@gmail.com',
-      },
+    const response = await clientMock.auth['confirm-email'].resend.$post({
+      json: { email: payload.email },
     })
-    expect(responseResendConfirmation.status as unknown).toBe(429)
+
+    // @ts-expect-error-next-line
+    expect(response.status).toBe(429)
   })
 })
 
 describe('/login', () => {
-  test('should not login with invalid credentials', async () => {
-    const responseLoginIncorrect = await client.auth.login.$post({
+  it('rejects invalid credentials', async () => {
+    const response = await clientMock.auth.login.$post({
       json: {
         identity: 'testuser',
         password: 'wrongpassword',
       },
     })
 
-    expect(await responseLoginIncorrect.json()).toEqual({
-      error: {
-        code: 'INVALID_CREDENTIALS',
-        message: 'Invalid credentials',
-      },
+    const body = await response.json()
+
+    // @ts-expect-error-next-line
+    expect(response.status).toBe(401)
+    expect(body).toMatchObject({
+      error: { code: 'INVALID_CREDENTIALS' },
     })
-    expect(responseLoginIncorrect.status as unknown).toBe(401)
   })
 
-  test('should login a user', async () => {
-    await client.auth.register.$post({
+  it('logs in a user', async () => {
+    await clientMock.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
         username: 'testuser',
@@ -165,34 +178,30 @@ describe('/login', () => {
       },
     })
 
-    const responseLogin = await client.auth.login.$post({
+    const response = await clientMock.auth.login.$post({
       json: {
         identity: 'testuser',
         password: 'password123',
       },
     })
 
-    expect(responseLogin.status).toBe(204)
-    expect(responseLogin.headers.get('Set-Cookie')).toBeDefined()
-
-    const cookie = parseCookie(responseLogin.headers.get('Set-Cookie')!, 'session_token')
-    expect(cookie).toBeDefined()
-    expect(cookie.session_token).toHaveLength(36)
+    expect(response.status).toBe(204)
+    expect(response.headers.get('Set-Cookie')).toBeTruthy()
   })
 })
 
 describe('/logout', () => {
-  test('should logout a user', async () => {
-    const responseLogout = await client.auth.logout.$post()
+  it('logs out a user', async () => {
+    const response = await clientMock.auth.logout.$post()
 
-    expect(responseLogout.status).toBe(204)
-    expect(responseLogout.headers.get('Set-Cookie')).toBeDefined()
+    expect(response.status).toBe(204)
+    expect(response.headers.get('Set-Cookie')).toBeTruthy()
   })
 })
 
 describe('/request-reset', () => {
-  test('should request password reset', async () => {
-    await client.auth.register.$post({
+  it('sends password reset email for existing user', async () => {
+    await clientMock.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
         username: 'testuser',
@@ -200,33 +209,32 @@ describe('/request-reset', () => {
       },
     })
 
-    const responseRequestReset = await client.auth['request-reset'].$post({
-      json: {
-        email: 'testuser@gmail.com',
-      },
+    const response = await clientMock.auth['request-reset'].$post({
+      json: { email: 'testuser@gmail.com' },
     })
 
-    expect(responseRequestReset.status).toBe(204)
+    expect(response.status).toBe(204)
+    expect(sendMailMock).toHaveBeenCalled()
 
-    const lastEmail = await memoryCache.get('testuser@gmail.com' + '-last-email').then(data => data ? JSON.parse(data) as MailOptions : null)
-    expect(lastEmail).not.toBeNull()
+    const mail = sendMailMock.mock.calls.at(-1)![0]
+    const token = extractTokenFromMail(mail)
 
-    const passwordResetToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]
-    expect(passwordResetToken).toHaveLength(36)
+    expect(token).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    )
   })
 
-  test('should return 204 for non-existent email', async () => {
-    const responseRequestReset = await client.auth['request-reset'].$post({
-      json: {
-        email: 'testuser@gmail.com',
-      },
+  it('returns 204 for non-existent email', async () => {
+    const response = await clientMock.auth['request-reset'].$post({
+      json: { email: 'testuser@gmail.com' },
     })
 
-    expect(responseRequestReset.status).toBe(204)
+    expect(response.status).toBe(204)
+    expect(sendMailMock).not.toHaveBeenCalled()
   })
 
-  test('should reject after exceeding maximum retry attempts for existing account', async () => {
-    await client.auth.register.$post({
+  it('rate limits reset attempts for existing account', async () => {
+    await clientMock.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
         username: 'testuser',
@@ -235,48 +243,36 @@ describe('/request-reset', () => {
     })
 
     for (let i = 0; i < 5; i++) {
-      await client.auth['request-reset'].$post({
-        json: {
-          email: 'testuser@gmail.com',
-        },
+      await clientMock.auth['request-reset'].$post({
+        json: { email: 'testuser@gmail.com' },
       })
     }
 
-    const responseRequestReset = await client.auth['request-reset'].$post({
-      json: {
-        email: 'testuser@gmail.com',
-      },
+    const response = await clientMock.auth['request-reset'].$post({
+      json: { email: 'testuser@gmail.com' },
     })
-    expect(await responseRequestReset.json()).toMatchObject({
-      error: {
-        code: 'TOO_MANY_PASSWORD_RESET_ATTEMPTS',
-      },
+
+    // @ts-expect-error-next-line
+    expect(response.status).toBe(429)
+    expect(await response.json()).toMatchObject({
+      error: { code: 'TOO_MANY_PASSWORD_RESET_ATTEMPTS' },
     })
-    expect(responseRequestReset.status as unknown).toBe(429)
   })
 
-  test('should not reject after exceeding maximum retry attempts for not existing account', async () => {
-    for (let i = 0; i < 5; i++) {
-      await client.auth['request-reset'].$post({
-        json: {
-          email: 'testuser@gmail.com',
-        },
+  it('does not rate limit non-existent account', async () => {
+    for (let i = 0; i < 6; i++) {
+      const response = await clientMock.auth['request-reset'].$post({
+        json: { email: 'testuser@gmail.com' },
       })
+
+      expect(response.status).toBe(204)
     }
-
-    const responseRequestReset = await client.auth['request-reset'].$post({
-      json: {
-        email: 'testuser@gmail.com',
-      },
-    })
-
-    expect(responseRequestReset.status as unknown).toBe(204)
   })
 })
 
 describe('/reset-password', () => {
-  test('should reset password with valid token', async () => {
-    await client.auth.register.$post({
+  it('resets password with valid token', async () => {
+    await clientMock.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
         username: 'testuser',
@@ -284,34 +280,25 @@ describe('/reset-password', () => {
       },
     })
 
-    await client.auth['request-reset'].$post({
-      json: {
-        email: 'testuser@gmail.com',
-      },
+    await clientMock.auth['request-reset'].$post({
+      json: { email: 'testuser@gmail.com' },
     })
 
-    const lastEmail = JSON.parse((await memoryCache.get('testuser@gmail.com' + '-last-email'))!)
+    const mail = sendMailMock.mock.calls.at(-1)![0]
+    const token = extractTokenFromMail(mail)
 
-    const passwordResetToken = lastEmail!.html.match(/[?&]token=([^"&]+)/)?.[1]
-
-    const responseResetPassword = await client.auth['reset-password'][':token'].$post({
-      json: {
-        newPassword: 'password456',
-      },
-      param: {
-        token: passwordResetToken!,
-      },
+    const response = await clientMock.auth['reset-password'][':token'].$post({
+      param: { token },
+      json: { newPassword: 'password456' },
     })
 
-    expect(responseResetPassword.status).toBe(204)
+    expect(response.status).toBe(204)
   })
 })
 
 describe('/change-password', () => {
-  test('should change password', async () => {
-    const client = testClient(createApp())
-
-    const loginResponse = await client.auth.register.$post({
+  it('changes password with valid current password', async () => {
+    const registerResponse = await clientMock.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
         username: 'testuser',
@@ -319,9 +306,10 @@ describe('/change-password', () => {
       },
     })
 
-    const sessionTokenCookie = parseCookie(loginResponse.headers.get('Set-Cookie')!, 'session_token')
+    const cookie = registerResponse.headers.get('Set-Cookie')
+    expect(cookie).toBeTruthy()
 
-    const changePasswordResponse = await client.auth['change-password'].$patch(
+    const response = await clientMock.auth['change-password'].$patch(
       {
         json: {
           currentPassword: 'password123',
@@ -329,28 +317,26 @@ describe('/change-password', () => {
         },
       },
       {
-        headers: {
-          Cookie: `session_token=${sessionTokenCookie.session_token}`,
-        },
+        headers: { Cookie: cookie! },
       },
     )
 
-    expect(changePasswordResponse.status).toBe(204)
+    expect(response.status).toBe(204)
   })
 
-  test('should not change password with invalid current password', async () => {
-    const registerResponse = await client.auth.register.$post({
+  it('rejects invalid current password', async () => {
+    const registerResponse = await clientMock.auth.register.$post({
       json: {
         email: 'testuser@gmail.com',
         username: 'testuser',
         password: 'password123',
       },
-
     })
 
-    const cookie = parseCookie(registerResponse.headers.get('Set-Cookie')!, 'session_token')
+    const cookie = registerResponse.headers.get('Set-Cookie')
+    expect(cookie).toBeTruthy()
 
-    const responseChangePasswordIncorrect = await client.auth['change-password'].$patch(
+    const response = await clientMock.auth['change-password'].$patch(
       {
         json: {
           currentPassword: 'wrongpassword',
@@ -358,17 +344,14 @@ describe('/change-password', () => {
         },
       },
       {
-        headers: {
-          Cookie: `session_token=${cookie.session_token}`,
-        },
+        headers: { Cookie: cookie! },
       },
     )
 
-    expect(responseChangePasswordIncorrect.status as unknown).toBe(401)
-    expect(await responseChangePasswordIncorrect.json()).toMatchObject({
-      error: {
-        code: 'INVALID_CURRENT_PASSWORD',
-      },
+    // @ts-expect-error-next-line
+    expect(response.status).toBe(401)
+    expect(await response.json()).toMatchObject({
+      error: { code: 'INVALID_CURRENT_PASSWORD' },
     })
   })
 })

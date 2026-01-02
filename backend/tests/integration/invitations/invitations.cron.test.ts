@@ -1,52 +1,65 @@
-import { afterEach, beforeAll, beforeEach, expect, test } from 'bun:test'
+import { beforeEach, expect, it } from 'bun:test'
 
 import { communities } from '@/db/tables/communities'
 import { invitations } from '@/db/tables/invitations'
-import { InvitationsCron } from '@/modules/invitations/invitations.cron'
-import { client } from '@/tests/_utils/client'
-import { memoryDatabase, migrateDatabase, resetDatabase } from '@/tests/_utils/database'
-import { memoryCache } from '@/tests/_utils/memory-cache'
+import { users } from '@/db/tables/users'
+import { InvitationsCron } from '@/modules/invitations'
+import { databaseMock } from '@/tests/mocks/database.mock'
 
-beforeAll(() => {
-  migrateDatabase(memoryDatabase)
-})
+const NOW = new Date('2025-01-01T12:00:00.000Z')
 
-afterEach(() => {
-  resetDatabase(memoryDatabase)
-  memoryCache.reset()
-})
+const userPayload = {
+  email: 'testuser@gmail.com',
+  username: 'testuser',
+  passwordHash: await Bun.password.hash('password123'),
+}
+
+const communityPayload = {
+  name: 'Test Community',
+}
 
 beforeEach(async () => {
-  await client.auth.register.$post({
-    json: {
-      email: 'testuser@gmail.com',
-      username: 'testuser',
-      password: 'password123',
-    },
-  })
+  await databaseMock
+    .insert(users)
+    .values(userPayload)
 })
 
-test('should delete only expired invitations', async () => {
-  const user = await memoryDatabase.query.users.findFirst()
+it('should delete only expired invitations', async () => {
+  const user = await databaseMock.query.users.findFirst({
+    where: { email: userPayload.email },
+  })
 
-  const [community] = await memoryDatabase
+  const [community] = await databaseMock
     .insert(communities)
     .values({
-      name: 'Test Community',
+      ...communityPayload,
       ownerId: user!.id,
     })
     .returning()
 
-  await memoryDatabase
-    .insert(invitations)
-    .values({
+  await databaseMock.insert(invitations).values([
+    {
       communityId: community.id,
       token: 'expired-invitation',
-      expiresAt: new Date(Date.now() - 1000 * 60), // expired 1 minute ago
-    })
+      expiresAt: new Date(NOW.getTime() - 60_000),
+    },
+    {
+      communityId: community.id,
+      token: 'valid-invitation',
+      expiresAt: new Date(NOW.getTime() + 60_000),
+    },
+  ])
 
-  const cron = new InvitationsCron(memoryDatabase)
-  const deletedCount = await cron.deleteExpiredInvitations()
+  const cron = new InvitationsCron(databaseMock)
+
+  const deletedCount = await cron.deleteExpiredInvitations(NOW)
 
   expect(deletedCount).toBe(1)
+
+  const remainingInvitations = await databaseMock.query.invitations.findMany({
+    where: { communityId: community.id },
+  })
+
+  expect(remainingInvitations).toHaveLength(1)
+  expect(remainingInvitations[0].token).toBe('valid-invitation')
 })

@@ -8,7 +8,8 @@
     "build:prod": "NODE_ENV=production bun --bun vite build",
     "generate:api": "bun heyapi.script.ts",
     "lint": "bun --bun eslint .",
-    "lint:css": "bun --bun stylelint \"./src/**/*.css\""
+    "lint:css": "bun --bun stylelint \"./src/**/*.css\"",
+    "test": "true"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",

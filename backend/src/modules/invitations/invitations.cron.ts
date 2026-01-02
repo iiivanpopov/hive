@@ -1,5 +1,5 @@
 import { Cron } from 'croner'
-import { and, isNotNull, lt, sql } from 'drizzle-orm'
+import { and, isNotNull, lt } from 'drizzle-orm'
 
 import type { DrizzleDatabase } from '@/db/instance'
 
@@ -11,13 +11,13 @@ export class InvitationsCron {
     private readonly db: DrizzleDatabase,
   ) {}
 
-  async deleteExpiredInvitations() {
+  async deleteExpiredInvitations(now: Date = new Date()) {
     const result = await this.db
       .delete(invitations)
       .where(
         and(
           isNotNull(invitations.expiresAt),
-          lt(invitations.expiresAt, sql`(unixepoch())`),
+          lt(invitations.expiresAt, now),
         ),
       )
       .returning()
