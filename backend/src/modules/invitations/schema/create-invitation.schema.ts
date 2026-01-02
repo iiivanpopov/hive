@@ -10,7 +10,7 @@ export const CreateInvitationBodySchema = z.object({
 export type CreateInvitationBody = z.infer<typeof CreateInvitationBodySchema>
 
 export const CreateInvitationParamSchema = z.object({
-  communityId: IdSchema,
+  id: IdSchema,
 })
 
 export type CreateInvitationParam = z.infer<typeof CreateInvitationParamSchema>

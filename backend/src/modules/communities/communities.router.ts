@@ -10,6 +10,7 @@ import { sessionMiddleware, validator } from '@/middleware'
 import { CommunitiesService } from './communities.service'
 import { CreateCommunityBodySchema, CreateCommunityResponseSchema } from './schema/create-community.schema'
 import { DeleteCommunityParamSchema } from './schema/delete-community.schema'
+import { LeaveCommunityParamSchema } from './schema/leave-community.schema'
 import { UpdateCommunityBodySchema, UpdateCommunityParamSchema, UpdateCommunityResponseSchema } from './schema/update-community.schema'
 
 export class CommunitiesRouter implements BaseRouter {
@@ -104,6 +105,28 @@ export class CommunitiesRouter implements BaseRouter {
           const community = await this.communitiesService.updateCommunity(id, body, user.id)
 
           return c.json({ community })
+        },
+      )
+      .post(
+        '/leave/:id',
+        describeRoute({
+          tags: ['Communities'],
+          summary: 'Leave a community',
+          description: 'Leave a community by its ID.',
+          responses: {
+            204: {
+              description: 'Left community successfully',
+            },
+          },
+        }),
+        validator('param', LeaveCommunityParamSchema),
+        async (c) => {
+          const params = c.req.valid('param')
+          const user = c.get('user')
+
+          await this.communitiesService.leaveCommunity(params.id, user.id)
+
+          return c.body(null, 204)
         },
       )
 

@@ -28,8 +28,7 @@ export class InvitationsRouter implements BaseRouter {
       .createApp()
       .basePath(this.basePath)
       .post(
-        '/communities/:communityId/invitations',
-        sessionMiddleware(this.db, this.sessionTokens),
+        '/communities/:id/invitations',
         describeRoute({
           tags: ['Invitations'],
           summary: 'Create a community invitation',
@@ -45,21 +44,21 @@ export class InvitationsRouter implements BaseRouter {
             },
           },
         }),
+        sessionMiddleware(this.db, this.sessionTokens),
         validator('param', CreateInvitationParamSchema),
         validator('json', CreateInvitationBodySchema),
         async (c) => {
-          const { communityId } = c.req.valid('param')
+          const { id } = c.req.valid('param')
           const body = c.req.valid('json')
           const user = c.get('user')
 
-          const invitation = await this.invitationsService.createCommunityInvitation(communityId, body, user.id)
+          const invitation = await this.invitationsService.createCommunityInvitation(id, body, user.id)
 
           return c.json({ invitation }, 201)
         },
       )
       .post(
-        '/join/:token',
-        sessionMiddleware(this.db, this.sessionTokens),
+        '/communities/join/:token',
         describeRoute({
           tags: ['Invitations'],
           summary: 'Join a community via invitation',
@@ -70,6 +69,7 @@ export class InvitationsRouter implements BaseRouter {
             },
           },
         }),
+        sessionMiddleware(this.db, this.sessionTokens),
         validator('param', JoinInvitationParamSchema),
         async (c) => {
           const { token } = c.req.valid('param')
@@ -82,7 +82,6 @@ export class InvitationsRouter implements BaseRouter {
       )
       .delete(
         '/invitations/:id',
-        sessionMiddleware(this.db, this.sessionTokens),
         describeRoute({
           tags: ['Invitations'],
           summary: 'Revoke an invitation',
@@ -98,6 +97,7 @@ export class InvitationsRouter implements BaseRouter {
             },
           },
         }),
+        sessionMiddleware(this.db, this.sessionTokens),
         validator('param', DeleteInvitationParamSchema),
         async (c) => {
           const { id } = c.req.valid('param')

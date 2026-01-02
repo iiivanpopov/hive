@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 
 import type { DrizzleDatabase } from '@/db/instance'
 
@@ -13,6 +13,37 @@ export class CommunitiesService {
   constructor(
     private readonly db: DrizzleDatabase,
   ) {}
+
+  async leaveCommunity(communityId: number, userId: number) {
+    const community = await this.db.query.communities.findFirst({
+      where: {
+        id: communityId,
+      },
+    })
+    if (!community)
+      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
+
+    const membership = await this.db.query.communityMembers.findFirst({
+      where: {
+        communityId,
+        userId,
+      },
+    })
+    if (!membership)
+      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
+
+    if (community.ownerId === userId)
+      throw ApiException.BadRequest('Community owners cannot leave their own community', 'OWNER_CANNOT_LEAVE')
+
+    await this.db
+      .delete(communityMembers)
+      .where(
+        and(
+          eq(communityMembers.communityId, communityId),
+          eq(communityMembers.userId, userId),
+        ),
+      )
+  }
 
   async updateCommunity(communityId: number, data: UpdateCommunityBody, userId: number) {
     const community = await this.db.query.communities.findFirst({

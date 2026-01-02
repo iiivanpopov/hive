@@ -46,10 +46,10 @@ describe('/communities/:communityId/invitations', () => {
     expect(createCommunityResponse.status).toBe(201)
     const { community } = await createCommunityResponse.json()
 
-    const createInvitationResponse = await client.communities[':communityId'].invitations.$post(
+    const createInvitationResponse = await client.communities[':id'].invitations.$post(
       {
         param: {
-          communityId: String(community.id),
+          id: String(community.id),
         },
         json: {
           expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -88,10 +88,10 @@ describe('/join/:token', () => {
     expect(createCommunityResponse.status).toBe(201)
     const { community } = await createCommunityResponse.json()
 
-    const createInvitationResponse = await client.communities[':communityId'].invitations.$post(
+    const createInvitationResponse = await client.communities[':id'].invitations.$post(
       {
         param: {
-          communityId: String(community.id),
+          id: String(community.id),
         },
         json: {},
       },
@@ -114,7 +114,7 @@ describe('/join/:token', () => {
 
     authCookie = getSessionTokenCookie(registerResponse)!
 
-    const joinInvitationResponse = await client.join[':token'].$post(
+    const joinInvitationResponse = await client.communities.join[':token'].$post(
       {
         param: {
           token: invitation.token,
@@ -149,10 +149,10 @@ describe('/invitations/:id', () => {
     expect(createCommunityResponse.status).toBe(201)
     const { community } = await createCommunityResponse.json()
 
-    const createInvitationResponse = await client.communities[':communityId'].invitations.$post(
+    const createInvitationResponse = await client.communities[':id'].invitations.$post(
       {
         param: {
-          communityId: String(community.id),
+          id: String(community.id),
         },
         json: {},
       },
