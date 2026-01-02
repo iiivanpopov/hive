@@ -13,6 +13,7 @@ import { ChannelsRouter } from '@/modules/channels/channels.router'
 import { CommunitiesRouter } from '@/modules/communities'
 import { CommunityMembersRouter } from '@/modules/community-members'
 import { InvitationsRouter } from '@/modules/invitations'
+import { MessagesRouter } from '@/modules/messages'
 
 import { Router } from './router'
 
@@ -44,6 +45,10 @@ export function createApp(
       sessionTokensRepository,
     ),
     new ChannelsRouter(
+      db,
+      sessionTokensRepository,
+    ),
+    new MessagesRouter(
       db,
       sessionTokensRepository,
     ),

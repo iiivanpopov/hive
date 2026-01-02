@@ -3,6 +3,7 @@ import type { ChannelsRouter } from '@/modules/channels/channels.router'
 import type { CommunitiesRouter } from '@/modules/communities'
 import type { CommunityMembersRouter } from '@/modules/community-members'
 import type { InvitationsRouter } from '@/modules/invitations'
+import type { MessagesRouter } from '@/modules/messages'
 
 import { factory } from '@/lib/factory'
 
@@ -13,6 +14,7 @@ export class Router {
     private readonly invitationsRouter: InvitationsRouter,
     private readonly communityMembersRouter: CommunityMembersRouter,
     private readonly channelsRouter: ChannelsRouter,
+    private readonly messagesRouter: MessagesRouter,
   ) {}
 
   init() {
@@ -23,6 +25,7 @@ export class Router {
       .route('/', this.communityMembersRouter.init())
       .route('/', this.invitationsRouter.init())
       .route('/', this.channelsRouter.init())
+      .route('/', this.messagesRouter.init())
 
     return app
   }
