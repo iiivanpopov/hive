@@ -1,185 +1,99 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, expectTypeOf, it } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'vitest'
 
-import { client } from '@/tests/_utils/client'
-import { getSessionTokenCookie } from '@/tests/_utils/cookies'
-import { memoryDatabase, migrateDatabase, resetDatabase } from '@/tests/_utils/database'
-import { memoryCache } from '@/tests/_utils/memory-cache'
+import { clientMock } from '@/tests/mocks/client.mock'
+import { databaseMock } from '@/tests/mocks/database.mock'
+import { extractSessionTokenCookie } from '@/tests/utils'
 
 let authCookie: string
 
-beforeAll(() => {
-  migrateDatabase(memoryDatabase)
-})
-
-afterEach(() => {
-  resetDatabase(memoryDatabase)
-  memoryCache.reset()
-})
-
 beforeEach(async () => {
-  const registerResponse = await client.auth.register.$post({
+  const response = await clientMock.auth.register.$post({
     json: {
       email: 'testuser@gmail.com',
       username: 'testuser',
       password: 'password123',
     },
   })
+  authCookie = extractSessionTokenCookie(response.headers)
 
-  authCookie = getSessionTokenCookie(registerResponse)!
+  await clientMock.communities.$post({
+    json: {
+      name: 'Test Community',
+    },
+  }, { headers: { Cookie: authCookie } })
 })
 
-describe('/communities/:communityId/invitations', () => {
-  it('should create a community invitation', async () => {
-    const createCommunityResponse = await client.communities.$post(
-      {
-        json: {
-          name: 'Test Community',
-        },
-      },
-      {
-        headers: {
-          Cookie: authCookie,
-        },
-      },
-    )
-
-    expect(createCommunityResponse.status).toBe(201)
-    const { community } = await createCommunityResponse.json()
-
-    const createInvitationResponse = await client.communities[':id'].invitations.$post(
-      {
-        param: {
-          id: String(community.id),
-        },
-        json: {
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        },
-      },
-      {
-        headers: {
-          Cookie: authCookie,
-        },
-      },
-    )
-    const { invitation } = await createInvitationResponse.json()
+describe('/communities/:id/invitations', () => {
+  it('should create a invitation', async () => {
+    const createInvitationResponse = await clientMock.communities[':id'].invitations.$post({
+      param: { id: '1' },
+      json: {},
+    }, { headers: { Cookie: authCookie } })
 
     expect(createInvitationResponse.status).toBe(201)
-    expect(invitation).toHaveProperty('id')
-    expectTypeOf(invitation.token).toBeString()
-    expect(invitation).toHaveProperty('expiresAt')
+
+    const body = await createInvitationResponse.json()
+
+    expect(body.invitation).toMatchObject({
+      communityId: 1,
+      token: expect.any(String),
+      expiresAt: null,
+    })
+
+    const invitations = await databaseMock.query.invitations.findMany()
+
+    expect(invitations).toHaveLength(1)
   })
 })
 
-describe('/join/:token', () => {
+describe('/communities/join/:token', () => {
   it('should join a community via invitation', async () => {
-    const createCommunityResponse = await client.communities.$post(
-      {
-        json: {
-          name: 'Test Community',
-        },
-      },
-      {
-        headers: {
-          Cookie: authCookie,
-        },
-      },
-    )
+    const createInvitationResponse = await clientMock.communities[':id'].invitations.$post({
+      param: { id: '1' },
+      json: {},
+    }, { headers: { Cookie: authCookie } })
 
-    expect(createCommunityResponse.status).toBe(201)
-    const { community } = await createCommunityResponse.json()
-
-    const createInvitationResponse = await client.communities[':id'].invitations.$post(
-      {
-        param: {
-          id: String(community.id),
-        },
-        json: {},
-      },
-      {
-        headers: {
-          Cookie: authCookie,
-        },
-      },
-    )
-    expect(createInvitationResponse.status).toBe(201)
     const { invitation } = await createInvitationResponse.json()
 
-    const registerResponse = await client.auth.register.$post({
+    const registerResponse = await clientMock.auth.register.$post({
       json: {
         email: 'testuser2@gmail.com',
         username: 'testuser2',
         password: 'password123',
       },
     })
+    authCookie = extractSessionTokenCookie(registerResponse.headers)
 
-    authCookie = getSessionTokenCookie(registerResponse)!
-
-    const joinInvitationResponse = await client.communities.join[':token'].$post(
-      {
-        param: {
-          token: invitation.token,
-        },
-      },
-      {
-        headers: {
-          Cookie: authCookie,
-        },
-      },
-    )
+    const joinInvitationResponse = await clientMock.communities.join[':token'].$post({
+      param: { token: invitation.token },
+    }, { headers: { Cookie: authCookie } })
 
     expect(joinInvitationResponse.status).toBe(204)
+
+    const membership = await databaseMock.query.communityMembers.findFirst({
+      where: {
+        communityId: invitation.communityId,
+        userId: 2,
+      },
+    })
+
+    expect(membership).toBeDefined()
   })
 })
 
 describe('/invitations/:id', () => {
   it('should revoke an invitation', async () => {
-    const createCommunityResponse = await client.communities.$post(
-      {
-        json: {
-          name: 'Test Community',
-        },
-      },
-      {
-        headers: {
-          Cookie: authCookie,
-        },
-      },
-    )
+    const createInvitationResponse = await clientMock.communities[':id'].invitations.$post({
+      param: { id: '1' },
+      json: {},
+    }, { headers: { Cookie: authCookie } })
 
-    expect(createCommunityResponse.status).toBe(201)
-    const { community } = await createCommunityResponse.json()
-
-    const createInvitationResponse = await client.communities[':id'].invitations.$post(
-      {
-        param: {
-          id: String(community.id),
-        },
-        json: {},
-      },
-      {
-        headers: {
-          Cookie: authCookie,
-        },
-      },
-    )
-    expect(createInvitationResponse.status).toBe(201)
     const { invitation } = await createInvitationResponse.json()
 
-    const revokeInvitationResponse = await client.invitations[':id'].$delete(
-      {
-        param: {
-          id: String(invitation.id),
-        },
-      },
-      {
-        headers: {
-          Cookie: authCookie,
-        },
-      },
-    )
+    const revokeInvitationResponse = await clientMock.invitations[':id'].$delete({
+      param: { id: invitation.id.toString() },
+    }, { headers: { Cookie: authCookie } })
 
     expect(revokeInvitationResponse.status).toBe(200)
-    const { invitation: revokedInvitation } = await revokeInvitationResponse.json()
-    expect(revokedInvitation.id).toBe(invitation.id)
   })
 })

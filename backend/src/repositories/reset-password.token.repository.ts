@@ -1,12 +1,6 @@
-import { authConfig } from '@/config'
+import type { KeyValueStore } from '@/types/interfaces'
 
-export interface ResetPasswordTokenStore {
-  setex: (key: string, ttl: number, value: string) => Promise<void | 'OK'>
-  get: (key: string) => Promise<string | null>
-  del: (key: string) => Promise<void | number>
-  expire: (key: string, ttl: number) => Promise<void | number>
-  incr: (key: string) => Promise<number>
-}
+import { authConfig } from '@/config'
 
 export interface ResetPasswordTokenPayload {
   userId: number
@@ -15,7 +9,7 @@ export interface ResetPasswordTokenPayload {
 export class ResetPasswordTokenRepository {
   namespace = 'reset-password-token'
 
-  constructor(private readonly store: ResetPasswordTokenStore) {}
+  constructor(private readonly store: KeyValueStore) {}
 
   async create(data: ResetPasswordTokenPayload) {
     const token = crypto.randomUUID()
