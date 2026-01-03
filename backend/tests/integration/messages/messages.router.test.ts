@@ -39,9 +39,9 @@ describe('/messages', () => {
   it('should create a message', async () => {
     await seedChannel()
 
-    const createMessageResponse = await clientMock.messages.$post({
+    const createMessageResponse = await clientMock.channels[':id'].messages.$post({
+      param: { id: '1' },
       json: {
-        channelId: '1',
         content: 'Hello world',
       },
     }, { headers: { Cookie: authCookie } })
@@ -70,9 +70,9 @@ describe('/channels/:id/messages', () => {
   it('should get channel messages', async () => {
     await seedChannel()
 
-    await clientMock.messages.$post({
+    await clientMock.channels[':id'].messages.$post({
+      param: { id: '1' },
       json: {
-        channelId: '1',
         content: 'First message',
       },
     }, { headers: { Cookie: authCookie } })
@@ -99,9 +99,9 @@ describe('/messages/:id', () => {
   it('should update a message', async () => {
     await seedChannel()
 
-    await clientMock.messages.$post({
+    await clientMock.channels[':id'].messages.$post({
+      param: { id: '1' },
       json: {
-        channelId: '1',
         content: 'Original message',
       },
     }, { headers: { Cookie: authCookie } })
@@ -132,9 +132,9 @@ describe('/messages/:id', () => {
   it('should delete a message', async () => {
     await seedChannel()
 
-    await clientMock.messages.$post({
+    await clientMock.channels[':id'].messages.$post({
+      param: { id: '1' },
       json: {
-        channelId: '1',
         content: 'Message to delete',
       },
     }, { headers: { Cookie: authCookie } })

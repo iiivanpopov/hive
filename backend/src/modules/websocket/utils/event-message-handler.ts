@@ -11,7 +11,7 @@ export class EventMessageHandler {
   handlers: Map<
     string,
     {
-      callback: (payload: any) => Promise<void> | void
+      callback: (payload: any, ws: WSContext) => Promise<void> | void
       schema: z.ZodTypeAny
     }
   > = new Map()
@@ -34,6 +34,7 @@ export class EventMessageHandler {
     schema: Schema,
     handler: (
       payload: z.infer<Schema>,
+      ws: WSContext,
     ) => Promise<void> | void,
   ) {
     this.handlers.set(event, { callback: handler, schema })
@@ -76,6 +77,6 @@ export class EventMessageHandler {
       ))
     }
 
-    return callback(parsed.data)
+    return callback(parsed.data, ws)
   }
 }

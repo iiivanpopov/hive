@@ -44,10 +44,10 @@ export class MessagesService {
     return messagesList
   }
 
-  async createMessage(data: CreateMessageBody, userId: number) {
+  async createMessage(channelId: number, data: CreateMessageBody, userId: number) {
     const channel = await this.db.query.channels.findFirst({
       where: {
-        id: data.channelId,
+        id: channelId,
       },
     })
     if (!channel)
@@ -66,7 +66,7 @@ export class MessagesService {
     const [message] = await this.db
       .insert(messages)
       .values({
-        channelId: data.channelId,
+        channelId,
         userId,
         content: data.content,
       })

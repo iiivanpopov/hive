@@ -57,7 +57,7 @@ export class MessagesRouter implements BaseRouter {
         },
       )
       .post(
-        '/messages',
+        '/channels/:id/messages',
         describeRoute({
           tags: ['Messages'],
           summary: 'Create a message',
@@ -74,12 +74,14 @@ export class MessagesRouter implements BaseRouter {
           },
         }),
         sessionMiddleware(this.db, this.sessionTokens),
+        validator('param', GetChannelMessagesParamsSchema),
         validator('json', CreateMessageBodySchema),
         async (c) => {
+          const { id } = c.req.valid('param')
           const body = c.req.valid('json')
           const user = c.get('user')
 
-          const message = await this.messagesService.createMessage(body, user.id)
+          const message = await this.messagesService.createMessage(id, body, user.id)
 
           return c.json({ message }, 201)
         },

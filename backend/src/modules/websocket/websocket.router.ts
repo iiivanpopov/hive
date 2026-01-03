@@ -8,6 +8,7 @@ import type { SessionTokenRepository } from '@/repositories/session-token.reposi
 import { factory } from '@/lib/factory'
 import { sessionMiddleware } from '@/middleware'
 
+import { MessagesService } from '../messages/messages.service'
 import { WebsocketService } from './websocket.service'
 
 export class WebsocketRouter implements BaseRouter {
@@ -18,7 +19,8 @@ export class WebsocketRouter implements BaseRouter {
     private readonly db: DrizzleDatabase,
     private readonly sessionTokens: SessionTokenRepository,
   ) {
-    this.websocketService = new WebsocketService(db)
+    const messagesService = new MessagesService(db)
+    this.websocketService = new WebsocketService(db, messagesService)
   }
 
   init() {

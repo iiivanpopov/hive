@@ -47,6 +47,21 @@ export class CreatedMessageResponse extends WsResponse<Message> {
   }
 }
 
+export class UpdatedMessageResponse extends WsResponse<Message> {
+  constructor(message: Message) {
+    super(WsEventType.UPDATE_MESSAGE, message)
+  }
+}
+
+export class DeletedMessageResponse extends WsResponse<{
+  messageId: number
+  channelId: number
+}> {
+  constructor(messageId: number, channelId: number) {
+    super(WsEventType.DELETE_MESSAGE, { messageId, channelId })
+  }
+}
+
 export class ErrorResponse extends WsResponse<{
   message: string
   code: string
