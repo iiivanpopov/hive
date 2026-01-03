@@ -4,6 +4,7 @@ import type { CommunitiesRouter } from '@/modules/communities'
 import type { CommunityMembersRouter } from '@/modules/community-members'
 import type { InvitationsRouter } from '@/modules/invitations'
 import type { MessagesRouter } from '@/modules/messages'
+import type { WebsocketRouter } from '@/modules/websocket/websocket.router'
 
 import { factory } from '@/lib/factory'
 
@@ -15,6 +16,7 @@ export class Router {
     private readonly communityMembersRouter: CommunityMembersRouter,
     private readonly channelsRouter: ChannelsRouter,
     private readonly messagesRouter: MessagesRouter,
+    private readonly websocketRouter: WebsocketRouter,
   ) {}
 
   init() {
@@ -26,6 +28,7 @@ export class Router {
       .route('/', this.invitationsRouter.init())
       .route('/', this.channelsRouter.init())
       .route('/', this.messagesRouter.init())
+      .route('/', this.websocketRouter.init())
 
     return app
   }

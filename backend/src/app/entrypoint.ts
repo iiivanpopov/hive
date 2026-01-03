@@ -1,6 +1,7 @@
 import { Scalar } from '@scalar/hono-api-reference'
 import { redis } from 'bun'
 import { openAPIRouteHandler } from 'hono-openapi'
+import { websocket } from 'hono/bun'
 import nodemailer from 'nodemailer'
 
 import { db } from '@/db/instance'
@@ -60,6 +61,7 @@ app
 
 const server = Bun.serve({
   fetch: app.fetch,
+  websocket,
 })
 
 pino.info(`Server started on ${server.url}`)

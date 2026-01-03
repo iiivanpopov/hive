@@ -28,7 +28,6 @@ export class MessagesRouter implements BaseRouter {
     const app = factory
       .createApp()
       .basePath(this.basePath)
-      .use(sessionMiddleware(this.db, this.sessionTokens))
       .get(
         '/channels/:id/messages',
         describeRoute({
@@ -46,6 +45,7 @@ export class MessagesRouter implements BaseRouter {
             },
           },
         }),
+        sessionMiddleware(this.db, this.sessionTokens),
         validator('param', GetChannelMessagesParamsSchema),
         async (c) => {
           const { id } = c.req.valid('param')
@@ -73,6 +73,7 @@ export class MessagesRouter implements BaseRouter {
             },
           },
         }),
+        sessionMiddleware(this.db, this.sessionTokens),
         validator('json', CreateMessageBodySchema),
         async (c) => {
           const body = c.req.valid('json')
@@ -100,6 +101,7 @@ export class MessagesRouter implements BaseRouter {
             },
           },
         }),
+        sessionMiddleware(this.db, this.sessionTokens),
         validator('param', UpdateMessageParamsSchema),
         validator('json', UpdateMessageBodySchema),
         async (c) => {
@@ -124,6 +126,7 @@ export class MessagesRouter implements BaseRouter {
             },
           },
         }),
+        sessionMiddleware(this.db, this.sessionTokens),
         validator('param', DeleteMessageParamsSchema),
         async (c) => {
           const { id } = c.req.valid('param')

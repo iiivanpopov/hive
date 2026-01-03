@@ -9,4 +9,7 @@ export const validationConfig = {
   maxChannelName: 20,
 
   maxChannelDescription: 500,
+
+  minMessageContent: 1,
+  maxMessageContent: 1000,
 }
