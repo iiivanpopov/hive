@@ -6,9 +6,11 @@ import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import path from 'node:path'
 
 import { relations } from './relations'
+import { channels } from './tables/channels'
 import { communities } from './tables/communities'
 import { communityMembers } from './tables/community-members'
 import { invitations } from './tables/invitations'
+import { messages } from './tables/messages'
 import { users } from './tables/users'
 
 export function migrateDatabase(db: DrizzleDatabase) {
@@ -22,6 +24,8 @@ export function resetDatabase(db: DrizzleDatabase) {
       communities,
       communityMembers,
       invitations,
+      channels,
+      messages,
     ].map(table => getTableName(table))
 
     db.run(sql`PRAGMA foreign_keys = OFF`)

@@ -13,6 +13,7 @@ export const globalESLintConfig: Parameters<typeof antfu>[0] & {
     'perfectionist/sort-imports': ['error', {
       environment: 'bun',
     }],
+    'ts/no-redeclare': 'off',
   },
 }
 
