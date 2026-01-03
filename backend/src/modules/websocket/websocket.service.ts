@@ -47,15 +47,22 @@ export class WebsocketService {
   }
 
   private async broadcastToChannel(channelId: number, message: any) {
-    const channel = await this.db.query.channels.findFirst({
-      where: { id: channelId },
+    const channel = await this.db.query.communityMembers.findFirst({
+      where: {
+        community: {
+          channels: {
+            id: channelId,
+          },
+        },
+      },
+      with: {
+        community: {
+          with: { members: true },
+        },
+      },
     })
-    if (!channel)
-      return
 
-    const members = await this.db.query.communityMembers.findMany({
-      where: { communityId: channel.communityId },
-    })
+    const members = channel?.community?.members || []
 
     const messageStr = JSON.stringify(message)
 

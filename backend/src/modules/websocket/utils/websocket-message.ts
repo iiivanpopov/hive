@@ -15,20 +15,6 @@ export interface WsMessage<T = any> {
   timestamp: number
 }
 
-export interface CreateMessagePayload {
-  content: string
-  channelId: number
-}
-
-export interface UpdateMessagePayload {
-  content: string
-  channelId: number
-}
-
-export interface DeleteMessagePayload {
-  messageId: number
-}
-
 export class WsResponse<T = any> implements WsMessage<T> {
   type: WsEventType | string
   payload: T
