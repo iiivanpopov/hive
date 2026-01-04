@@ -123,10 +123,14 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans text-base;
+    @apply bg-background text-foreground font-sans text-base min-h-screen;
   }
 
   html {
-    @apply font-sans;
+    @apply font-sans min-h-screen;
+  }
+
+  #root {
+    @apply min-h-screen;
   }
 }

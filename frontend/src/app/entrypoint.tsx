@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 
 import '@/styles/global.css'
 import { client } from '@/api/client.gen'
+import { Toaster } from '@/components/ui/sonner'
 import { queryClient } from '@/lib/query-client'
 import { routeTree } from '@/routeTree.gen'
 
@@ -23,5 +24,6 @@ declare module '@tanstack/react-router' {
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
     <RouterProvider router={router} />
+    <Toaster />
   </QueryClientProvider>,
 )
