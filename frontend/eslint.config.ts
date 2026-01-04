@@ -1,4 +1,5 @@
 import antfu from '@antfu/eslint-config'
+import path from 'node:path'
 
 import { globalESLintConfig } from '../eslint.config.ts'
 
@@ -12,4 +13,5 @@ export default antfu({
     'react-refresh/only-export-components': 'off',
     'react-hooks/exhaustive-deps': 'off',
   },
+  basePath: path.resolve(__dirname),
 })

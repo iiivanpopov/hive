@@ -4,9 +4,10 @@ import z from 'zod'
 
 import { postAuthRegisterMutation } from '@/api/@tanstack/react-query.gen'
 import { useForm } from '@/components/form/hooks'
+import { useI18n } from '@/providers/i18n-provider'
 import { EmailSchema } from '@/shared/zod'
 
-const RegisterSchema = z.object({
+const RegisterFormSchema = z.object({
   email: EmailSchema,
   username: z
     .string()
@@ -27,17 +28,18 @@ const RegisterSchema = z.object({
     })
   }
 })
-export type RegisterData = z.infer<typeof RegisterSchema>
+export type RegisterFormData = z.infer<typeof RegisterFormSchema>
 
 const registerFormDefaultValues = {
   email: '',
   username: '',
   password: '',
   confirmPassword: '',
-} satisfies RegisterData
+} satisfies RegisterFormData
 
-export function useRegisterPage() {
+export function useRoute() {
   const navigate = useNavigate()
+  const i18n = useI18n()
 
   const registerMutation = useMutation({
     ...postAuthRegisterMutation(),
@@ -49,10 +51,10 @@ export function useRegisterPage() {
   const registerForm = useForm({
     defaultValues: registerFormDefaultValues,
     validators: {
-      onChange: RegisterSchema,
+      onChange: RegisterFormSchema,
     },
     onSubmit: async ({ value }) => {
-      registerMutation.mutate({
+      await registerMutation.mutateAsync({
         body: {
           email: value.email,
           username: value.username,
@@ -65,5 +67,6 @@ export function useRegisterPage() {
   return {
     registerForm,
     registerMutation,
+    i18n,
   }
 }

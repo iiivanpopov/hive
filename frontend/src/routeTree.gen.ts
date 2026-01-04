@@ -9,104 +9,155 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthRegisterRouteRouteImport } from './routes/auth/register/route'
-import { Route as AuthRecoveryRouteRouteImport } from './routes/auth/recovery/route'
-import { Route as AuthLoginRouteRouteImport } from './routes/auth/login/route'
+import { Route as rootCommunitiesRouteImport } from './routes/(root)/_communities'
+import { Route as rootCommunitiesIndexRouteImport } from './routes/(root)/_communities/index'
+import { Route as authRegisterIndexRouteImport } from './routes/(auth)/register/index'
+import { Route as authRecoveryIndexRouteImport } from './routes/(auth)/recovery/index'
+import { Route as authLoginIndexRouteImport } from './routes/(auth)/login/index'
+import { Route as rootCommunitiesSlugIndexRouteImport } from './routes/(root)/_communities/$slug/index'
 
-const IndexRoute = IndexRouteImport.update({
+const rootCommunitiesRoute = rootCommunitiesRouteImport.update({
+  id: '/(root)/_communities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const rootCommunitiesIndexRoute = rootCommunitiesIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootCommunitiesRoute,
+} as any)
+const authRegisterIndexRoute = authRegisterIndexRouteImport.update({
+  id: '/(auth)/register/',
+  path: '/register/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRegisterRouteRoute = AuthRegisterRouteRouteImport.update({
-  id: '/auth/register',
-  path: '/auth/register',
+const authRecoveryIndexRoute = authRecoveryIndexRouteImport.update({
+  id: '/(auth)/recovery/',
+  path: '/recovery/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRecoveryRouteRoute = AuthRecoveryRouteRouteImport.update({
-  id: '/auth/recovery',
-  path: '/auth/recovery',
+const authLoginIndexRoute = authLoginIndexRouteImport.update({
+  id: '/(auth)/login/',
+  path: '/login/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthLoginRouteRoute = AuthLoginRouteRouteImport.update({
-  id: '/auth/login',
-  path: '/auth/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const rootCommunitiesSlugIndexRoute =
+  rootCommunitiesSlugIndexRouteImport.update({
+    id: '/$slug/',
+    path: '/$slug/',
+    getParentRoute: () => rootCommunitiesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/auth/login': typeof AuthLoginRouteRoute
-  '/auth/recovery': typeof AuthRecoveryRouteRoute
-  '/auth/register': typeof AuthRegisterRouteRoute
+  '/login': typeof authLoginIndexRoute
+  '/recovery': typeof authRecoveryIndexRoute
+  '/register': typeof authRegisterIndexRoute
+  '/': typeof rootCommunitiesIndexRoute
+  '/$slug': typeof rootCommunitiesSlugIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/auth/login': typeof AuthLoginRouteRoute
-  '/auth/recovery': typeof AuthRecoveryRouteRoute
-  '/auth/register': typeof AuthRegisterRouteRoute
+  '/login': typeof authLoginIndexRoute
+  '/recovery': typeof authRecoveryIndexRoute
+  '/register': typeof authRegisterIndexRoute
+  '/': typeof rootCommunitiesIndexRoute
+  '/$slug': typeof rootCommunitiesSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/auth/login': typeof AuthLoginRouteRoute
-  '/auth/recovery': typeof AuthRecoveryRouteRoute
-  '/auth/register': typeof AuthRegisterRouteRoute
+  '/(root)/_communities': typeof rootCommunitiesRouteWithChildren
+  '/(auth)/login/': typeof authLoginIndexRoute
+  '/(auth)/recovery/': typeof authRecoveryIndexRoute
+  '/(auth)/register/': typeof authRegisterIndexRoute
+  '/(root)/_communities/': typeof rootCommunitiesIndexRoute
+  '/(root)/_communities/$slug/': typeof rootCommunitiesSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth/login' | '/auth/recovery' | '/auth/register'
+  fullPaths: '/login' | '/recovery' | '/register' | '/' | '/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/login' | '/auth/recovery' | '/auth/register'
-  id: '__root__' | '/' | '/auth/login' | '/auth/recovery' | '/auth/register'
+  to: '/login' | '/recovery' | '/register' | '/' | '/$slug'
+  id:
+    | '__root__'
+    | '/(root)/_communities'
+    | '/(auth)/login/'
+    | '/(auth)/recovery/'
+    | '/(auth)/register/'
+    | '/(root)/_communities/'
+    | '/(root)/_communities/$slug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AuthLoginRouteRoute: typeof AuthLoginRouteRoute
-  AuthRecoveryRouteRoute: typeof AuthRecoveryRouteRoute
-  AuthRegisterRouteRoute: typeof AuthRegisterRouteRoute
+  rootCommunitiesRoute: typeof rootCommunitiesRouteWithChildren
+  authLoginIndexRoute: typeof authLoginIndexRoute
+  authRecoveryIndexRoute: typeof authRecoveryIndexRoute
+  authRegisterIndexRoute: typeof authRegisterIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/(root)/_communities': {
+      id: '/(root)/_communities'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof rootCommunitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(root)/_communities/': {
+      id: '/(root)/_communities/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof rootCommunitiesIndexRouteImport
+      parentRoute: typeof rootCommunitiesRoute
+    }
+    '/(auth)/register/': {
+      id: '/(auth)/register/'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/register': {
-      id: '/auth/register'
-      path: '/auth/register'
-      fullPath: '/auth/register'
-      preLoaderRoute: typeof AuthRegisterRouteRouteImport
+    '/(auth)/recovery/': {
+      id: '/(auth)/recovery/'
+      path: '/recovery'
+      fullPath: '/recovery'
+      preLoaderRoute: typeof authRecoveryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/recovery': {
-      id: '/auth/recovery'
-      path: '/auth/recovery'
-      fullPath: '/auth/recovery'
-      preLoaderRoute: typeof AuthRecoveryRouteRouteImport
+    '/(auth)/login/': {
+      id: '/(auth)/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/login': {
-      id: '/auth/login'
-      path: '/auth/login'
-      fullPath: '/auth/login'
-      preLoaderRoute: typeof AuthLoginRouteRouteImport
-      parentRoute: typeof rootRouteImport
+    '/(root)/_communities/$slug/': {
+      id: '/(root)/_communities/$slug/'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof rootCommunitiesSlugIndexRouteImport
+      parentRoute: typeof rootCommunitiesRoute
     }
   }
 }
 
+interface rootCommunitiesRouteChildren {
+  rootCommunitiesIndexRoute: typeof rootCommunitiesIndexRoute
+  rootCommunitiesSlugIndexRoute: typeof rootCommunitiesSlugIndexRoute
+}
+
+const rootCommunitiesRouteChildren: rootCommunitiesRouteChildren = {
+  rootCommunitiesIndexRoute: rootCommunitiesIndexRoute,
+  rootCommunitiesSlugIndexRoute: rootCommunitiesSlugIndexRoute,
+}
+
+const rootCommunitiesRouteWithChildren = rootCommunitiesRoute._addFileChildren(
+  rootCommunitiesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AuthLoginRouteRoute: AuthLoginRouteRoute,
-  AuthRecoveryRouteRoute: AuthRecoveryRouteRoute,
-  AuthRegisterRouteRoute: AuthRegisterRouteRoute,
+  rootCommunitiesRoute: rootCommunitiesRouteWithChildren,
+  authLoginIndexRoute: authLoginIndexRoute,
+  authRecoveryIndexRoute: authRecoveryIndexRoute,
+  authRegisterIndexRoute: authRegisterIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

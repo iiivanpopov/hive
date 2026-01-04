@@ -140,6 +140,7 @@ export class CommunitiesService {
         .insert(communities)
         .values({
           ownerId,
+          slug: body.name.toLowerCase().replace(/\s+/g, '-'),
           name: body.name,
         })
         .returning()

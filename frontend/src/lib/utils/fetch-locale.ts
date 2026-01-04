@@ -1,13 +1,4 @@
-import type { ClassValue } from 'clsx'
-
-import { clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
 import type { Locale } from '@/providers/i18n-provider'
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
 
 export async function fetchLocale(locale: Locale) {
   const messages = await fetch(`/locales/${locale}.json`)

@@ -289,7 +289,7 @@ export class AuthRouter {
             maxAge: authConfig.sessionTokenTtl,
           })
 
-          return c.redirect(`${Bun.env.FRONTEND_URL}/auth/set-password`, 302)
+          return c.redirect(Bun.env.FRONTEND_URL, 302)
         },
       )
 

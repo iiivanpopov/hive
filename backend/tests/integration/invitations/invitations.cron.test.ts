@@ -16,6 +16,7 @@ const userPayload = {
 
 const communityPayload = {
   name: 'Test Community',
+  slug: 'test-community',
 }
 
 beforeEach(async () => {

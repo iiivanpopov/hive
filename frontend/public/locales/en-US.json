@@ -21,5 +21,12 @@
   "validation.username.min": "Min 5 characters.",
   "validation.password.min": "Min 6 characters.",
   "validation.identity": "Invalid email or username.",
-  "validation.passwords-do-not-match": "Passwords don't match."
+  "validation.passwords-do-not-match": "Passwords don't match.",
+  "toast.community-created": "Community \"{name}\" created successfully!",
+  "button.close": "Close",
+  "button.create-community": "Create Community",
+  "field.community-name.label": "Community Name",
+  "form.create-community.title": "Create a New Community",
+  "validation.community-name.min": "Min 3 characters.",
+  "validation.community-name.max": "Max 50 characters."
 }

@@ -12,6 +12,7 @@ export const channels = s.sqliteTable('channels', {
     .notNull()
     .references(() => communities.id, { onDelete: 'cascade' }),
   name: s.text('name').notNull(),
+  slug: s.text('slug').notNull(),
   type: s.text('type', { enum: channelTypes }).notNull(),
   description: s.text('description'),
   createdAt: s.integer('created_at', { mode: 'timestamp' })

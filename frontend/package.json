@@ -6,7 +6,7 @@
     "prod": "NODE_ENV=production bun --bun vite preview",
     "build:dev": "bun --bun tsgo -b && NODE_ENV=development bun --bun vite build",
     "build:prod": "NODE_ENV=production bun --bun vite build",
-    "generate:api": "bun heyapi.script.ts",
+    "api:generate": "bun heyapi.script.ts",
     "lint": "bun --bun eslint .",
     "lint:css": "bun --bun stylelint \"./src/**/*.css\"",
     "test": "echo \"Frontend tests are not yet implemented\""

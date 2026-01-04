@@ -1,4 +1,4 @@
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
+import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react-router'
 
 import type { GetAuthMeResponse } from '@/api/types.gen'
 
@@ -10,7 +10,12 @@ interface RootRouteContext {
 }
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
-  component: Outlet,
+  component: () => (
+    <>
+      <HeadContent />
+      <Outlet />
+    </>
+  ),
   beforeLoad: async () => {
     try {
       const query = await queryClient.ensureQueryData(getAuthMeOptions({

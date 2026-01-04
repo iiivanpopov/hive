@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "cdb5cee0-971d-4d79-be10-d81f98574c44",
+  "id": "447e8e29-c90d-4557-90e8-df6f61fb50ab",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -66,6 +66,16 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
+      "name": "slug",
+      "entityType": "columns",
+      "table": "channels"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
       "name": "type",
       "entityType": "columns",
       "table": "channels"
@@ -117,6 +127,16 @@
       "default": null,
       "generated": null,
       "name": "name",
+      "entityType": "columns",
+      "table": "communities"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "slug",
       "entityType": "columns",
       "table": "communities"
     },
@@ -528,6 +548,15 @@
       "name": "users_pk",
       "table": "users",
       "entityType": "pks"
+    },
+    {
+      "columns": [
+        "slug"
+      ],
+      "nameExplicit": false,
+      "name": "communities_slug_unique",
+      "entityType": "uniques",
+      "table": "communities"
     },
     {
       "columns": [

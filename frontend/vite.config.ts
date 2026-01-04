@@ -11,6 +11,8 @@ export default defineConfig({
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
+      semicolons: false,
+      quoteStyle: 'single',
     }),
     react(),
     tailwindcss(),

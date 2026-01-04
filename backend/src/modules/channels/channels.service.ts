@@ -111,6 +111,7 @@ export class ChannelsService {
       .insert(channels)
       .values({
         communityId,
+        slug: data.name.toLowerCase().replace(/\s+/g, '-'),
         name: data.name,
         description: data.description,
         type: data.type,

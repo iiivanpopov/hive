@@ -6,5 +6,6 @@ export const CommunitySchema = z.object({
   id: IdSchema,
   ownerId: IdSchema,
   name: z.string(),
+  slug: z.string(),
   createdAt: z.iso.datetime(),
 })
