@@ -48,24 +48,6 @@ export interface UseIntersectionObserver {
   (target: HookTarget, callback: UseIntersectionObserverCallback): UseIntersectionObserverReturn
 }
 
-/**
- * @name useIntersectionObserver
- * @description - Hook that gives you intersection observer state
- * @category Sensors
- * @usage medium
- *
- * @browserapi IntersectionObserver https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver
- *
- * @param {HookTarget | UseIntersectionObserverOptions | UseIntersectionObserverCallback} [params0] The target element, options, or callback
- * @param {UseIntersectionObserverOptions | UseIntersectionObserverCallback} [params1] The options or callback
- * @returns {UseIntersectionObserverReturn} An object containing the state
- *
- * @example
- * const { ref, entries, observer } = useIntersectionObserver();
- * const { entries, observer } = useIntersectionObserver(ref);
- * const { ref, entries, observer } = useIntersectionObserver(() => console.log('callback'));
- * const { entries, observer } = useIntersectionObserver(ref, () => console.log('callback'));
- */
 export const useIntersectionObserver = ((...params: any[]) => {
   const target = (isTarget(params[0]) ? params[0] : undefined) as HookTarget | undefined
 

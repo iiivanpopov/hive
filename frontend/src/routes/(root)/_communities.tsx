@@ -94,145 +94,148 @@ function RouteComponent() {
 
   return (
     <div className="flex min-h-screen min-w-screen">
-      <div className="relative h-[90vh] py-4 w-20 flex justify-center">
-        <div
-          ref={listRef}
-          className="h-full flex no-scrollbar flex-col gap-2 overflow-y-auto items-center"
-        >
-          <Dialog
-            modal={true}
-            open={isCreateCommunityModalOpen}
-            onOpenChange={setIsCreateCommunityModalOpen}
+      <div className="bg-zinc-100 dark:bg-zinc-900 border-r border-zinc-200/75">
+        <div className="relative h-[92vh] py-12 w-20 flex justify-center">
+          <div
+            ref={listRef}
+            className="h-full flex no-scrollbar flex-col gap-2 overflow-y-auto items-center"
           >
-            <DialogTrigger
-              render={props => (
-                <button
-                  {...props}
-                  ref={addServerIntersectionObserver.ref}
-                  className="size-12 aspect-square shrink-0 flex items-center justify-center rounded-lg bg-slate-400 text-white hover:bg-primary cursor-pointer transition-colors"
-                >
-                  <PlusIcon size={24} strokeWidth={3} />
-                </button>
-              )}
-            />
-
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  <Typography variant="heading">
-                    <I18nText id="form.create-community.title" />
-                  </Typography>
-                </DialogTitle>
-              </DialogHeader>
-
-              <form
-                id="create-community-form"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  createCommunityForm.handleSubmit()
-                }}
-              >
-                <FieldSet>
-                  <FieldLegend className="sr-only">
-                    <I18nText id="form.create-community.title" />
-                  </FieldLegend>
-                  <FieldGroup>
-                    <createCommunityForm.AppField name="name">
-                      {field => (
-                        <field.Input
-                          label={t('field.community-name.label')}
-                          error={t(field.state.meta.errors)}
-                        />
-                      )}
-                    </createCommunityForm.AppField>
-                  </FieldGroup>
-                </FieldSet>
-              </form>
-
-              <DialogFooter>
-                <Button
-                  type="submit"
-                  form="create-community-form"
-                  disabled={createCommunityMutation.isPending}
-                >
-                  {createCommunityMutation.isPending && <Spinner />}
-                  <I18nText id="button.create-community" />
-                </Button>
-                <DialogClose
-                  render={props => (
-                    <Button {...props} variant="destructive">
-                      <I18nText id="button.close" />
-                    </Button>
-                  )}
-                />
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          {communities.map((community, i) => {
-            const isActive = params.slug === community.slug
-
-            return (
-              <div
-                key={community.id}
-                className="w-20 h-12 flex justify-center relative"
-              >
-                <Popover
-                  modal={false}
-                >
-                  <PopoverTrigger
-                    openOnHover={true}
-                    nativeButton={false}
-                    delay={500}
-                    closeDelay={100}
-                    render={({ children, ...props }) => <div {...props}>{children}</div>} // fix for ref overriding
+            <Dialog
+              modal={true}
+              open={isCreateCommunityModalOpen}
+              onOpenChange={setIsCreateCommunityModalOpen}
+            >
+              <DialogTrigger
+                render={props => (
+                  <button
+                    {...props}
+                    ref={addServerIntersectionObserver.ref}
+                    className="size-12 aspect-square shrink-0 flex items-center justify-center rounded-lg bg-zinc-300 text-white hover:bg-zinc-400/50 cursor-pointer transition-colors"
                   >
-                    <button
-                      ref={i === communities.length - 1 ? lastServerIntersectionObserver.ref : undefined}
-                      onClick={() =>
-                        navigate({
-                          to: '/$slug',
-                          params: { slug: community.slug },
-                        })}
-                      className={cn(
-                        'cursor-pointer w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-primary text-primary-foreground transition-colors',
-                      )}
-                    >
-                      <span className="text-xl font-bold leading-none select-none">
-                        {community.name[0]!.toUpperCase()}
-                      </span>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-fit px-2 py-1"
-                    side="right"
-                  >
-                    {community.name}
-                  </PopoverContent>
-                </Popover>
-                {isActive && (
-                  <div className="absolute w-3 h-10 rounded-br-sm rounded-tr-sm bg-primary/50 left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 animate-in fade-in zoom-in-0 duration-200" />
+                    <PlusIcon size={24} strokeWidth={3} />
+                  </button>
                 )}
+              />
+
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    <Typography variant="heading">
+                      <I18nText id="form.create-community.title" />
+                    </Typography>
+                  </DialogTitle>
+                </DialogHeader>
+
+                <form
+                  id="create-community-form"
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    createCommunityForm.handleSubmit()
+                  }}
+                >
+                  <FieldSet>
+                    <FieldLegend className="sr-only">
+                      <I18nText id="form.create-community.title" />
+                    </FieldLegend>
+                    <FieldGroup>
+                      <createCommunityForm.AppField name="name">
+                        {field => (
+                          <field.Input
+                            label={t('field.community-name.label')}
+                            error={t(field.state.meta.errors)}
+                          />
+                        )}
+                      </createCommunityForm.AppField>
+                    </FieldGroup>
+                  </FieldSet>
+                </form>
+
+                <DialogFooter>
+                  <Button
+                    type="submit"
+                    form="create-community-form"
+                    disabled={createCommunityMutation.isPending}
+                  >
+                    {createCommunityMutation.isPending && <Spinner />}
+                    <I18nText id="button.create-community" />
+                  </Button>
+                  <DialogClose
+                    render={props => (
+                      <Button {...props} variant="destructive">
+                        <I18nText id="button.close" />
+                      </Button>
+                    )}
+                  />
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {communities.map((community, i) => {
+              const isActive = params.slug === community.slug
+
+              return (
+                <div
+                  key={community.id}
+                  className="w-20 h-12 flex justify-center relative"
+                >
+                  <Popover
+                    modal={false}
+                  >
+                    <PopoverTrigger
+                      openOnHover={true}
+                      nativeButton={false}
+                      delay={500}
+                      closeDelay={100}
+                      render={({ children, ...props }) => <div {...props}>{children}</div>} // fix for ref overriding
+                    >
+                      <button
+                        ref={i === communities.length - 1 ? lastServerIntersectionObserver.ref : undefined}
+                        onClick={() =>
+                          navigate({
+                            to: '/$slug',
+                            params: { slug: community.slug },
+                          })}
+                        className={cn(
+                          'cursor-pointer w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-primary/80 text-primary-foreground transition-colors hover:bg-primary',
+                          isActive && 'bg-primary',
+                        )}
+                      >
+                        <span className="text-xl font-bold select-none">
+                          {community.name[0]!.toUpperCase()}
+                        </span>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-fit px-2 py-1"
+                      side="right"
+                    >
+                      {community.name}
+                    </PopoverContent>
+                  </Popover>
+                  {isActive && (
+                    <div className="absolute w-3 h-10 rounded-br-sm rounded-tr-sm bg-primary left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 animate-in fade-in zoom-in-0 duration-200" />
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          {!addServerInView && (
+            <div className="pointer-events-none absolute top-6 left-2 right-2">
+              <div className="text-sm rounded-sm bg-zinc-200 py-0.5 px-1.5 text-muted-foreground animate-in fade-in zoom-in-0 duration-200">
+                more...
               </div>
-            )
-          })}
+            </div>
+          )}
+
+          {!lastServerInView && (
+            <div className="pointer-events-none absolute bottom-6 left-2 right-2">
+              <div className="text-sm rounded-sm bg-zinc-200 py-0.5 px-1.5 text-muted-foreground animate-in fade-in zoom-in-0 duration-200">
+                more...
+              </div>
+            </div>
+          )}
         </div>
-
-        {!addServerInView && (
-          <div className="pointer-events-none absolute top-2 left-2 right-2">
-            <div className="text-sm font-semibold rounded-sm bg-muted py-1 px-2 text-muted-foreground animate-in fade-in zoom-in-0 duration-200">
-              more...
-            </div>
-          </div>
-        )}
-
-        {!lastServerInView && (
-          <div className="pointer-events-none absolute bottom-2 left-2 right-2">
-            <div className="text-sm font-semibold rounded-sm bg-muted py-1 px-2 text-muted-foreground animate-in fade-in zoom-in-0 duration-200">
-              more...
-            </div>
-          </div>
-        )}
       </div>
 
       <Outlet />
