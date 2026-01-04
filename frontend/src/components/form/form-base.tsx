@@ -12,6 +12,7 @@ import { useFieldContext } from './hooks'
 export interface FormControlProps {
   label: string
   description?: string
+  error?: { message?: string } | undefined
 }
 
 type FormBaseProps = FormControlProps & {
@@ -26,6 +27,7 @@ export function FormBase({
   description,
   controlFirst,
   horizontal,
+  error,
 }: FormBaseProps) {
   const field = useFieldContext()
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
@@ -35,7 +37,7 @@ export function FormBase({
       {description && <FieldDescription>{description}</FieldDescription>}
     </>
   )
-  const errorElem = isInvalid && <FieldError errors={field.state.meta.errors} />
+  const errorElem = isInvalid && <FieldError errors={error !== undefined ? [error] : field.state.meta.errors} />
 
   return (
     <Field

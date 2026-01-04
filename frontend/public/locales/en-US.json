@@ -1,0 +1,16 @@
+{
+  "button.submit": "Submit",
+  "form.auth.title": "Login to your account",
+  "field.password.label": "Password",
+  "field.identity.label": "Identity",
+  "field.identity.description": "Your username or email address.",
+  "text.don-not-have-an-account": "Don't have an account?",
+  "link.sign-up": "Sign up.",
+  "text.forgot-password": "Forgot your password?",
+  "text.or-continue-with": "Or continue with",
+  "link.recover": "Recover.",
+  "validation.email": "Please enter a valid email address.",
+  "validation.username.min": "Username must be at least 5 characters long.",
+  "validation.password.min": "Password must be at least 6 characters long.",
+  "validation.identity": "Identity must be a valid email or username."
+}

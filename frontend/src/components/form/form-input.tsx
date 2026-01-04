@@ -1,4 +1,4 @@
-import type { HTMLInputTypeAttribute } from 'react'
+import type { HTMLInputAutoCompleteAttribute, HTMLInputTypeAttribute } from 'react'
 
 import type { FormControlProps } from './form-base'
 
@@ -8,20 +8,32 @@ import { useFieldContext } from './hooks'
 
 export interface FormInputProps extends FormControlProps {
   type?: HTMLInputTypeAttribute | undefined
+  autoComplete?: HTMLInputAutoCompleteAttribute | undefined
 }
 
-export function FormInput(props: FormInputProps) {
+export function FormInput({
+  label,
+  autoComplete,
+  description,
+  error,
+  type,
+}: FormInputProps) {
   const field = useFieldContext<string>()
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
 
   return (
-    <FormBase {...props}>
+    <FormBase
+      label={label}
+      description={description}
+      error={error}
+    >
       <Input
         id={field.name}
-        type={props.type ?? 'text'}
+        type={type ?? 'text'}
         value={field.state.value}
         onBlur={field.handleBlur}
         aria-invalid={isInvalid}
+        autoComplete={autoComplete}
         onChange={e => field.handleChange(e.target.value)}
       />
     </FormBase>

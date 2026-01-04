@@ -12,7 +12,7 @@
       "@/*": ["./src/*"],
       "@/api/*": ["./api/*"]
     },
-    "types": ["vite/client"],
+    "types": ["vite/client", "vite-plugin-svgr/client"],
     "allowImportingTsExtensions": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,

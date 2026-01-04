@@ -10,11 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRegisterRouteRouteImport } from './routes/auth/register/route'
+import { Route as AuthRecoveryRouteRouteImport } from './routes/auth/recovery/route'
 import { Route as AuthLoginRouteRouteImport } from './routes/auth/login/route'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRegisterRouteRoute = AuthRegisterRouteRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRecoveryRouteRoute = AuthRecoveryRouteRouteImport.update({
+  id: '/auth/recovery',
+  path: '/auth/recovery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRouteRoute = AuthLoginRouteRouteImport.update({
@@ -26,27 +38,35 @@ const AuthLoginRouteRoute = AuthLoginRouteRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth/login': typeof AuthLoginRouteRoute
+  '/auth/recovery': typeof AuthRecoveryRouteRoute
+  '/auth/register': typeof AuthRegisterRouteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth/login': typeof AuthLoginRouteRoute
+  '/auth/recovery': typeof AuthRecoveryRouteRoute
+  '/auth/register': typeof AuthRegisterRouteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth/login': typeof AuthLoginRouteRoute
+  '/auth/recovery': typeof AuthRecoveryRouteRoute
+  '/auth/register': typeof AuthRegisterRouteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth/login'
+  fullPaths: '/' | '/auth/login' | '/auth/recovery' | '/auth/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/login'
-  id: '__root__' | '/' | '/auth/login'
+  to: '/' | '/auth/login' | '/auth/recovery' | '/auth/register'
+  id: '__root__' | '/' | '/auth/login' | '/auth/recovery' | '/auth/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthLoginRouteRoute: typeof AuthLoginRouteRoute
+  AuthRecoveryRouteRoute: typeof AuthRecoveryRouteRoute
+  AuthRegisterRouteRoute: typeof AuthRegisterRouteRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -56,6 +76,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/recovery': {
+      id: '/auth/recovery'
+      path: '/auth/recovery'
+      fullPath: '/auth/recovery'
+      preLoaderRoute: typeof AuthRecoveryRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/login': {
@@ -71,6 +105,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthLoginRouteRoute: AuthLoginRouteRoute,
+  AuthRecoveryRouteRoute: AuthRecoveryRouteRoute,
+  AuthRegisterRouteRoute: AuthRegisterRouteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
