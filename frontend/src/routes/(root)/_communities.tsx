@@ -20,17 +20,6 @@ import { cn } from '@/lib/utils'
 import { useI18n } from '@/providers/i18n-provider'
 import { queryClient } from '@/providers/query-provider'
 
-export const Route = createFileRoute('/(root)/_communities')({
-  component: RouteComponent,
-  beforeLoad: async ({ context }) => {
-    if (!context.user)
-      throw redirect({ to: '/login' })
-  },
-  loader: async () => {
-    return queryClient.ensureQueryData(getCommunitiesJoinedOptions())
-  },
-})
-
 const CreateCommunityFormSchema = z.object({
   name: z
     .string()
@@ -40,28 +29,36 @@ const CreateCommunityFormSchema = z.object({
 
 export type CreateCommunityFormData = z.infer<typeof CreateCommunityFormSchema>
 
-const createCommunityFormDefaultValues = {
+const createCommunityFormDefaultValues: CreateCommunityFormData = {
   name: '',
-} satisfies CreateCommunityFormData
+}
+
+export const Route = createFileRoute('/(root)/_communities')({
+  component: RouteComponent,
+  beforeLoad: async ({ context }) => {
+    if (!context.user)
+      throw redirect({ to: '/login' })
+  },
+  loader: async () => queryClient.ensureQueryData(getCommunitiesJoinedOptions()),
+})
 
 function RouteComponent() {
   const navigate = useNavigate()
+  const { t } = useI18n()
   const { communities } = Route.useLoaderData()
   const params = useParams({ from: '/(root)/_communities/$slug/' })
+
+  const listRef = useRef<HTMLDivElement | null>(null)
   const [isCreateCommunityModalOpen, setIsCreateCommunityModalOpen] = useBoolean(false)
-  const { t } = useI18n()
+  const [addServerInView, setAddServerInView] = useBoolean(true)
+  const [lastServerInView, setLastServerInView] = useBoolean(true)
 
   const createCommunityMutation = useMutation({
     ...postCommunitiesMutation(),
     onSuccess: async ({ community }) => {
       toast.success(t('toast.community-created', { name: community.name }))
-
       await queryClient.refetchQueries(getCommunitiesJoinedOptions())
-
-      navigate({
-        to: '/$slug',
-        params: { slug: community.slug },
-      })
+      navigate({ to: '/$slug', params: { slug: community.slug } })
     },
   })
 
@@ -74,11 +71,6 @@ function RouteComponent() {
       setIsCreateCommunityModalOpen(false)
     },
   })
-
-  const listRef = useRef<HTMLDivElement | null>(null)
-
-  const [addServerInView, setAddServerInView] = useBoolean(true)
-  const [lastServerInView, setLastServerInView] = useBoolean(true)
 
   const addServerIntersectionObserver = useIntersectionObserver<HTMLButtonElement>({
     root: listRef,
@@ -101,7 +93,7 @@ function RouteComponent() {
             className="h-full flex no-scrollbar flex-col gap-2 overflow-y-auto items-center"
           >
             <Dialog
-              modal={true}
+              modal
               open={isCreateCommunityModalOpen}
               onOpenChange={setIsCreateCommunityModalOpen}
             >
@@ -172,29 +164,24 @@ function RouteComponent() {
 
             {communities.map((community, i) => {
               const isActive = params.slug === community.slug
+              const isLast = i === communities.length - 1
 
               return (
                 <div
                   key={community.id}
                   className="w-20 h-12 flex justify-center relative"
                 >
-                  <Popover
-                    modal={false}
-                  >
+                  <Popover modal={false}>
                     <PopoverTrigger
-                      openOnHover={true}
+                      openOnHover
                       nativeButton={false}
                       delay={500}
                       closeDelay={100}
-                      render={({ children, ...props }) => <div {...props}>{children}</div>} // fix for ref overriding
+                      render={({ children, ...props }) => <div {...props}>{children}</div>}
                     >
                       <button
-                        ref={i === communities.length - 1 ? lastServerIntersectionObserver.ref : undefined}
-                        onClick={() =>
-                          navigate({
-                            to: '/$slug',
-                            params: { slug: community.slug },
-                          })}
+                        ref={isLast ? lastServerIntersectionObserver.ref : undefined}
+                        onClick={() => navigate({ to: '/$slug', params: { slug: community.slug } })}
                         className={cn(
                           'cursor-pointer w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-primary/80 text-primary-foreground transition-colors hover:bg-primary',
                           isActive && 'bg-primary',
@@ -205,10 +192,7 @@ function RouteComponent() {
                         </span>
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent
-                      className="w-fit px-2 py-1"
-                      side="right"
-                    >
+                    <PopoverContent className="w-fit px-2 py-1" side="right">
                       {community.name}
                     </PopoverContent>
                   </Popover>

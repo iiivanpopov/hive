@@ -4,7 +4,3 @@ export const EmailSchema = z
   .email('validation.email')
   .trim()
   .toLowerCase()
-export const IdSchema = z.coerce
-  .number()
-  .int()
-  .positive()

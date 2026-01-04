@@ -1,7 +1,7 @@
 import { use } from 'react'
 import { useIntl } from 'react-intl'
 
-import type { I18nKey } from '@/types'
+import type { I18nKey } from './i18n-context'
 
 import { I18nContext } from './i18n-context'
 
