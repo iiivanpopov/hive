@@ -75,7 +75,6 @@
 }
 
 @theme inline {
-  --text-base: 1.0625rem;
   --font-sans: 'Comfortaa', system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI', sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

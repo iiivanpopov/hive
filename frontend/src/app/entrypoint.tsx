@@ -21,7 +21,7 @@ client.setConfig({
   credentials: 'include',
 })
 
-client.interceptors.response.use(async (response) => {
+client.interceptors.response.use(async (response, _, options) => {
   let body = null
 
   try {
@@ -32,14 +32,19 @@ client.interceptors.response.use(async (response) => {
   }
 
   if (!response.ok) {
-    if (body && 'error' in body && typeof body.error === 'object' && body.error && 'code' in body.error)
+    if (options.meta?.toast !== false)
       toast.error(body.error.message)
   }
 
   return response
 })
 
-const router = createRouter({ routeTree })
+const router = createRouter({
+  routeTree,
+  context: {
+    user: null,
+  },
+})
 
 declare module '@tanstack/react-router' {
   interface Register {

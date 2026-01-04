@@ -4,15 +4,16 @@ import z from 'zod'
 
 import { postAuthLoginMutation } from '@/api/@tanstack/react-query.gen'
 import { useForm } from '@/components/form/hooks'
+import { EmailSchema } from '@/shared/zod'
 
-const LoginBodySchema = z.object({
+const LoginSchema = z.object({
   identity: z.union([
-    z.email(),
+    EmailSchema,
     z.string().min(5),
   ], 'validation.identity'),
   password: z.string().min(6, 'validation.password.min'),
 })
-export type LoginData = z.infer<typeof LoginBodySchema>
+export type LoginData = z.infer<typeof LoginSchema>
 
 const loginFormDefaultValues = {
   identity: '',
@@ -32,7 +33,7 @@ export function useLoginPage() {
   const loginForm = useForm({
     defaultValues: loginFormDefaultValues,
     validators: {
-      onChange: LoginBodySchema,
+      onChange: LoginSchema,
     },
     onSubmit: async ({ value }) => {
       loginMutation.mutate({ body: value })
