@@ -8,7 +8,7 @@ import { factory } from '@/lib/factory'
 import { sessionMiddleware, validator } from '@/middleware'
 
 import { MessagesService } from './messages.service'
-import { CreateMessageBodySchema, CreateMessageResponseSchema } from './schema/create-message.schema'
+import { CreateMessageBodySchema, CreateMessageParamsSchema, CreateMessageResponseSchema } from './schema/create-message.schema'
 import { DeleteMessageParamsSchema } from './schema/delete-message.schema'
 import { GetChannelMessagesParamsSchema, GetChannelMessagesResponseSchema } from './schema/get-channel-messages.schema'
 import { UpdateMessageBodySchema, UpdateMessageParamsSchema, UpdateMessageResponseSchema } from './schema/update-message.schema'
@@ -74,7 +74,7 @@ export class MessagesRouter implements BaseRouter {
           },
         }),
         sessionMiddleware(this.db, this.sessionTokens),
-        validator('param', GetChannelMessagesParamsSchema),
+        validator('param', CreateMessageParamsSchema),
         validator('json', CreateMessageBodySchema),
         async (c) => {
           const { id } = c.req.valid('param')

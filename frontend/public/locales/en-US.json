@@ -30,5 +30,9 @@
   "validation.community-name.min": "Min 3 characters.",
   "validation.community-name.max": "Max 50 characters.",
   "text.no-community-selected": "No community selected",
-  "button.leave-community": "Leave Community"
+  "button.leave-community": "Leave Community",
+  "dialog.leave-community.title": "Leave Community",
+  "dialog.leave-community.description": "Are you sure you want to leave this community?",
+  "button.cancel": "Cancel",
+  "text.no-channel-selected": "No channel selected"
 }

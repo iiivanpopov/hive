@@ -11,12 +11,15 @@ import type { UpdateMessageBody } from './schema/update-message.schema'
 export class MessagesService {
   constructor(
     private readonly db: DrizzleDatabase,
-  ) {}
+  ) { }
 
-  async getMessagesInChannel(channelId: number, userId: number) {
+  async getMessagesInChannel(channelIdOrSlug: string, userId: number) {
     const channel = await this.db.query.channels.findFirst({
       where: {
-        id: channelId,
+        OR: [
+          { id: Number(channelIdOrSlug) },
+          { slug: channelIdOrSlug },
+        ],
       },
     })
     if (!channel)
@@ -34,7 +37,10 @@ export class MessagesService {
 
     const messagesList = await this.db.query.messages.findMany({
       where: {
-        channelId,
+        OR: [
+          { channelId: Number(channelIdOrSlug) },
+          { channel: { slug: channelIdOrSlug } },
+        ],
       },
       orderBy: {
         createdAt: 'asc',
