@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, Outlet, redirect, useNavigate, useParams } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
+import { HomeIcon, PlusIcon } from 'lucide-react'
 import { useRef } from 'react'
 import { toast } from 'sonner'
 import z from 'zod'
@@ -46,7 +46,7 @@ function RouteComponent() {
   const navigate = useNavigate()
   const { t } = useI18n()
   const { communities } = Route.useLoaderData()
-  const params = useParams({ from: '/(root)/_communities/$slug/' })
+  const params = useParams({ strict: false })
 
   const listRef = useRef<HTMLDivElement | null>(null)
   const [isCreateCommunityModalOpen, setIsCreateCommunityModalOpen] = useBoolean(false)
@@ -57,8 +57,13 @@ function RouteComponent() {
     ...postCommunitiesMutation(),
     onSuccess: async ({ community }) => {
       toast.success(t('toast.community-created', { name: community.name }))
+
       await queryClient.refetchQueries(getCommunitiesJoinedOptions())
-      navigate({ to: '/$slug', params: { slug: community.slug } })
+
+      navigate({
+        to: '/$slug',
+        params: { slug: community.slug },
+      })
     },
   })
 
@@ -67,12 +72,13 @@ function RouteComponent() {
     validators: { onChange: CreateCommunityFormSchema },
     onSubmit: async ({ value, formApi }) => {
       await createCommunityMutation.mutateAsync({ body: { name: value.name } })
+
       formApi.reset()
       setIsCreateCommunityModalOpen(false)
     },
   })
 
-  const addServerIntersectionObserver = useIntersectionObserver<HTMLButtonElement>({
+  const addServerIntersectionObserver = useIntersectionObserver<HTMLDivElement>({
     root: listRef,
     threshold: 0.2,
     onChange: entries => setAddServerInView(entries.some(e => e.isIntersecting)),
@@ -84,10 +90,22 @@ function RouteComponent() {
     onChange: entries => setLastServerInView(entries.some(e => e.isIntersecting)),
   })
 
+  const handleHomeClick = () => navigate({ to: '/' })
+
   return (
     <div className="flex min-h-screen min-w-screen">
       <div className="bg-zinc-100 dark:bg-zinc-900 border-r border-zinc-200/75">
-        <div className="relative h-[92vh] py-12 w-20 flex justify-center">
+        <div className="relative flex-col h-[90vh] py-12 w-20 flex items-center gap-4">
+          <Button
+            size="icon-lg"
+            variant="outline"
+            onClick={handleHomeClick}
+          >
+            <HomeIcon />
+          </Button>
+
+          <div className="w-8 /12 h-0.5 bg-zinc-200" />
+
           <div
             ref={listRef}
             className="h-full flex no-scrollbar flex-col gap-2 overflow-y-auto items-center"
@@ -98,16 +116,22 @@ function RouteComponent() {
               onOpenChange={setIsCreateCommunityModalOpen}
             >
               <DialogTrigger
-                render={props => (
-                  <button
+                render={({ children, ...props }) => (
+                  <div
                     {...props}
                     ref={addServerIntersectionObserver.ref}
-                    className="size-12 aspect-square shrink-0 flex items-center justify-center rounded-lg bg-zinc-300 text-white hover:bg-zinc-400/50 cursor-pointer transition-colors"
                   >
-                    <PlusIcon size={24} strokeWidth={3} />
-                  </button>
+                    {children}
+                  </div>
                 )}
-              />
+              >
+                <Button
+                  size="icon-lg"
+                  variant="outline"
+                >
+                  <PlusIcon />
+                </Button>
+              </DialogTrigger>
 
               <DialogContent>
                 <DialogHeader>
@@ -153,7 +177,10 @@ function RouteComponent() {
                   </Button>
                   <DialogClose
                     render={props => (
-                      <Button {...props} variant="destructive">
+                      <Button
+                        {...props}
+                        variant="destructive"
+                      >
                         <I18nText id="button.close" />
                       </Button>
                     )}
@@ -166,6 +193,11 @@ function RouteComponent() {
               const isActive = params.slug === community.slug
               const isLast = i === communities.length - 1
 
+              const handleCommunityClick = () => navigate({
+                to: '/$slug',
+                params: { slug: community.slug },
+              })
+
               return (
                 <div
                   key={community.id}
@@ -175,50 +207,69 @@ function RouteComponent() {
                     <PopoverTrigger
                       openOnHover
                       nativeButton={false}
-                      delay={500}
+                      delay={200}
                       closeDelay={100}
-                      render={({ children, ...props }) => <div {...props}>{children}</div>}
+                      render={({ children, ...props }) => (
+                        <div {...props}>
+                          {children}
+                        </div>
+                      )}
                     >
-                      <button
-                        ref={isLast ? lastServerIntersectionObserver.ref : undefined}
-                        onClick={() => navigate({ to: '/$slug', params: { slug: community.slug } })}
-                        className={cn(
-                          'cursor-pointer w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-primary/80 text-primary-foreground transition-colors hover:bg-primary',
-                          isActive && 'bg-primary',
+                      <Button
+                        render={({ children, ...props }) => (
+                          <button
+                            {...props}
+                            ref={isLast ? lastServerIntersectionObserver.ref : undefined}
+                          >
+                            {children}
+                          </button>
                         )}
+                        size="icon-lg"
+                        onClick={handleCommunityClick}
                       >
                         <span className="text-xl font-bold select-none">
                           {community.name[0]!.toUpperCase()}
                         </span>
-                      </button>
+                      </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-fit px-2 py-1" side="right">
+                    <PopoverContent
+                      className="w-fit px-2 py-1"
+                      side="right"
+                    >
                       {community.name}
                     </PopoverContent>
                   </Popover>
                   {isActive && (
-                    <div className="absolute w-3 h-10 rounded-br-sm rounded-tr-sm bg-primary left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 animate-in fade-in zoom-in-0 duration-200" />
+                    <div className="absolute w-3 h-8 rounded-br-sm rounded-tr-sm bg-primary left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 animate-in fade-in zoom-in-0 duration-200" />
                   )}
                 </div>
               )
             })}
           </div>
 
-          {!addServerInView && (
-            <div className="pointer-events-none absolute top-6 left-2 right-2">
-              <div className="text-sm rounded-sm bg-zinc-200 py-0.5 px-1.5 text-muted-foreground animate-in fade-in zoom-in-0 duration-200">
-                more...
-              </div>
+          <div className="pointer-events-none absolute top-30 left-2 right-2">
+            <div
+              data-open={!addServerInView}
+              className={cn(
+                'opacity-0 scale-0 text-sm rounded-sm bg-zinc-200 py-0.5 px-1.5 text-muted-foreground animate-in fade-in zoom-in-0 duration-200',
+                'data-open:opacity-100 data-open:scale-100',
+              )}
+            >
+              more...
             </div>
-          )}
+          </div>
 
-          {!lastServerInView && (
-            <div className="pointer-events-none absolute bottom-6 left-2 right-2">
-              <div className="text-sm rounded-sm bg-zinc-200 py-0.5 px-1.5 text-muted-foreground animate-in fade-in zoom-in-0 duration-200">
-                more...
-              </div>
+          <div className="pointer-events-none absolute bottom-10 left-2 right-2">
+            <div
+              data-open={!lastServerInView}
+              className={cn(
+                'opacity-0 scale-0 text-sm rounded-sm bg-zinc-200 py-0.5 px-1.5 text-muted-foreground animate-in fade-in zoom-in-0 duration-200',
+                'data-open:opacity-100 data-open:scale-100',
+              )}
+            >
+              more...
             </div>
-          )}
+          </div>
         </div>
       </div>
 

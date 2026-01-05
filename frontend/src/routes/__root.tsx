@@ -16,6 +16,9 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
       <Outlet />
     </>
   ),
+  head: () => ({
+    meta: [{ title: 'Hive' }],
+  }),
   beforeLoad: async () => {
     try {
       const query = await queryClient.ensureQueryData(getAuthMeOptions({
