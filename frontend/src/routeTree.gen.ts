@@ -14,7 +14,8 @@ import { Route as rootCommunitiesIndexRouteImport } from './routes/(root)/_commu
 import { Route as authRegisterIndexRouteImport } from './routes/(auth)/register/index'
 import { Route as authRecoveryIndexRouteImport } from './routes/(auth)/recovery/index'
 import { Route as authLoginIndexRouteImport } from './routes/(auth)/login/index'
-import { Route as rootCommunitiesSlugIndexRouteImport } from './routes/(root)/_communities/$slug/index'
+import { Route as rootCommunitiesSlugCommunityLayoutRouteImport } from './routes/(root)/_communities/$slug/_community-layout'
+import { Route as rootCommunitiesSlugCommunityLayoutIndexRouteImport } from './routes/(root)/_communities/$slug/_community-layout/index'
 
 const rootCommunitiesRoute = rootCommunitiesRouteImport.update({
   id: '/(root)/_communities',
@@ -40,11 +41,17 @@ const authLoginIndexRoute = authLoginIndexRouteImport.update({
   path: '/login/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const rootCommunitiesSlugIndexRoute =
-  rootCommunitiesSlugIndexRouteImport.update({
-    id: '/$slug/',
-    path: '/$slug/',
+const rootCommunitiesSlugCommunityLayoutRoute =
+  rootCommunitiesSlugCommunityLayoutRouteImport.update({
+    id: '/$slug/_community-layout',
+    path: '/$slug',
     getParentRoute: () => rootCommunitiesRoute,
+  } as any)
+const rootCommunitiesSlugCommunityLayoutIndexRoute =
+  rootCommunitiesSlugCommunityLayoutIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => rootCommunitiesSlugCommunityLayoutRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -52,14 +59,15 @@ export interface FileRoutesByFullPath {
   '/recovery': typeof authRecoveryIndexRoute
   '/register': typeof authRegisterIndexRoute
   '/': typeof rootCommunitiesIndexRoute
-  '/$slug': typeof rootCommunitiesSlugIndexRoute
+  '/$slug': typeof rootCommunitiesSlugCommunityLayoutRouteWithChildren
+  '/$slug/': typeof rootCommunitiesSlugCommunityLayoutIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginIndexRoute
   '/recovery': typeof authRecoveryIndexRoute
   '/register': typeof authRegisterIndexRoute
   '/': typeof rootCommunitiesIndexRoute
-  '/$slug': typeof rootCommunitiesSlugIndexRoute
+  '/$slug': typeof rootCommunitiesSlugCommunityLayoutIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,11 +76,12 @@ export interface FileRoutesById {
   '/(auth)/recovery/': typeof authRecoveryIndexRoute
   '/(auth)/register/': typeof authRegisterIndexRoute
   '/(root)/_communities/': typeof rootCommunitiesIndexRoute
-  '/(root)/_communities/$slug/': typeof rootCommunitiesSlugIndexRoute
+  '/(root)/_communities/$slug/_community-layout': typeof rootCommunitiesSlugCommunityLayoutRouteWithChildren
+  '/(root)/_communities/$slug/_community-layout/': typeof rootCommunitiesSlugCommunityLayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/recovery' | '/register' | '/' | '/$slug'
+  fullPaths: '/login' | '/recovery' | '/register' | '/' | '/$slug' | '/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to: '/login' | '/recovery' | '/register' | '/' | '/$slug'
   id:
@@ -82,7 +91,8 @@ export interface FileRouteTypes {
     | '/(auth)/recovery/'
     | '/(auth)/register/'
     | '/(root)/_communities/'
-    | '/(root)/_communities/$slug/'
+    | '/(root)/_communities/$slug/_community-layout'
+    | '/(root)/_communities/$slug/_community-layout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -129,24 +139,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(root)/_communities/$slug/': {
-      id: '/(root)/_communities/$slug/'
+    '/(root)/_communities/$slug/_community-layout': {
+      id: '/(root)/_communities/$slug/_community-layout'
       path: '/$slug'
       fullPath: '/$slug'
-      preLoaderRoute: typeof rootCommunitiesSlugIndexRouteImport
+      preLoaderRoute: typeof rootCommunitiesSlugCommunityLayoutRouteImport
       parentRoute: typeof rootCommunitiesRoute
+    }
+    '/(root)/_communities/$slug/_community-layout/': {
+      id: '/(root)/_communities/$slug/_community-layout/'
+      path: '/'
+      fullPath: '/$slug/'
+      preLoaderRoute: typeof rootCommunitiesSlugCommunityLayoutIndexRouteImport
+      parentRoute: typeof rootCommunitiesSlugCommunityLayoutRoute
     }
   }
 }
 
+interface rootCommunitiesSlugCommunityLayoutRouteChildren {
+  rootCommunitiesSlugCommunityLayoutIndexRoute: typeof rootCommunitiesSlugCommunityLayoutIndexRoute
+}
+
+const rootCommunitiesSlugCommunityLayoutRouteChildren: rootCommunitiesSlugCommunityLayoutRouteChildren =
+  {
+    rootCommunitiesSlugCommunityLayoutIndexRoute:
+      rootCommunitiesSlugCommunityLayoutIndexRoute,
+  }
+
+const rootCommunitiesSlugCommunityLayoutRouteWithChildren =
+  rootCommunitiesSlugCommunityLayoutRoute._addFileChildren(
+    rootCommunitiesSlugCommunityLayoutRouteChildren,
+  )
+
 interface rootCommunitiesRouteChildren {
   rootCommunitiesIndexRoute: typeof rootCommunitiesIndexRoute
-  rootCommunitiesSlugIndexRoute: typeof rootCommunitiesSlugIndexRoute
+  rootCommunitiesSlugCommunityLayoutRoute: typeof rootCommunitiesSlugCommunityLayoutRouteWithChildren
 }
 
 const rootCommunitiesRouteChildren: rootCommunitiesRouteChildren = {
   rootCommunitiesIndexRoute: rootCommunitiesIndexRoute,
-  rootCommunitiesSlugIndexRoute: rootCommunitiesSlugIndexRoute,
+  rootCommunitiesSlugCommunityLayoutRoute:
+    rootCommunitiesSlugCommunityLayoutRouteWithChildren,
 }
 
 const rootCommunitiesRouteWithChildren = rootCommunitiesRoute._addFileChildren(

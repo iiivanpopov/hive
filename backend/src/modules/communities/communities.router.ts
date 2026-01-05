@@ -10,6 +10,7 @@ import { sessionMiddleware, validator } from '@/middleware'
 import { CommunitiesService } from './communities.service'
 import { CreateCommunityBodySchema, CreateCommunityResponseSchema } from './schema/create-community.schema'
 import { DeleteCommunityParamsSchema } from './schema/delete-community.schema'
+import { GetCommunityParamsSchema, GetCommunityResponseSchema } from './schema/get-community.schema'
 import { GetJoinedCommunitiesResponseSchema } from './schema/get-joined-communities.schema'
 import { LeaveCommunityParamsSchema } from './schema/leave-community.schema'
 import { UpdateCommunityBodySchema, UpdateCommunityParamsSchema, UpdateCommunityResponseSchema } from './schema/update-community.schema'
@@ -102,6 +103,33 @@ export class CommunitiesRouter implements BaseRouter {
           await this.communitiesService.leaveCommunity(params.id, user.id)
 
           return c.body(null, 204)
+        },
+      )
+      .get(
+        '/:id',
+        describeRoute({
+          tags: ['Communities'],
+          summary: 'Get community by ID',
+          description: 'Retrieve a community by its ID.',
+          responses: {
+            200: {
+              description: 'Community retrieved successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(GetCommunityResponseSchema),
+                },
+              },
+            },
+          },
+        }),
+        validator('param', GetCommunityParamsSchema),
+        async (c) => {
+          const { id } = c.req.valid('param')
+          const user = c.get('user')
+
+          const community = await this.communitiesService.getCommunity(id, user.id)
+
+          return c.json({ community })
         },
       )
       .delete(

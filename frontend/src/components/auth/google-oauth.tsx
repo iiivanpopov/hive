@@ -7,8 +7,8 @@ import { Button } from '../ui/button'
 export function GoogleOauth() {
   const navigate = useNavigate()
 
-  const handleClick = () => {
-    navigate({ href: `${import.meta.env.VITE_BACKEND_URL}/auth/google` })
+  const handleClick = async () => {
+    await navigate({ href: `${import.meta.env.VITE_BACKEND_URL}/auth/google` })
   }
 
   return (

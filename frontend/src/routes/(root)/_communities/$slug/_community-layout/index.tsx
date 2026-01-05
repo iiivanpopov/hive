@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(root)/_communities/$slug/')({
+export const Route = createFileRoute('/(root)/_communities/$slug/_community-layout/')({
   component: RouteComponent,
   head: ({ params }) => ({
     meta: [{ title: `#${params.slug}` }],
@@ -8,5 +8,9 @@ export const Route = createFileRoute('/(root)/_communities/$slug/')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/(root)/_communities/$slug/"!</div>
+  return (
+    <div>
+      asdasasfsdfsd
+    </div>
+  )
 }

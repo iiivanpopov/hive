@@ -10,8 +10,8 @@ const typographyVariants = cva(
   {
     variants: {
       variant: {
-        heading: 'text-xl lg:text-2xl font-semibold',
-        subheading: 'text-base lg:text-xl font-medium',
+        heading: 'text-3xl lg:text-4xl font-semibold',
+        subheading: 'text-xl lg:text-2xl font-medium',
         body: 'text-base font-normal',
         caption: 'text-xs lg:text-sm leading-tight',
       },

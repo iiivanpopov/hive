@@ -13,7 +13,7 @@ import type { UpdateCommunityBody } from './schema/update-community.schema'
 export class CommunitiesService {
   constructor(
     private readonly db: DrizzleDatabase,
-  ) {}
+  ) { }
 
   async getCommunityMembers(communityId: number) {
     const community = await this.db.query.communities.findFirst({
@@ -157,5 +157,37 @@ export class CommunitiesService {
     })
 
     return community
+  }
+
+  async getCommunity(idOrSlug: string, userId: number) {
+    const community = await this.db.query.communities.findFirst({
+      where: {
+        OR: [
+          { id: Number(idOrSlug) },
+          { slug: idOrSlug },
+        ],
+      },
+      with: {
+        channels: true,
+        members: {
+          with: {
+            user: true,
+          },
+        },
+      },
+    })
+
+    if (!community)
+      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
+
+    const membership = community.members.find(m => m.userId === userId)
+
+    if (!membership)
+      throw ApiException.Forbidden('You are not a member of this community', 'NOT_A_MEMBER')
+
+    return {
+      ...community,
+      members: community.members.map(member => toUserDto(member.user!)),
+    }
   }
 }

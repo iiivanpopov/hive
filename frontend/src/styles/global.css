@@ -122,14 +122,14 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans text-base min-h-screen;
+    @apply bg-background text-foreground font-sans text-base min-h-screen overflow-hidden;
   }
 
   html {
-    @apply font-sans min-h-screen;
+    @apply font-sans min-h-screen overflow-hidden;
   }
 
   #root {
-    @apply min-h-screen;
+    @apply min-h-screen overflow-hidden;
   }
 }

@@ -43,8 +43,8 @@ export function useRoute() {
 
   const registerMutation = useMutation({
     ...postAuthRegisterMutation(),
-    onSuccess: () => {
-      navigate({ to: '/' })
+    onSuccess: async () => {
+      await navigate({ to: '/' })
     },
   })
 

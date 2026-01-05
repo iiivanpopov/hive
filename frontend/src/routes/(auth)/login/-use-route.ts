@@ -27,8 +27,8 @@ export function useRoute() {
 
   const loginMutation = useMutation({
     ...postAuthLoginMutation(),
-    onSuccess: () => {
-      navigate({ to: '/' })
+    onSuccess: async () => {
+      await navigate({ to: '/' })
     },
   })
 

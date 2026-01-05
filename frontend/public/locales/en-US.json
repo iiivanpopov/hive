@@ -28,5 +28,7 @@
   "field.community-name.label": "Community Name",
   "form.create-community.title": "Create a New Community",
   "validation.community-name.min": "Min 3 characters.",
-  "validation.community-name.max": "Max 50 characters."
+  "validation.community-name.max": "Max 50 characters.",
+  "text.no-community-selected": "No community selected",
+  "button.leave-community": "Leave Community"
 }

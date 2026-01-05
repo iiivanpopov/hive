@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Outlet, redirect, useNavigate, useParams } from '@tanstack/react-router'
 import { HomeIcon, PlusIcon } from 'lucide-react'
 import { useRef } from 'react'
@@ -45,7 +45,7 @@ export const Route = createFileRoute('/(root)/_communities')({
 function RouteComponent() {
   const navigate = useNavigate()
   const { t } = useI18n()
-  const { communities } = Route.useLoaderData()
+  const communitiesQuery = useSuspenseQuery(getCommunitiesJoinedOptions())
   const params = useParams({ strict: false })
 
   const listRef = useRef<HTMLDivElement | null>(null)
@@ -60,7 +60,7 @@ function RouteComponent() {
 
       await queryClient.refetchQueries(getCommunitiesJoinedOptions())
 
-      navigate({
+      await navigate({
         to: '/$slug',
         params: { slug: community.slug },
       })
@@ -94,8 +94,8 @@ function RouteComponent() {
 
   return (
     <div className="flex min-h-screen min-w-screen">
-      <div className="bg-zinc-100 dark:bg-zinc-900 border-r border-zinc-200/75">
-        <div className="relative flex-col h-[90vh] py-12 w-20 flex items-center gap-4">
+      <div className="bg-zinc-100 dark:bg-zinc-900 border-r-[1.5px] border-zinc-200">
+        <div className="relative flex-col h-[90vh] py-8 w-20 flex items-center gap-4">
           <Button
             size="icon-lg"
             variant="outline"
@@ -136,7 +136,7 @@ function RouteComponent() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>
-                    <Typography variant="heading">
+                    <Typography variant="subheading">
                       <I18nText id="form.create-community.title" />
                     </Typography>
                   </DialogTitle>
@@ -189,11 +189,11 @@ function RouteComponent() {
               </DialogContent>
             </Dialog>
 
-            {communities.map((community, i) => {
+            {communitiesQuery.data.communities.map((community, i) => {
               const isActive = params.slug === community.slug
-              const isLast = i === communities.length - 1
+              const isLast = i === communitiesQuery.data.communities.length - 1
 
-              const handleCommunityClick = () => navigate({
+              const handleCommunityClick = async () => await navigate({
                 to: '/$slug',
                 params: { slug: community.slug },
               })
@@ -201,7 +201,7 @@ function RouteComponent() {
               return (
                 <div
                   key={community.id}
-                  className="w-20 h-12 flex justify-center relative"
+                  className="w-20 h-10 flex justify-center relative"
                 >
                   <Popover modal={false}>
                     <PopoverTrigger
@@ -247,7 +247,7 @@ function RouteComponent() {
             })}
           </div>
 
-          <div className="pointer-events-none absolute top-30 left-2 right-2">
+          <div className="pointer-events-none absolute top-25 left-2 right-2">
             <div
               data-open={!addServerInView}
               className={cn(
@@ -259,7 +259,7 @@ function RouteComponent() {
             </div>
           </div>
 
-          <div className="pointer-events-none absolute bottom-10 left-2 right-2">
+          <div className="pointer-events-none absolute bottom-5 left-2 right-2">
             <div
               data-open={!lastServerInView}
               className={cn(
