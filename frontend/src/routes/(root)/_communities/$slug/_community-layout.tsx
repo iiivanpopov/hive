@@ -1,10 +1,11 @@
 import { useMutation, useSuspenseQueries } from '@tanstack/react-query'
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
-import { ChevronDownIcon, DoorOpenIcon } from 'lucide-react'
+import { ChevronDownIcon, DoorOpenIcon, GlobeIcon } from 'lucide-react'
 
 import { getAuthMeOptions, getCommunitiesIdOptions, getCommunitiesJoinedQueryKey, postCommunitiesLeaveIdMutation } from '@/api/@tanstack/react-query.gen'
 import { I18nText } from '@/components/i18n/i18n-text'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useBoolean } from '@/hooks/use-boolean'
 import { queryClient } from '@/providers/query-provider'
@@ -55,32 +56,49 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-1">
-      <div className="w-48 bg-zinc-100 py-6 px-2">
-        <DropdownMenu
-          open={isCommunityDropdownMenuOpen}
-          onOpenChange={setIsCommunityDropdownMenuOpen}
-        >
-          <DropdownMenuTrigger className="flex gap-2 cursor-pointer hover:bg-zinc-200 transition-colors px-2 py-1 rounded-sm items-center max-w-44">
-            <Typography className="font-bold truncate text-secondary-foreground">
-              {communityQuery.data.community.name}
-            </Typography>
-            <ChevronDownIcon
-              data-open={isCommunityDropdownMenuOpen}
-              size={20}
-              className="data-open:rotate-180 rotate-0 transition-transform text-secondary-foreground"
-            />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-64 ">
-            {!isOwner && (
-              <DropdownMenuItem onClick={handleLeaveCommunity}>
-                <DoorOpenIcon size={20} className="text-destructive" />
-                <span className="text-destructive">
-                  <I18nText id="button.leave-community" />
-                </span>
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="w-48 bg-zinc-100 py-4">
+        <div className="py-2 border-l-[1.5px] border-b-[1.5px] border-t-[1.5px] rounded-tl-md rounded-bl-md h-full border-border flex flex-col gap-2">
+          <DropdownMenu
+            open={isCommunityDropdownMenuOpen}
+            onOpenChange={setIsCommunityDropdownMenuOpen}
+          >
+            <DropdownMenuTrigger className="flex gap-2 cursor-pointer hover:bg-zinc-200 transition-colors px-2 mx-2 py-1 rounded-sm items-center max-w-44 justify-between">
+              <div className="flex gap-2 items-center truncate">
+                <GlobeIcon size={20} className="shrink-0" />
+                <Typography className="font-bold truncate text-secondary-foreground">
+                  {communityQuery.data.community.name}
+                </Typography>
+              </div>
+              <ChevronDownIcon
+                data-open={isCommunityDropdownMenuOpen}
+                size={20}
+                className="data-open:rotate-180 rotate-0 transition-transform text-secondary-foreground shrink-0"
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-64 ">
+              <DropdownMenuGroup>
+                <DropdownMenuItem className="wrap-anywhere">
+                  {communityQuery.data.community.name}
+                </DropdownMenuItem>
+
+                {!isOwner && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleLeaveCommunity}
+                      className="text-destructive"
+                    >
+                      <DoorOpenIcon size={20} />
+                      <I18nText id="button.leave-community" />
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Separator />
+        </div>
       </div>
 
       <div className="flex-1">

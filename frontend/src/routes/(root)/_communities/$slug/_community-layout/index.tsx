@@ -10,7 +10,7 @@ export const Route = createFileRoute('/(root)/_communities/$slug/_community-layo
 function RouteComponent() {
   return (
     <div>
-      asdasasfsdfsd
+      Community
     </div>
   )
 }

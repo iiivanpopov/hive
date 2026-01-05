@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { FieldGroup, FieldLegend, FieldSet } from '@/components/ui/field'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
 import { Typography } from '@/components/ui/typography'
 import { useBoolean } from '@/hooks/use-boolean/use-boolean'
@@ -94,8 +95,8 @@ function RouteComponent() {
 
   return (
     <div className="flex min-h-screen min-w-screen">
-      <div className="bg-zinc-100 dark:bg-zinc-900 border-r-[1.5px] border-zinc-200">
-        <div className="relative flex-col h-[90vh] py-8 w-20 flex items-center gap-4">
+      <div className="bg-zinc-100 dark:bg-zinc-900">
+        <div className="relative flex-col h-[90vh] py-4 w-20 flex items-center gap-4">
           <Button
             size="icon-lg"
             variant="outline"
@@ -104,7 +105,7 @@ function RouteComponent() {
             <HomeIcon />
           </Button>
 
-          <div className="w-8 /12 h-0.5 bg-zinc-200" />
+          <Separator className="w-10!" />
 
           <div
             ref={listRef}
@@ -247,7 +248,7 @@ function RouteComponent() {
             })}
           </div>
 
-          <div className="pointer-events-none absolute top-25 left-2 right-2">
+          <div className="pointer-events-none absolute top-16 left-2 right-2">
             <div
               data-open={!addServerInView}
               className={cn(
@@ -259,7 +260,7 @@ function RouteComponent() {
             </div>
           </div>
 
-          <div className="pointer-events-none absolute bottom-5 left-2 right-2">
+          <div className="pointer-events-none absolute bottom-0 left-2 right-2">
             <div
               data-open={!lastServerInView}
               className={cn(
