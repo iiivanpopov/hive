@@ -9,7 +9,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useBoolean } from '@/hooks/use-boolean/use-boolean'
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer/use-intersection-observer'
 
+import { AddCommunityDialog } from './add-community-dialog'
 import { CreateCommunityDialog } from './create-community-dialog'
+import { JoinCommunityDialog } from './join-community-dialog'
 
 export function CommunityList() {
   const navigate = useNavigate()
@@ -18,6 +20,8 @@ export function CommunityList() {
 
   const listRef = useRef<HTMLDivElement | null>(null)
   const [isCreateCommunityModalOpen, setIsCreateCommunityModalOpen] = useBoolean(false)
+  const [isJoinCommunityModalOpen, setIsJoinCommunityModalOpen] = useBoolean(false)
+  const [isAddCommunityPopoverOpen, setIsAddCommunityPopoverOpen] = useBoolean(false)
   const [addServerInView, setAddServerInView] = useBoolean(true)
   const [lastServerInView, setLastServerInView] = useBoolean(true)
 
@@ -33,7 +37,7 @@ export function CommunityList() {
     onChange: entries => setLastServerInView(entries.some(e => e.isIntersecting)),
   })
 
-  const handleAddServerClick = () => setIsCreateCommunityModalOpen(true)
+  const handleAddServerClick = () => setIsAddCommunityPopoverOpen(true)
 
   return (
     <div className="relative">
@@ -50,9 +54,21 @@ export function CommunityList() {
           <PlusIcon />
         </Button>
 
+        <AddCommunityDialog
+          open={isAddCommunityPopoverOpen}
+          onOpenChange={setIsAddCommunityPopoverOpen}
+          openCreateCommunityDialog={() => setIsCreateCommunityModalOpen(true)}
+          openJoinCommunityDialog={() => setIsJoinCommunityModalOpen(true)}
+        />
+
         <CreateCommunityDialog
           open={isCreateCommunityModalOpen}
           onOpenChange={setIsCreateCommunityModalOpen}
+        />
+
+        <JoinCommunityDialog
+          open={isJoinCommunityModalOpen}
+          onOpenChange={setIsJoinCommunityModalOpen}
         />
 
         {communitiesQuery.data.communities.map((community, i) => {

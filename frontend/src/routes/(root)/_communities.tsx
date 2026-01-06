@@ -11,12 +11,12 @@ import { CommunityListSkeleton } from './-components/community-list-skeleton'
 
 export const Route = createFileRoute('/(root)/_communities')({
   component: RouteComponent,
-  beforeLoad: async ({ context }) => {
+  pendingComponent: LoadingComponent,
+  beforeLoad: ({ context }) => {
     if (!context.user)
       throw redirect({ to: '/login' })
   },
-  loader: async () => queryClient.ensureQueryData(getCommunitiesJoinedOptions()),
-  pendingComponent: LoadingComponent,
+  loader: () => queryClient.ensureQueryData(getCommunitiesJoinedOptions()),
 })
 
 function RouteComponent() {
@@ -50,7 +50,7 @@ function RouteComponent() {
 function LoadingComponent() {
   return (
     <div className="flex min-h-screen min-w-screen">
-      <div className="bg-zinc-100 dark:bg-zinc-900">
+      <div className="bg-zinc-100">
         <div className="relative flex-col h-[90vh] py-4 w-20 flex items-center gap-4">
           <div className="size-10 rounded-md bg-zinc-200/50 animate-pulse" />
 

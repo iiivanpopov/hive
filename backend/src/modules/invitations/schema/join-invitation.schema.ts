@@ -1,6 +1,6 @@
 import z from 'zod'
 
-import { InvitationSchema } from '@/db/tables/invitations'
+import { CommunitySchema } from '@/db/tables/communities'
 
 export const JoinInvitationParamsSchema = z.object({
   token: z.string(),
@@ -8,6 +8,6 @@ export const JoinInvitationParamsSchema = z.object({
 
 export type JoinInvitationParam = z.infer<typeof JoinInvitationParamsSchema>
 
-export const JoinInvitationSchema = z.object({
-  invitation: InvitationSchema,
+export const JoinInvitationResponseSchema = z.object({
+  community: CommunitySchema,
 })

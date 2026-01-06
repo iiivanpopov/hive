@@ -68,7 +68,7 @@ describe('/communities/join/:token', () => {
       param: { token: invitation.token },
     }, { headers: { Cookie: authCookie } })
 
-    expect(joinInvitationResponse.status).toBe(204)
+    expect(joinInvitationResponse.status).toBe(200)
 
     const membership = await databaseMock.query.communityMembers.findFirst({
       where: {

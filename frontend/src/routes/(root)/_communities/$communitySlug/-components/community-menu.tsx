@@ -1,6 +1,6 @@
 import { useSuspenseQueries } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { ChevronDownIcon, DoorOpenIcon, GlobeIcon, PlusIcon } from 'lucide-react'
+import { ChevronDownIcon, DoorOpenIcon, GlobeIcon, LinkIcon, PlusIcon } from 'lucide-react'
 
 import { getAuthMeOptions, getCommunitiesIdOptions } from '@/api/@tanstack/react-query.gen'
 import { I18nText } from '@/components/i18n/i18n-text'
@@ -10,6 +10,7 @@ import { useBoolean } from '@/hooks/use-boolean'
 import { cn } from '@/lib/utils'
 
 import { CreateChannelDialog } from './create-channel-dialog'
+import { CreateInvitationDialog } from './create-invitation-dialog'
 import { LeaveCommunityDialog } from './leave-community-dialog'
 
 export function CommunityMenu() {
@@ -18,6 +19,7 @@ export function CommunityMenu() {
   const [isCommunityDropdownMenuOpen, setIsCommunityDropdownMenuOpen] = useBoolean(false)
   const [isCreateChannelDialogOpen, setIsCreateChannelDialogOpen] = useBoolean(false)
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useBoolean(false)
+  const [isCreateInvitationDialogOpen, setIsCreateInvitiationDialogOpen] = useBoolean(false)
 
   const [communityQuery, authMeQuery] = useSuspenseQueries({
     queries: [
@@ -80,6 +82,20 @@ export function CommunityMenu() {
                 </DropdownMenuItem>
               </>
             )}
+
+            {isOwner && (
+              <>
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={() => setIsCreateInvitiationDialogOpen(true)}
+                  className="justify-between flex items-center w-full cursor-pointer"
+                >
+                  <I18nText id="button.create-invitation" />
+                  <LinkIcon size={20} />
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -96,6 +112,11 @@ export function CommunityMenu() {
       <CreateChannelDialog
         open={isCreateChannelDialogOpen}
         onOpenChange={setIsCreateChannelDialogOpen}
+      />
+
+      <CreateInvitationDialog
+        open={isCreateInvitationDialogOpen}
+        onOpenChange={setIsCreateInvitiationDialogOpen}
       />
 
       <LeaveCommunityDialog

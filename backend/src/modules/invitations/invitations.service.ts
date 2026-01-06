@@ -12,7 +12,7 @@ import type { CreateInvitationBody } from './schema/create-invitation.schema'
 export class InvitationsService {
   constructor(
     private readonly db: DrizzleDatabase,
-  ) {}
+  ) { }
 
   async joinCommunityViaInvitation(token: string, userId: number) {
     const invitation = await this.db.query.invitations.findFirst({
@@ -46,6 +46,8 @@ export class InvitationsService {
         userId,
         role: 'member',
       })
+
+    return invitation.community!
   }
 
   async revokeInvitation(invitationId: number, userId: number) {

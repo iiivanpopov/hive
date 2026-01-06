@@ -118,7 +118,7 @@ export function CreateChannelDialog({ open, onOpenChange }: CreateChannelDialogP
 
               <createChannelForm.AppField name="description">
                 {field => (
-                  <field.Input
+                  <field.Textarea
                     description={t('field.channel-description.description')}
                     label={t('field.channel-description.label')}
                     error={t(field.state.meta.errors)}

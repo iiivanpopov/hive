@@ -12,13 +12,13 @@ import { CommunityMenuSkeleton } from './-components/community-menu-skeleton'
 
 export const Route = createFileRoute('/(root)/_communities/$communitySlug/_community')({
   component: RouteComponent,
-  loader: async ({ params }) => queryClient.ensureQueryData(getCommunitiesIdOptions({
+  pendingComponent: LoadingComponent,
+  errorComponent: ErrorComponent,
+  loader: ({ params }) => queryClient.ensureQueryData(getCommunitiesIdOptions({
     path: {
       id: params.communitySlug,
     },
   })),
-  errorComponent: ErrorComponent,
-  pendingComponent: LoadingComponent,
 })
 
 function RouteComponent() {

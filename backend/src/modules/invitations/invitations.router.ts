@@ -9,8 +9,8 @@ import { sessionMiddleware, validator } from '@/middleware'
 
 import { InvitationsService } from './invitations.service'
 import { CreateInvitationBodySchema, CreateInvitationParamsSchema, CreateInvitationResponseSchema } from './schema/create-invitation.schema'
-import { DeleteInvitationParamsSchema } from './schema/delete-invitation.schema'
-import { JoinInvitationParamsSchema, JoinInvitationSchema } from './schema/join-invitation.schema'
+import { DeleteInvitationParamsSchema, DeleteInvitationResponseSchema } from './schema/delete-invitation.schema'
+import { JoinInvitationParamsSchema, JoinInvitationResponseSchema } from './schema/join-invitation.schema'
 
 export class InvitationsRouter implements BaseRouter {
   readonly basePath = '/'
@@ -64,8 +64,13 @@ export class InvitationsRouter implements BaseRouter {
           summary: 'Join a community via invitation',
           description: 'Join a community using an invitation ID.',
           responses: {
-            204: {
+            200: {
               description: 'Joined community successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(JoinInvitationResponseSchema),
+                },
+              },
             },
           },
         }),
@@ -75,9 +80,9 @@ export class InvitationsRouter implements BaseRouter {
           const { token } = c.req.valid('param')
           const user = c.get('user')
 
-          await this.invitationsService.joinCommunityViaInvitation(token, user.id)
+          const community = await this.invitationsService.joinCommunityViaInvitation(token, user.id)
 
-          return c.body(null, 204)
+          return c.json({ community }, 200)
         },
       )
       .delete(
@@ -91,7 +96,7 @@ export class InvitationsRouter implements BaseRouter {
               description: 'Invitation revoked successfully',
               content: {
                 'application/json': {
-                  schema: resolver(JoinInvitationSchema),
+                  schema: resolver(DeleteInvitationResponseSchema),
                 },
               },
             },
