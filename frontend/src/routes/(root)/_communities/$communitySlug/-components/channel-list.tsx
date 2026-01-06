@@ -4,6 +4,7 @@ import { HashIcon } from 'lucide-react'
 import { useRef } from 'react'
 
 import { getCommunitiesIdOptions } from '@/api/@tanstack/react-query.gen'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useBoolean } from '@/hooks/use-boolean'
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer'
 import { cn } from '@/lib/utils'
@@ -45,26 +46,42 @@ export function ChannelList() {
   })
 
   return (
-    <div ref={listRef} className="relative">
-      <div className="flex flex-col gap-2 h-[90vh] no-scrollbar overflow-y-auto">
+    <div className="relative">
+      <div
+        ref={listRef}
+        className="flex flex-col gap-2 h-[90vh] no-scrollbar overflow-y-auto"
+      >
         {channelsQuery.data.community.channels.map((channel, i) => {
           const isLast = i === channelsQuery.data.community.channels.length - 1
           const isFirst = i === 0
           const isActive = channelSlug === channel.slug
 
           return (
-            <button
+            <Tooltip
               key={channel.id}
-              onClick={() => handleOpenChannel(channel.slug)}
-              ref={isFirst ? firstChannelRef : isLast ? lastChannelRef : undefined}
-              className={cn(
-                'flex gap-2 cursor-pointer hover:bg-zinc-200 transition-colors px-2 mx-2 py-1 rounded-sm items-center max-w-44 w-full',
-                isActive && 'bg-zinc-200',
-              )}
             >
-              <HashIcon size={20} />
-              {channel.name}
-            </button>
+              <TooltipTrigger>
+                <button
+                  onClick={() => handleOpenChannel(channel.slug)}
+                  ref={isFirst ? firstChannelRef : isLast ? lastChannelRef : undefined}
+                  className={cn(
+                    'flex gap-1.5 cursor-pointer hover:bg-zinc-200 transition-colors px-2 mx-2 py-1 rounded-sm items-center max-w-44 w-full',
+                    isActive && 'bg-zinc-200',
+                  )}
+                >
+                  <HashIcon
+                    size={20}
+                    className="shrink-0 "
+                  />
+                  <span className="truncate">
+                    {channel.name}
+                  </span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                {channel.name}
+              </TooltipContent>
+            </Tooltip>
           )
         })}
       </div>

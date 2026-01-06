@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 import { getCommunitiesIdOptions } from '@/api/@tanstack/react-query.gen'
+import { ErrorComponent } from '@/components/error-component'
 import { Separator } from '@/components/ui/separator'
 import { queryClient } from '@/providers/query-provider'
 
@@ -14,6 +15,7 @@ export const Route = createFileRoute('/(root)/_communities/$communitySlug/_commu
       id: params.communitySlug,
     },
   })),
+  errorComponent: ({ error }) => <ErrorComponent error={(error as any).error} />,
 })
 
 function RouteComponent() {

@@ -34,5 +34,16 @@
   "dialog.leave-community.title": "Leave Community",
   "dialog.leave-community.description": "Are you sure you want to leave this community?",
   "button.cancel": "Cancel",
-  "text.no-channel-selected": "No channel selected"
+  "text.no-channel-selected": "No channel selected",
+  "dialog.create-channel.title": "Create channel",
+  "button.create-channel": "Create",
+  "toast.channel-created": "Channel created",
+  "field.channel-name.label": "Channel name",
+  "field.channel-description.label": "Channel description",
+  "form.create-channel.title": "Create channel",
+  "validation.channel-name.min": "Min 3 characters",
+  "validation.channel-name.max": "Max 20 characters",
+  "validation.channel-description.max": "Max 255 characters",
+  "toast.leaved-community": "Leaved community \"{name}\"",
+  "field.channel-description.description": "Optional. Up to 255 characters."
 }

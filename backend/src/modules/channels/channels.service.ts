@@ -11,7 +11,7 @@ import type { UpdateChannelBody } from './schema/update-channel.schema'
 export class ChannelsService {
   constructor(
     private readonly db: DrizzleDatabase,
-  ) {}
+  ) { }
 
   async getChannelsByCommunityId(communityId: number, userId: number) {
     const membership = await this.db.query.communityMembers.findFirst({
@@ -95,6 +95,15 @@ export class ChannelsService {
   }
 
   async createChannel(communityId: number, data: CreateChannelBody, userId: number) {
+    const channel = await this.db.query.channels.findFirst({
+      where: {
+        communityId,
+        slug: data.name.toLowerCase().replace(/\s+/g, '-'),
+      },
+    })
+    if (channel)
+      throw ApiException.BadRequest('Channel with this name already exists', 'CHANNEL_ALREADY_EXISTS')
+
     const member = await this.db.query.communityMembers.findFirst({
       where: {
         communityId,
@@ -107,7 +116,7 @@ export class ChannelsService {
     if (member.role !== 'owner')
       throw ApiException.Forbidden('You do not have permission to create channels in this community', 'FORBIDDEN')
 
-    const [channel] = await this.db
+    const [newChannel] = await this.db
       .insert(channels)
       .values({
         communityId,
@@ -118,6 +127,6 @@ export class ChannelsService {
       })
       .returning()
 
-    return channel
+    return newChannel
   }
 }

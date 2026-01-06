@@ -5,7 +5,7 @@ import { useRef } from 'react'
 
 import { getCommunitiesJoinedOptions } from '@/api/@tanstack/react-query.gen'
 import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useBoolean } from '@/hooks/use-boolean/use-boolean'
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer/use-intersection-observer'
 
@@ -34,12 +34,11 @@ export function CommunityList() {
   })
 
   return (
-    <div className="relative flex-col h-[90vh] py-4 w-20 flex items-center gap-4">
+    <div className="relative">
       <div
         ref={listRef}
-        className="h-full flex no-scrollbar flex-col gap-2 overflow-y-auto items-center"
+        className="h-[80vh] w-20 flex no-scrollbar flex-col gap-2 overflow-y-auto items-center"
       >
-
         <Button
           ref={addServerRef}
           onClick={() => setIsCreateCommunityModalOpen(true)}
@@ -48,6 +47,7 @@ export function CommunityList() {
         >
           <PlusIcon />
         </Button>
+
         <CreateCommunityDialog
           open={isCreateCommunityModalOpen}
           onOpenChange={setIsCreateCommunityModalOpen}
@@ -67,14 +67,8 @@ export function CommunityList() {
               key={community.id}
               className="w-20 h-10 flex justify-center relative"
             >
-              <Popover modal={false}>
-                <PopoverTrigger
-                  openOnHover
-                  nativeButton={false}
-                  delay={200}
-                  closeDelay={100}
-                  render={props => <div {...props} />} // don't nest button in button
-                >
+              <Tooltip>
+                <TooltipTrigger>
                   <Button
                     ref={isLast ? lastServerRef : undefined}
                     size="icon-lg"
@@ -84,14 +78,11 @@ export function CommunityList() {
                       {community.name[0]!.toUpperCase()}
                     </span>
                   </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-fit px-2 py-1"
-                  side="right"
-                >
+                </TooltipTrigger>
+                <TooltipContent side="right">
                   {community.name}
-                </PopoverContent>
-              </Popover>
+                </TooltipContent>
+              </Tooltip>
               {isActive && (
                 <div className="absolute w-3 h-8 rounded-br-sm rounded-tr-sm bg-primary left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 animate-in fade-in zoom-in-0 duration-200" />
               )}

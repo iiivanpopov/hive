@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "447e8e29-c90d-4557-90e8-df6f61fb50ab",
+  "id": "d09bc7d5-d6d3-47f0-a9d6-da7e80d0c02f",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -548,6 +548,16 @@
       "name": "users_pk",
       "table": "users",
       "entityType": "pks"
+    },
+    {
+      "columns": [
+        "community_id",
+        "slug"
+      ],
+      "nameExplicit": true,
+      "name": "community_id_slug_name",
+      "entityType": "uniques",
+      "table": "channels"
     },
     {
       "columns": [

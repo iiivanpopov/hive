@@ -18,6 +18,11 @@ export const channels = s.sqliteTable('channels', {
   createdAt: s.integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
-})
+}, t => [
+  s.unique('community_id_slug').on(
+    t.communityId,
+    t.slug,
+  ),
+])
 
 export type Channel = typeof channels.$inferSelect

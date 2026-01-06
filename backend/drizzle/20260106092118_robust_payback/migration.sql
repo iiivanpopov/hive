@@ -6,7 +6,8 @@ CREATE TABLE `channels` (
 	`type` text NOT NULL,
 	`description` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
-	CONSTRAINT `fk_channels_community_id_communities_id_fk` FOREIGN KEY (`community_id`) REFERENCES `communities`(`id`) ON DELETE CASCADE
+	CONSTRAINT `fk_channels_community_id_communities_id_fk` FOREIGN KEY (`community_id`) REFERENCES `communities`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `community_id_slug_name` UNIQUE(`community_id`,`slug`)
 );
 --> statement-breakpoint
 CREATE TABLE `communities` (

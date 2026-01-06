@@ -1,11 +1,13 @@
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from '@tanstack/react-router'
+import { toast } from 'sonner'
 
 import { getCommunitiesIdOptions, getCommunitiesJoinedQueryKey, postCommunitiesLeaveIdMutation } from '@/api/@tanstack/react-query.gen'
 import { I18nText } from '@/components/i18n/i18n-text'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Typography } from '@/components/ui/typography'
+import { useI18n } from '@/providers/i18n-provider'
 import { queryClient } from '@/providers/query-provider'
 
 interface LeaveCommunityDialogProps {
@@ -19,14 +21,20 @@ export function LeaveCommunityDialog({
 }: LeaveCommunityDialogProps) {
   const { communitySlug } = useParams({ from: '/(root)/_communities/$communitySlug/_community' })
   const navigate = useNavigate()
-
-  const leaveMutation = useMutation(postCommunitiesLeaveIdMutation())
+  const { t } = useI18n()
 
   const communityQuery = useSuspenseQuery(getCommunitiesIdOptions({
     path: {
       id: communitySlug,
     },
   }))
+
+  const leaveMutation = useMutation({
+    ...postCommunitiesLeaveIdMutation(),
+    onSuccess: async () => {
+      toast.success(t('toast.leaved-community', { name: communityQuery.data.community.name }))
+    },
+  })
 
   const handleLeaveConfirm = async () => {
     await leaveMutation.mutateAsync({
@@ -58,12 +66,10 @@ export function LeaveCommunityDialog({
         <DialogDescription>
           <I18nText id="dialog.leave-community.description" />
         </DialogDescription>
-        <DialogFooter>
-          <DialogClose>
-            <Button variant="outline">
-              <I18nText id="button.cancel" />
-            </Button>
-          </DialogClose>
+        <DialogFooter
+          showCloseButton={true}
+          closeButtonChildren={t('button.cancel')}
+        >
           <Button
             onClick={handleLeaveConfirm}
             variant="destructive"
