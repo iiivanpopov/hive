@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator'
 import { queryClient } from '@/providers/query-provider'
 
 import { CommunityList } from './-components/community-list'
+import { CommunityListSkeleton } from './-components/community-list-skeleton'
 
 export const Route = createFileRoute('/(root)/_communities')({
   component: RouteComponent,
@@ -15,12 +16,13 @@ export const Route = createFileRoute('/(root)/_communities')({
       throw redirect({ to: '/login' })
   },
   loader: async () => queryClient.ensureQueryData(getCommunitiesJoinedOptions()),
+  pendingComponent: LoadingComponent,
 })
 
 function RouteComponent() {
   const navigate = useNavigate()
 
-  const handleHomeClick = () => navigate({ to: '/' })
+  const handleGoHome = () => navigate({ to: '/' })
 
   return (
     <div className="flex min-h-screen min-w-screen">
@@ -29,7 +31,7 @@ function RouteComponent() {
           <Button
             size="icon-lg"
             variant="outline"
-            onClick={handleHomeClick}
+            onClick={handleGoHome}
           >
             <HomeIcon />
           </Button>
@@ -37,6 +39,24 @@ function RouteComponent() {
           <Separator className="w-10!" />
 
           <CommunityList />
+        </div>
+      </div>
+
+      <Outlet />
+    </div>
+  )
+}
+
+function LoadingComponent() {
+  return (
+    <div className="flex min-h-screen min-w-screen">
+      <div className="bg-zinc-100 dark:bg-zinc-900">
+        <div className="relative flex-col h-[90vh] py-4 w-20 flex items-center gap-4">
+          <div className="size-10 rounded-md bg-zinc-200/50 animate-pulse" />
+
+          <Separator className="w-10!" />
+
+          <CommunityListSkeleton />
         </div>
       </div>
 

@@ -12,6 +12,7 @@ export default antfu({
     ...globalESLintConfig.rules,
     'react-refresh/only-export-components': 'off',
     'react-hooks/exhaustive-deps': 'off',
+    'react/no-array-index-key': 'off',
   },
   basePath: path.resolve(__dirname),
 })

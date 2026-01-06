@@ -35,7 +35,6 @@ interface CreateCommunityDialogProps {
 export function CreateCommunityDialog({
   open,
   onOpenChange,
-
 }: CreateCommunityDialogProps) {
   const { t } = useI18n()
   const navigate = useNavigate()

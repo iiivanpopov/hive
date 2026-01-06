@@ -17,13 +17,13 @@ export function ChannelList() {
   const [firstChannelInView, setFirstChannelInView] = useBoolean(true)
   const [lastChannelInView, setLastChannelInView] = useBoolean(true)
 
-  const { ref: firstChannelRef } = useIntersectionObserver<HTMLButtonElement>({
+  const { ref: firstChannelRef } = useIntersectionObserver<HTMLDivElement>({
     root: listRef,
     threshold: 0.2,
     onChange: entries => setFirstChannelInView(entries.some(e => e.isIntersecting)),
   })
 
-  const { ref: lastChannelRef } = useIntersectionObserver<HTMLButtonElement>({
+  const { ref: lastChannelRef } = useIntersectionObserver<HTMLDivElement>({
     root: listRef,
     threshold: 0.2,
     onChange: entries => setLastChannelInView(entries.some(e => e.isIntersecting)),
@@ -57,15 +57,12 @@ export function ChannelList() {
           const isActive = channelSlug === channel.slug
 
           return (
-            <Tooltip
-              key={channel.id}
-            >
-              <TooltipTrigger>
-                <button
-                  onClick={() => handleOpenChannel(channel.slug)}
+            <Tooltip key={channel.id}>
+              <TooltipTrigger onClick={() => handleOpenChannel(channel.slug)}>
+                <div
                   ref={isFirst ? firstChannelRef : isLast ? lastChannelRef : undefined}
                   className={cn(
-                    'flex gap-1.5 cursor-pointer hover:bg-zinc-200 transition-colors px-2 mx-2 py-1 rounded-sm items-center max-w-44 w-full',
+                    'flex gap-1.5 cursor-pointer hover:bg-zinc-200 transition-colors px-2 mx-2 rounded-sm items-center max-w-44 h-7 w-full',
                     isActive && 'bg-zinc-200',
                   )}
                 >
@@ -76,7 +73,7 @@ export function ChannelList() {
                   <span className="truncate">
                     {channel.name}
                   </span>
-                </button>
+                </div>
               </TooltipTrigger>
               <TooltipContent side="right">
                 {channel.name}

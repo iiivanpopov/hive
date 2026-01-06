@@ -27,11 +27,13 @@ export function CommunityList() {
     onChange: entries => setAddServerInView(entries.some(e => e.isIntersecting)),
   })
 
-  const { ref: lastServerRef } = useIntersectionObserver<HTMLButtonElement>({
+  const { ref: lastServerRef } = useIntersectionObserver<HTMLDivElement>({
     root: listRef,
     threshold: 0.2,
     onChange: entries => setLastServerInView(entries.some(e => e.isIntersecting)),
   })
+
+  const handleAddServerClick = () => setIsCreateCommunityModalOpen(true)
 
   return (
     <div className="relative">
@@ -40,10 +42,10 @@ export function CommunityList() {
         className="h-[80vh] w-20 flex no-scrollbar flex-col gap-2 overflow-y-auto items-center"
       >
         <Button
-          ref={addServerRef}
-          onClick={() => setIsCreateCommunityModalOpen(true)}
           size="icon-lg"
           variant="outline"
+          onClick={handleAddServerClick}
+          render={props => <button {...props} ref={addServerRef} />}
         >
           <PlusIcon />
         </Button>
@@ -66,23 +68,26 @@ export function CommunityList() {
             <div
               key={community.id}
               className="w-20 h-10 flex justify-center relative"
+              ref={isLast ? lastServerRef : undefined}
             >
               <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    ref={isLast ? lastServerRef : undefined}
-                    size="icon-lg"
-                    onClick={handleOpenCommunity}
-                  >
-                    <span className="text-xl font-bold select-none">
+                <TooltipTrigger
+                  render={props => (
+                    <Button
+                      {...props}
+                      onClick={handleOpenCommunity}
+                      size="icon-lg"
+                      className="text-xl font-bold"
+                    >
                       {community.name[0]!.toUpperCase()}
-                    </span>
-                  </Button>
-                </TooltipTrigger>
+                    </Button>
+                  )}
+                />
                 <TooltipContent side="right">
                   {community.name}
                 </TooltipContent>
               </Tooltip>
+
               {isActive && (
                 <div className="absolute w-3 h-8 rounded-br-sm rounded-tr-sm bg-primary left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 animate-in fade-in zoom-in-0 duration-200" />
               )}
@@ -94,7 +99,7 @@ export function CommunityList() {
       <div className="pointer-events-none absolute top-0 left-2 right-2">
         <div
           data-open={!addServerInView}
-          className="opacity-0 scale-0 text-sm rounded-sm bg-zinc-200 py-0.5 px-1.5 text-muted-foreground animate-in fade-in zoom-in-0 duration-200 data-open:opacity-100 data-open:scale-100"
+          className="opacity-0 scale-0 text-sm rounded-sm bg-zinc-200 py-0.5 px-1.5 text-muted-foreground animate-in fade-in zoom-in-0 duration-200 data-open:opacity-100 data-open:scale-100 w-full"
         >
           more...
         </div>
@@ -103,7 +108,7 @@ export function CommunityList() {
       <div className="pointer-events-none absolute bottom-0 left-2 right-2">
         <div
           data-open={!lastServerInView}
-          className="opacity-0 scale-0 text-sm rounded-sm bg-zinc-200 py-0.5 px-1.5 text-muted-foreground animate-in fade-in zoom-in-0 duration-200 data-open:opacity-100 data-open:scale-100"
+          className="opacity-0 scale-0 text-sm rounded-sm bg-zinc-200 py-0.5 px-1.5 text-muted-foreground animate-in fade-in zoom-in-0 duration-200 data-open:opacity-100 data-open:scale-100 w-full"
         >
           more...
         </div>

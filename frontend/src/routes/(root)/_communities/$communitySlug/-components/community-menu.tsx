@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 import { CreateChannelDialog } from './create-channel-dialog'
 import { LeaveCommunityDialog } from './leave-community-dialog'
 
-export function CommunitySidebarHeader() {
+export function CommunityMenu() {
   const { communitySlug } = useParams({ from: '/(root)/_communities/$communitySlug/_community' })
 
   const [isCommunityDropdownMenuOpen, setIsCommunityDropdownMenuOpen] = useBoolean(false)
@@ -29,6 +29,9 @@ export function CommunitySidebarHeader() {
       getAuthMeOptions(),
     ],
   })
+
+  const handleOpenCreateChannelDialog = () => setIsCreateChannelDialogOpen(true)
+  const handleOpenLeaveCommunityDialog = () => setIsLeaveDialogOpen(true)
 
   const isOwner = communityQuery.data.community.ownerId === authMeQuery.data.user.id
 
@@ -69,7 +72,7 @@ export function CommunitySidebarHeader() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                  onClick={() => setIsLeaveDialogOpen(true)}
+                  onClick={handleOpenLeaveCommunityDialog}
                   className="text-destructive justify-between flex items-center w-full cursor-pointer"
                 >
                   <I18nText id="button.leave-community" />
@@ -84,7 +87,7 @@ export function CommunitySidebarHeader() {
       {isOwner && (
         <button
           className="cursor-pointer hover:bg-zinc-200 transition-colors p-1 rounded-sm mr-2 shrink-0"
-          onClick={() => setIsCreateChannelDialogOpen(true)}
+          onClick={handleOpenCreateChannelDialog}
         >
           <PlusIcon size={24} />
         </button>
