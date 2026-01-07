@@ -13,7 +13,7 @@ import type { SessionTokenRepository } from '@/repositories/session-token.reposi
 import { authConfig } from '@/config'
 import { toUserDto } from '@/db/tables/users'
 import { factory } from '@/lib/factory'
-import { sessionMiddleware, validator } from '@/middleware'
+import { session, validator } from '@/middleware'
 
 import { AuthService } from './auth.service'
 import { ChangePasswordBodySchema } from './schema/change-password.schema'
@@ -224,7 +224,7 @@ export class AuthRouter {
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
         validator('json', ChangePasswordBodySchema),
         async (c) => {
           const body = c.req.valid('json')
@@ -245,7 +245,7 @@ export class AuthRouter {
       )
       .get(
         '/me',
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
         describeRoute({
           tags: ['Authentication'],
           summary: 'Get current authenticated user',

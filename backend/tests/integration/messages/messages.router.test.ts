@@ -13,13 +13,13 @@ async function seedChannel() {
     },
   }, { headers: { Cookie: authCookie } })
 
-  await clientMock.communities[':id'].channels.$post({
+  await clientMock.communities[':communityId'].channels.$post({
     json: {
       name: 'General',
       description: 'General discussion',
       type: 'text',
     },
-    param: { id: '1' },
+    param: { communityId: '1' },
   }, { headers: { Cookie: authCookie } })
 }
 
@@ -39,8 +39,8 @@ describe('/messages', () => {
   it('should create a message', async () => {
     await seedChannel()
 
-    const createMessageResponse = await clientMock.channels[':id'].messages.$post({
-      param: { id: '1' },
+    const createMessageResponse = await clientMock.channels[':channelId'].messages.$post({
+      param: { channelId: '1' },
       json: {
         content: 'Hello world',
       },
@@ -70,15 +70,15 @@ describe('/channels/:id/messages', () => {
   it('should get channel messages', async () => {
     await seedChannel()
 
-    await clientMock.channels[':id'].messages.$post({
-      param: { id: '1' },
+    await clientMock.channels[':channelId'].messages.$post({
+      param: { channelId: '1' },
       json: {
         content: 'First message',
       },
     }, { headers: { Cookie: authCookie } })
 
-    const getMessagesResponse = await clientMock.channels[':id'].messages.$get({
-      param: { id: '1' },
+    const getMessagesResponse = await clientMock.channels[':channelId'].messages.$get({
+      param: { channelId: '1' },
       query: { limit: '10' },
     }, { headers: { Cookie: authCookie } })
 
@@ -100,15 +100,15 @@ describe('/messages/:id', () => {
   it('should update a message', async () => {
     await seedChannel()
 
-    await clientMock.channels[':id'].messages.$post({
-      param: { id: '1' },
+    await clientMock.channels[':channelId'].messages.$post({
+      param: { channelId: '1' },
       json: {
         content: 'Original message',
       },
     }, { headers: { Cookie: authCookie } })
 
-    const updateMessageResponse = await clientMock.messages[':id'].$patch({
-      param: { id: '1' },
+    const updateMessageResponse = await clientMock.messages[':messageId'].$patch({
+      param: { messageId: '1' },
       json: {
         content: 'Updated message',
       },
@@ -133,18 +133,18 @@ describe('/messages/:id', () => {
   it('should delete a message', async () => {
     await seedChannel()
 
-    await clientMock.channels[':id'].messages.$post({
-      param: { id: '1' },
+    await clientMock.channels[':channelId'].messages.$post({
+      param: { channelId: '1' },
       json: {
         content: 'Message to delete',
       },
     }, { headers: { Cookie: authCookie } })
 
-    const deleteMessageResponse = await clientMock.messages[':id'].$delete({
-      param: { id: '1' },
+    const deleteMessageResponse = await clientMock.messages[':messageId'].$delete({
+      param: { messageId: '1' },
     }, { headers: { Cookie: authCookie } })
 
-    expect(deleteMessageResponse.status).toBe(204)
+    expect(deleteMessageResponse.status).toBe(200)
 
     const message = await databaseMock.query.messages.findFirst({
       where: { id: 1 },

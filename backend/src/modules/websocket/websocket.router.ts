@@ -6,7 +6,7 @@ import type { BaseRouter } from '@/lib/base-router.interface'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { factory } from '@/lib/factory'
-import { sessionMiddleware } from '@/middleware'
+import { session } from '@/middleware'
 
 import { MessagesService } from '../messages/messages.service'
 import { WebsocketService } from './websocket.service'
@@ -34,7 +34,7 @@ export class WebsocketRouter implements BaseRouter {
           summary: 'WebSocket endpoint',
           description: 'Establish a WebSocket connection for real-time communication.',
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
         upgradeWebSocket(c => this.websocketService.handleConnection(c)),
       )
 

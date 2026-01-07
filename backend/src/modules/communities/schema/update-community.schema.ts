@@ -14,7 +14,7 @@ export const UpdateCommunityBodySchema = z.object({
 export type UpdateCommunityBody = z.infer<typeof UpdateCommunityBodySchema>
 
 export const UpdateCommunityParamsSchema = z.object({
-  id: IdSchema,
+  communityId: IdSchema,
 })
 
 export type UpdateCommunityParam = z.infer<typeof UpdateCommunityParamsSchema>

@@ -13,8 +13,10 @@ export const CreateMessageBodySchema = z.object({
 export type CreateMessageBody = z.infer<typeof CreateMessageBodySchema>
 
 export const CreateMessageParamsSchema = z.object({
-  id: IdSchema,
+  channelId: IdSchema,
 })
+
+export type CreateMessageParams = z.infer<typeof CreateMessageParamsSchema>
 
 export const CreateMessageResponseSchema = z.object({
   message: MessageSchema,

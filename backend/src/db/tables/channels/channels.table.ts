@@ -12,17 +12,11 @@ export const channels = s.sqliteTable('channels', {
     .notNull()
     .references(() => communities.id, { onDelete: 'cascade' }),
   name: s.text('name').notNull(),
-  slug: s.text('slug').notNull(),
   type: s.text('type', { enum: channelTypes }).notNull(),
   description: s.text('description'),
   createdAt: s.integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
-}, t => [
-  s.unique('community_id_slug').on(
-    t.communityId,
-    t.slug,
-  ),
-])
+})
 
 export type Channel = typeof channels.$inferSelect

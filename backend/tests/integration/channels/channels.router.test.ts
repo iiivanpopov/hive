@@ -6,6 +6,17 @@ import { extractSessionTokenCookie } from '@/tests/utils'
 
 let authCookie: string
 
+async function seedChannel() {
+  await clientMock.communities[':communityId'].channels.$post({
+    json: {
+      name: 'General',
+      description: 'General discussion',
+      type: 'text',
+    },
+    param: { communityId: '1' },
+  }, { headers: { Cookie: authCookie } })
+}
+
 beforeEach(async () => {
   const response = await clientMock.auth.register.$post({
     json: {
@@ -26,13 +37,13 @@ beforeEach(async () => {
 
 describe('/communities/:id/channels', () => {
   it('should create a channel in the community', async () => {
-    const createChannelResponse = await clientMock.communities[':id'].channels.$post({
+    const createChannelResponse = await clientMock.communities[':communityId'].channels.$post({
       json: {
         name: 'General',
         description: 'General discussion',
         type: 'text',
       },
-      param: { id: '1' },
+      param: { communityId: '1' },
     }, { headers: { Cookie: authCookie } })
 
     expect(createChannelResponse.status).toBe(201)
@@ -62,17 +73,10 @@ describe('/communities/:id/channels', () => {
   })
 
   it('should get channels in the community', async () => {
-    await clientMock.communities[':id'].channels.$post({
-      json: {
-        name: 'General',
-        description: 'General discussion',
-        type: 'text',
-      },
-      param: { id: '1' },
-    }, { headers: { Cookie: authCookie } })
+    await seedChannel()
 
-    const getChannelsResponse = await clientMock.communities[':id'].channels.$get({
-      param: { id: '1' },
+    const getChannelsResponse = await clientMock.communities[':communityId'].channels.$get({
+      param: { communityId: '1' },
     }, { headers: { Cookie: authCookie } })
 
     expect(getChannelsResponse.status).toBe(200)
@@ -90,22 +94,15 @@ describe('/communities/:id/channels', () => {
   })
 })
 
-describe('/channels/:id', () => {
+describe('/channels/:communityId/:channelId', () => {
   it('should delete a channel', async () => {
-    await clientMock.communities[':id'].channels.$post({
-      json: {
-        name: 'General',
-        description: 'General discussion',
-        type: 'text',
-      },
-      param: { id: '1' },
+    await seedChannel()
+
+    const deleteChannelResponse = await clientMock.channels[':channelId'].$delete({
+      param: { channelId: '1' },
     }, { headers: { Cookie: authCookie } })
 
-    const deleteChannelResponse = await clientMock.channels[':id'].$delete({
-      param: { id: '1' },
-    }, { headers: { Cookie: authCookie } })
-
-    expect(deleteChannelResponse.status).toBe(204)
+    expect(deleteChannelResponse.status).toBe(200)
 
     const channel = await databaseMock.query.channels.findFirst({
       where: { id: 1 },
@@ -115,24 +112,17 @@ describe('/channels/:id', () => {
   })
 
   it('should update a channel', async () => {
-    await clientMock.communities[':id'].channels.$post({
-      json: {
-        name: 'General',
-        description: 'General discussion',
-        type: 'text',
-      },
-      param: { id: '1' },
-    }, { headers: { Cookie: authCookie } })
+    await seedChannel()
 
-    const updateChannelResponse = await clientMock.channels[':id'].$patch({
+    const updateChannelResponse = await clientMock.channels[':channelId'].$patch({
       json: {
         name: 'Updated General',
         description: 'Updated general discussion',
       },
-      param: { id: '1' },
+      param: { channelId: '1' },
     }, { headers: { Cookie: authCookie } })
 
-    expect(updateChannelResponse.status).toBe(204)
+    expect(updateChannelResponse.status).toBe(200)
 
     const channel = await databaseMock.query.channels.findFirst({
       where: { id: 1 },

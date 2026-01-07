@@ -5,14 +5,16 @@ import type { BaseRouter } from '@/lib/base-router.interface'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { factory } from '@/lib/factory'
-import { sessionMiddleware, validator } from '@/middleware'
+import { session, validator } from '@/middleware'
+import { onlyMember } from '@/middleware/only-member.middleware'
+import { role } from '@/middleware/role.middleware'
 
 import { CommunitiesService } from './communities.service'
 import { CreateCommunityBodySchema, CreateCommunityResponseSchema } from './schema/create-community.schema'
-import { DeleteCommunityParamsSchema } from './schema/delete-community.schema'
+import { DeleteCommunityParamsSchema, DeleteCommunityResponseSchema } from './schema/delete-community.schema'
 import { GetCommunityParamsSchema, GetCommunityResponseSchema } from './schema/get-community.schema'
 import { GetJoinedCommunitiesResponseSchema } from './schema/get-joined-communities.schema'
-import { LeaveCommunityParamsSchema } from './schema/leave-community.schema'
+import { LeaveCommunityParamsSchema, LeaveCommunityResponseSchema } from './schema/leave-community.schema'
 import { UpdateCommunityBodySchema, UpdateCommunityParamsSchema, UpdateCommunityResponseSchema } from './schema/update-community.schema'
 
 export class CommunitiesRouter implements BaseRouter {
@@ -30,7 +32,6 @@ export class CommunitiesRouter implements BaseRouter {
     const app = factory
       .createApp()
       .basePath(this.basePath)
-      .use(sessionMiddleware(this.db, this.sessionTokens))
       .post(
         '/',
         describeRoute({
@@ -48,12 +49,13 @@ export class CommunitiesRouter implements BaseRouter {
             },
           },
         }),
+        session(this.db, this.sessionTokens),
         validator('json', CreateCommunityBodySchema),
         async (c) => {
           const body = c.req.valid('json')
           const user = c.get('user')
 
-          const community = await this.communitiesService.createCommunity(body, user.id)
+          const community = await this.communitiesService.createCommunity(body, user)
 
           return c.json({ community }, 201)
         },
@@ -75,38 +77,47 @@ export class CommunitiesRouter implements BaseRouter {
             },
           },
         }),
+        session(this.db, this.sessionTokens),
         async (c) => {
           const user = c.get('user')
 
-          const communities = await this.communitiesService.getJoinedCommunities(user.id)
+          const communities = await this.communitiesService.getJoinedCommunities(user)
 
           return c.json({ communities })
         },
       )
       .post(
-        '/leave/:id',
+        '/leave/:communityId',
         describeRoute({
           tags: ['Communities'],
           summary: 'Leave a community',
           description: 'Leave a community by its ID.',
           responses: {
-            204: {
+            200: {
               description: 'Left community successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(LeaveCommunityResponseSchema),
+                },
+              },
             },
           },
         }),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'communityId' }),
+        role(['member']),
         validator('param', LeaveCommunityParamsSchema),
         async (c) => {
           const params = c.req.valid('param')
           const user = c.get('user')
 
-          await this.communitiesService.leaveCommunity(params.id, user.id)
+          const community = await this.communitiesService.leaveCommunity(params, user)
 
-          return c.body(null, 204)
+          return c.json({ community })
         },
       )
       .get(
-        '/:id',
+        '/:communityId',
         describeRoute({
           tags: ['Communities'],
           summary: 'Get community by ID',
@@ -122,40 +133,49 @@ export class CommunitiesRouter implements BaseRouter {
             },
           },
         }),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'communityId' }),
+        role('all'),
         validator('param', GetCommunityParamsSchema),
         async (c) => {
-          const { id } = c.req.valid('param')
-          const user = c.get('user')
+          const params = c.req.valid('param')
 
-          const community = await this.communitiesService.getCommunity(id, user.id)
+          const community = await this.communitiesService.getCommunity(params)
 
           return c.json({ community })
         },
       )
       .delete(
-        '/:id',
+        '/:communityId',
         describeRoute({
           tags: ['Communities'],
           summary: 'Delete a community',
           description: 'Delete a community by its ID.',
           responses: {
-            204: {
+            200: {
               description: 'Community deleted successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(DeleteCommunityResponseSchema),
+                },
+              },
             },
           },
         }),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'communityId' }),
+        role(['owner']),
         validator('param', DeleteCommunityParamsSchema),
         async (c) => {
-          const { id } = c.req.valid('param')
-          const user = c.get('user')
+          const params = c.req.valid('param')
 
-          await this.communitiesService.deleteCommunity(id, user.id)
+          const community = await this.communitiesService.deleteCommunity(params)
 
-          return c.body(null, 204)
+          return c.json({ community })
         },
       )
       .patch(
-        '/:id',
+        '/:communityId',
         describeRoute({
           tags: ['Communities'],
           summary: 'Update a community',
@@ -171,14 +191,16 @@ export class CommunitiesRouter implements BaseRouter {
             },
           },
         }),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'communityId' }),
+        role(['owner']),
         validator('param', UpdateCommunityParamsSchema),
         validator('json', UpdateCommunityBodySchema),
         async (c) => {
-          const { id } = c.req.valid('param')
+          const params = c.req.valid('param')
           const body = c.req.valid('json')
-          const user = c.get('user')
 
-          const community = await this.communitiesService.updateCommunity(id, body, user.id)
+          const community = await this.communitiesService.updateCommunity(params, body)
 
           return c.json({ community })
         },

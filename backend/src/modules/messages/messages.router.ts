@@ -5,11 +5,13 @@ import type { BaseRouter } from '@/lib/base-router.interface'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { factory } from '@/lib/factory'
-import { sessionMiddleware, validator } from '@/middleware'
+import { session, validator } from '@/middleware'
+import { onlyMember } from '@/middleware/only-member.middleware'
+import { role } from '@/middleware/role.middleware'
 
 import { MessagesService } from './messages.service'
 import { CreateMessageBodySchema, CreateMessageParamsSchema, CreateMessageResponseSchema } from './schema/create-message.schema'
-import { DeleteMessageParamsSchema } from './schema/delete-message.schema'
+import { DeleteMessageParamsSchema, DeleteMessageResponseSchema } from './schema/delete-message.schema'
 import { GetChannelMessagesParamsSchema, GetChannelMessagesQuerySchema, GetChannelMessagesResponseSchema } from './schema/get-channel-messages.schema'
 import { UpdateMessageBodySchema, UpdateMessageParamsSchema, UpdateMessageResponseSchema } from './schema/update-message.schema'
 
@@ -29,7 +31,7 @@ export class MessagesRouter implements BaseRouter {
       .createApp()
       .basePath(this.basePath)
       .get(
-        '/channels/:id/messages',
+        '/channels/:channelId/messages',
         describeRoute({
           tags: ['Messages'],
           summary: 'Get channel messages',
@@ -45,21 +47,22 @@ export class MessagesRouter implements BaseRouter {
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'channelId' }),
+        role('all'),
         validator('param', GetChannelMessagesParamsSchema),
         validator('query', GetChannelMessagesQuerySchema),
         async (c) => {
-          const { id } = c.req.valid('param')
+          const params = c.req.valid('param')
           const query = c.req.valid('query')
-          const user = c.get('user')
 
-          const response = await this.messagesService.getMessagesInChannel(id, query, user.id)
+          const response = await this.messagesService.getMessagesInChannel(params, query)
 
           return c.json(response)
         },
       )
       .post(
-        '/channels/:id/messages',
+        '/channels/:channelId/messages',
         describeRoute({
           tags: ['Messages'],
           summary: 'Create a message',
@@ -75,21 +78,23 @@ export class MessagesRouter implements BaseRouter {
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'channelId' }),
+        role('all'),
         validator('param', CreateMessageParamsSchema),
         validator('json', CreateMessageBodySchema),
         async (c) => {
-          const { id } = c.req.valid('param')
+          const params = c.req.valid('param')
           const body = c.req.valid('json')
           const user = c.get('user')
 
-          const message = await this.messagesService.createMessage(id, body, user.id)
+          const message = await this.messagesService.createMessage(params, body, user)
 
           return c.json({ message }, 201)
         },
       )
       .patch(
-        '/messages/:id',
+        '/messages/:messageId',
         describeRoute({
           tags: ['Messages'],
           summary: 'Update a message',
@@ -105,7 +110,9 @@ export class MessagesRouter implements BaseRouter {
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'messageId' }),
+        role('all'),
         validator('param', UpdateMessageParamsSchema),
         validator('json', UpdateMessageBodySchema),
         async (c) => {
@@ -113,32 +120,39 @@ export class MessagesRouter implements BaseRouter {
           const body = c.req.valid('json')
           const user = c.get('user')
 
-          const message = await this.messagesService.updateMessage(params.id, body, user.id)
+          const message = await this.messagesService.updateMessage(params, body, user)
 
           return c.json({ message })
         },
       )
       .delete(
-        '/messages/:id',
+        '/messages/:messageId',
         describeRoute({
           tags: ['Messages'],
           summary: 'Delete a message',
           description: 'Delete a message by its ID.',
           responses: {
-            204: {
+            200: {
               description: 'Message deleted successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(DeleteMessageResponseSchema),
+                },
+              },
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'messageId' }),
+        role('all'),
         validator('param', DeleteMessageParamsSchema),
         async (c) => {
-          const { id } = c.req.valid('param')
+          const params = c.req.valid('param')
           const user = c.get('user')
 
-          await this.messagesService.deleteMessage(id, user.id)
+          const message = await this.messagesService.deleteMessage(params, user)
 
-          return c.body(null, 204)
+          return c.json({ message })
         },
       )
 

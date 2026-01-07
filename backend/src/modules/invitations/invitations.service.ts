@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm'
 
+import type { User } from '@/db/tables/users'
 import type { DrizzleDatabase } from '@/db/utils'
 
 import { communityMembers } from '@/db/tables/community-members'
@@ -7,17 +8,19 @@ import { invitations } from '@/db/tables/invitations'
 import { ApiException } from '@/lib/api-exception'
 import { generateInvitationId } from '@/lib/utils'
 
-import type { CreateInvitationBody } from './schema/create-invitation.schema'
+import type { CreateInvitationBody, CreateInvitationParam } from './schema/create-invitation.schema'
+import type { DeleteInvitationParam } from './schema/delete-invitation.schema'
+import type { JoinInvitationParam } from './schema/join-invitation.schema'
 
 export class InvitationsService {
   constructor(
     private readonly db: DrizzleDatabase,
   ) { }
 
-  async joinCommunityViaInvitation(token: string, userId: number) {
+  async joinCommunityViaInvitation(params: JoinInvitationParam, user: User) {
     const invitation = await this.db.query.invitations.findFirst({
       where: {
-        token,
+        token: params.token,
         OR: [
           { expiresAt: { gt: new Date() } },
           { expiresAt: { isNull: true } },
@@ -33,7 +36,7 @@ export class InvitationsService {
     const membership = await this.db.query.communityMembers.findFirst({
       where: {
         communityId: invitation.community!.id,
-        userId,
+        userId: user.id,
       },
     })
     if (membership)
@@ -43,17 +46,17 @@ export class InvitationsService {
       .insert(communityMembers)
       .values({
         communityId: invitation.community!.id,
-        userId,
+        userId: user.id,
         role: 'member',
       })
 
     return invitation.community!
   }
 
-  async revokeInvitation(invitationId: number, userId: number) {
+  async revokeInvitation(params: DeleteInvitationParam) {
     const invitation = await this.db.query.invitations.findFirst({
       where: {
-        id: invitationId,
+        id: params.invitationId,
       },
       with: {
         community: true,
@@ -62,44 +65,19 @@ export class InvitationsService {
     if (!invitation)
       throw ApiException.NotFound('Invitation not found', 'INVITATION_NOT_FOUND')
 
-    if (invitation.community!.ownerId !== userId)
-      throw ApiException.Forbidden('You do not have permission to revoke this invitation', 'FORBIDDEN')
-
-    const [newInvitation] = await this.db
+    const [deletedInvitation] = await this.db
       .delete(invitations)
-      .where(eq(invitations.id, invitationId))
+      .where(eq(invitations.id, params.invitationId))
       .returning()
 
-    return newInvitation
+    return deletedInvitation
   }
 
-  async createCommunityInvitation(communityId: number, data: CreateInvitationBody, userId: number) {
-    const community = await this.db.query.communities.findFirst({
-      where: {
-        id: communityId,
-        ownerId: userId,
-      },
-    })
-    if (!community)
-      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
-
-    const membership = await this.db.query.communityMembers.findFirst({
-      where: {
-        communityId,
-        userId,
-      },
-    })
-
-    if (!membership)
-      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
-
-    if (membership.role !== 'owner')
-      throw ApiException.Forbidden('You do not have permission to create an invitation for this community', 'FORBIDDEN')
-
+  async createCommunityInvitation(params: CreateInvitationParam, data: CreateInvitationBody) {
     const [invitation] = await this.db
       .insert(invitations)
       .values({
-        communityId,
+        communityId: params.communityId,
         expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
         token: generateInvitationId(),
       })

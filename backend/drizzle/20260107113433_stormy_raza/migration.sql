@@ -2,19 +2,16 @@ CREATE TABLE `channels` (
 	`id` integer PRIMARY KEY AUTOINCREMENT,
 	`community_id` integer NOT NULL,
 	`name` text NOT NULL,
-	`slug` text NOT NULL,
 	`type` text NOT NULL,
 	`description` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
-	CONSTRAINT `fk_channels_community_id_communities_id_fk` FOREIGN KEY (`community_id`) REFERENCES `communities`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `community_id_slug_name` UNIQUE(`community_id`,`slug`)
+	CONSTRAINT `fk_channels_community_id_communities_id_fk` FOREIGN KEY (`community_id`) REFERENCES `communities`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
 CREATE TABLE `communities` (
 	`id` integer PRIMARY KEY AUTOINCREMENT,
 	`owner_id` integer NOT NULL,
 	`name` text NOT NULL,
-	`slug` text NOT NULL UNIQUE,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	CONSTRAINT `fk_communities_owner_id_users_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users`(`id`)
 );

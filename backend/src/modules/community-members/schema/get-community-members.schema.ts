@@ -4,7 +4,7 @@ import { UserDtoSchema } from '@/db/tables/users'
 import { IdSchema } from '@/shared/zod'
 
 export const GetCommunityMembersParamsSchema = z.object({
-  id: IdSchema,
+  communityId: IdSchema,
 })
 
 export type GetCommunityMembersParam = z.infer<typeof GetCommunityMembersParamsSchema>

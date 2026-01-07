@@ -5,7 +5,9 @@ import type { BaseRouter } from '@/lib/base-router.interface'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { factory } from '@/lib/factory'
-import { sessionMiddleware, validator } from '@/middleware'
+import { session, validator } from '@/middleware'
+import { onlyMember } from '@/middleware/only-member.middleware'
+import { role } from '@/middleware/role.middleware'
 
 import { CommunityMembersService } from './community-members.service'
 import { GetCommunityMembersParamsSchema, GetCommunityMembersResponseSchema } from './schema/get-community-members.schema'
@@ -26,7 +28,7 @@ export class CommunityMembersRouter implements BaseRouter {
       .createApp()
       .basePath(this.basePath)
       .get(
-        '/communities/:id/members',
+        '/communities/:communityId/members',
         describeRoute({
           tags: ['Community Members'],
           summary: 'Get community members',
@@ -42,12 +44,14 @@ export class CommunityMembersRouter implements BaseRouter {
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'communityId' }),
+        role('all'),
         validator('param', GetCommunityMembersParamsSchema),
         async (c) => {
-          const { id } = c.req.valid('param')
+          const params = c.req.valid('param')
 
-          const members = await this.communityMembersService.getCommunityMembers(id)
+          const members = await this.communityMembersService.getCommunityMembers(params)
 
           return c.json({ members })
         },

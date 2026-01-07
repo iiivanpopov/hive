@@ -5,37 +5,21 @@ import type { DrizzleDatabase } from '@/db/utils'
 import { channels } from '@/db/tables/channels'
 import { ApiException } from '@/lib/api-exception'
 
-import type { CreateChannelBody } from './schema/create-channel.schema'
-import type { UpdateChannelBody } from './schema/update-channel.schema'
+import type { CreateChannelBody, CreateChannelParams } from './schema/create-channel.schema'
+import type { DeleteChannelParams } from './schema/delete-channel.schema'
+import type { GetChannelParams } from './schema/get-channel.schema'
+import type { GetChannelsInCommunityParams } from './schema/get-channels-in-community.schema'
+import type { UpdateChannelBody, UpdateChannelParams } from './schema/update-channel.schema'
 
 export class ChannelsService {
   constructor(
     private readonly db: DrizzleDatabase,
   ) { }
 
-  async getChannelsByCommunityId(communityId: number, userId: number) {
-    const membership = await this.db.query.communityMembers.findFirst({
-      where: {
-        communityId,
-        userId,
-      },
-    })
-    if (!membership)
-      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
-
-    const channelsList = await this.db.query.channels.findMany({
-      where: {
-        communityId,
-      },
-    })
-
-    return channelsList
-  }
-
-  async updateChannel(channelId: number, data: UpdateChannelBody, userId: number) {
+  async getChannelById(params: GetChannelParams) {
     const channel = await this.db.query.channels.findFirst({
       where: {
-        id: channelId,
+        id: params.channelId,
       },
       with: {
         community: true,
@@ -44,31 +28,47 @@ export class ChannelsService {
     if (!channel)
       throw ApiException.NotFound('Channel not found', 'CHANNEL_NOT_FOUND')
 
-    const member = await this.db.query.communityMembers.findFirst({
+    return channel
+  }
+
+  async getChannelsByCommunityId(params: GetChannelsInCommunityParams) {
+    const channels = await this.db.query.channels.findMany({
       where: {
-        communityId: channel.community!.id,
-        userId,
+        communityId: params.communityId,
       },
     })
-    if (!member)
-      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
 
-    if (member.role !== 'owner')
-      throw ApiException.Forbidden('You do not have permission to update this channel', 'FORBIDDEN')
+    return channels
+  }
 
-    await this.db
+  async updateChannel(params: UpdateChannelParams, data: UpdateChannelBody) {
+    const channel = await this.db.query.channels.findFirst({
+      where: {
+        id: params.channelId,
+      },
+      with: {
+        community: true,
+      },
+    })
+    if (!channel)
+      throw ApiException.NotFound('Channel not found', 'CHANNEL_NOT_FOUND')
+
+    const [updatedChannel] = await this.db
       .update(channels)
       .set({
         name: data.name,
         description: data.description,
       })
-      .where(eq(channels.id, channelId))
+      .where(eq(channels.id, params.channelId))
+      .returning()
+
+    return updatedChannel
   }
 
-  async deleteChannel(channelId: number, userId: number) {
+  async deleteChannel(params: DeleteChannelParams) {
     const channel = await this.db.query.channels.findFirst({
       where: {
-        id: channelId,
+        id: params.channelId,
       },
       with: {
         community: true,
@@ -77,50 +77,27 @@ export class ChannelsService {
     if (!channel)
       throw ApiException.NotFound('Channel not found', 'CHANNEL_NOT_FOUND')
 
-    const member = await this.db.query.communityMembers.findFirst({
-      where: {
-        communityId: channel.community!.id,
-        userId,
-      },
-    })
-    if (!member)
-      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
-
-    if (member.role !== 'owner')
-      throw ApiException.Forbidden('You do not have permission to delete this channel', 'FORBIDDEN')
-
-    await this.db
+    const [deletedChannel] = await this.db
       .delete(channels)
-      .where(eq(channels.id, channelId))
+      .where(eq(channels.id, params.channelId))
+      .returning()
+
+    return deletedChannel
   }
 
-  async createChannel(communityId: number, data: CreateChannelBody, userId: number) {
+  async createChannel(params: CreateChannelParams, data: CreateChannelBody) {
     const channel = await this.db.query.channels.findFirst({
       where: {
-        communityId,
-        slug: data.name.toLowerCase().replace(/\s+/g, '-'),
+        communityId: params.communityId,
       },
     })
     if (channel)
       throw ApiException.BadRequest('Channel with this name already exists', 'CHANNEL_ALREADY_EXISTS')
 
-    const member = await this.db.query.communityMembers.findFirst({
-      where: {
-        communityId,
-        userId,
-      },
-    })
-    if (!member)
-      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
-
-    if (member.role !== 'owner')
-      throw ApiException.Forbidden('You do not have permission to create channels in this community', 'FORBIDDEN')
-
     const [newChannel] = await this.db
       .insert(channels)
       .values({
-        communityId,
-        slug: data.name.toLowerCase().replace(/\s+/g, '-'),
+        communityId: params.communityId,
         name: data.name,
         description: data.description,
         type: data.type,

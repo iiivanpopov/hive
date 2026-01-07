@@ -9,7 +9,6 @@ export const communities = s.sqliteTable('communities', {
     .notNull()
     .references(() => users.id),
   name: s.text('name').notNull(),
-  slug: s.text('slug').notNull().unique(),
   createdAt: s.integer('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),

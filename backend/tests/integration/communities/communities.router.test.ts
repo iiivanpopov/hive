@@ -6,6 +6,14 @@ import { extractSessionTokenCookie } from '@/tests/utils'
 
 let authCookie: string
 
+async function seedCommunity() {
+  await clientMock.communities.$post({
+    json: {
+      name: 'Test Community',
+    },
+  }, { headers: { Cookie: authCookie } })
+}
+
 beforeEach(async () => {
   const response = await clientMock.auth.register.$post({
     json: {
@@ -78,19 +86,15 @@ describe('/joined', () => {
   })
 })
 
-describe('/:id', () => {
+describe('/:communityId', () => {
   it('should delete community', async () => {
-    await clientMock.communities.$post({
-      json: {
-        name: 'Test Community',
-      },
+    await seedCommunity()
+
+    const deleteCommunityResponse = await clientMock.communities[':communityId'].$delete({
+      param: { communityId: '1' },
     }, { headers: { Cookie: authCookie } })
 
-    const deleteCommunityResponse = await clientMock.communities[':id'].$delete({
-      param: { id: '1' },
-    }, { headers: { Cookie: authCookie } })
-
-    expect(deleteCommunityResponse.status).toBe(204)
+    expect(deleteCommunityResponse.status).toBe(200)
 
     const communities = await databaseMock.query.communities.findMany()
 
@@ -98,14 +102,10 @@ describe('/:id', () => {
   })
 
   it('should update community', async () => {
-    await clientMock.communities.$post({
-      json: {
-        name: 'Test Community',
-      },
-    }, { headers: { Cookie: authCookie } })
+    await seedCommunity()
 
-    const updateCommunityResponse = await clientMock.communities[':id'].$patch({
-      param: { id: '1' },
+    const updateCommunityResponse = await clientMock.communities[':communityId'].$patch({
+      param: { communityId: '1' },
       json: {
         name: 'Updated Community',
       },
@@ -128,14 +128,10 @@ describe('/:id', () => {
   })
 
   it('should get community members', async () => {
-    await clientMock.communities.$post({
-      json: {
-        name: 'Test Community',
-      },
-    }, { headers: { Cookie: authCookie } })
+    await seedCommunity()
 
-    const getCommunityMembersResponse = await clientMock.communities[':id'].members.$get({
-      param: { id: '1' },
+    const getCommunityMembersResponse = await clientMock.communities[':communityId'].members.$get({
+      param: { communityId: '1' },
     }, { headers: { Cookie: authCookie } })
 
     expect(getCommunityMembersResponse.status).toBe(200)
@@ -150,16 +146,12 @@ describe('/:id', () => {
   })
 })
 
-describe('/leave/:id', () => {
+describe('/leave/:communityId', () => {
   it('should leave a community', async () => {
-    await clientMock.communities.$post({
-      json: {
-        name: 'Test Community',
-      },
-    }, { headers: { Cookie: authCookie } })
+    await seedCommunity()
 
-    const createInvitationResponse = await clientMock.communities[':id'].invitations.$post({
-      param: { id: '1' },
+    const createInvitationResponse = await clientMock.communities[':communityId'].invitations.$post({
+      param: { communityId: '1' },
       json: {},
     }, { headers: { Cookie: authCookie } })
 
@@ -178,11 +170,11 @@ describe('/leave/:id', () => {
       param: { token: invitation.token },
     }, { headers: { Cookie: authCookie } })
 
-    const leaveCommunityResponse = await clientMock.communities.leave[':id'].$post({
-      param: { id: '1' },
+    const leaveCommunityResponse = await clientMock.communities.leave[':communityId'].$post({
+      param: { communityId: '1' },
     }, { headers: { Cookie: authCookie } })
 
-    expect(leaveCommunityResponse.status).toBe(204)
+    expect(leaveCommunityResponse.status).toBe(200)
 
     const membership = await databaseMock.query.communityMembers.findFirst({
       where: { user: { email: 'testuser2@gmail.com' } },

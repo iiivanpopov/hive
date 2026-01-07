@@ -5,7 +5,9 @@ import type { BaseRouter } from '@/lib/base-router.interface'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { factory } from '@/lib/factory'
-import { sessionMiddleware, validator } from '@/middleware'
+import { session, validator } from '@/middleware'
+import { onlyMember } from '@/middleware/only-member.middleware'
+import { role } from '@/middleware/role.middleware'
 
 import { InvitationsService } from './invitations.service'
 import { CreateInvitationBodySchema, CreateInvitationParamsSchema, CreateInvitationResponseSchema } from './schema/create-invitation.schema'
@@ -28,7 +30,7 @@ export class InvitationsRouter implements BaseRouter {
       .createApp()
       .basePath(this.basePath)
       .post(
-        '/communities/:id/invitations',
+        '/communities/:communityId/invitations',
         describeRoute({
           tags: ['Invitations'],
           summary: 'Create a community invitation',
@@ -44,15 +46,16 @@ export class InvitationsRouter implements BaseRouter {
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'communityId' }),
+        role(['owner']),
         validator('param', CreateInvitationParamsSchema),
         validator('json', CreateInvitationBodySchema),
         async (c) => {
-          const { id } = c.req.valid('param')
+          const params = c.req.valid('param')
           const body = c.req.valid('json')
-          const user = c.get('user')
 
-          const invitation = await this.invitationsService.createCommunityInvitation(id, body, user.id)
+          const invitation = await this.invitationsService.createCommunityInvitation(params, body)
 
           return c.json({ invitation }, 201)
         },
@@ -74,19 +77,19 @@ export class InvitationsRouter implements BaseRouter {
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
         validator('param', JoinInvitationParamsSchema),
         async (c) => {
-          const { token } = c.req.valid('param')
+          const params = c.req.valid('param')
           const user = c.get('user')
 
-          const community = await this.invitationsService.joinCommunityViaInvitation(token, user.id)
+          const community = await this.invitationsService.joinCommunityViaInvitation(params, user)
 
-          return c.json({ community }, 200)
+          return c.json({ community })
         },
       )
       .delete(
-        '/invitations/:id',
+        '/invitations/:invitationId',
         describeRoute({
           tags: ['Invitations'],
           summary: 'Revoke an invitation',
@@ -102,13 +105,14 @@ export class InvitationsRouter implements BaseRouter {
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'invitationId' }),
+        role(['owner']),
         validator('param', DeleteInvitationParamsSchema),
         async (c) => {
-          const { id } = c.req.valid('param')
-          const user = c.get('user')
+          const params = c.req.valid('param')
 
-          const invitation = await this.invitationsService.revokeInvitation(id, user.id)
+          const invitation = await this.invitationsService.revokeInvitation(params)
 
           return c.json({ invitation }, 200)
         },

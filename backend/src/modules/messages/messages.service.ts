@@ -1,47 +1,33 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 
+import type { User } from '@/db/tables/users'
 import type { DrizzleDatabase } from '@/db/utils'
 
 import { messages } from '@/db/tables/messages'
 import { ApiException } from '@/lib/api-exception'
 
-import type { CreateMessageBody } from './schema/create-message.schema'
-import type { GetChannelMessagesQuery } from './schema/get-channel-messages.schema'
-import type { UpdateMessageBody } from './schema/update-message.schema'
+import type { CreateMessageBody, CreateMessageParams } from './schema/create-message.schema'
+import type { DeleteMessageParams } from './schema/delete-message.schema'
+import type { GetChannelMessagesParams, GetChannelMessagesQuery } from './schema/get-channel-messages.schema'
+import type { UpdateMessageBody, UpdateMessageParams } from './schema/update-message.schema'
 
 export class MessagesService {
   constructor(
     private readonly db: DrizzleDatabase,
   ) { }
 
-  async getMessagesInChannel(channelIdOrSlug: string, query: GetChannelMessagesQuery, userId: number) {
+  async getMessagesInChannel(params: GetChannelMessagesParams, query: GetChannelMessagesQuery) {
     const channel = await this.db.query.channels.findFirst({
       where: {
-        OR: [
-          { id: Number(channelIdOrSlug) },
-          { slug: channelIdOrSlug },
-        ],
+        id: params.channelId,
       },
     })
     if (!channel)
       throw ApiException.NotFound('Channel not found', 'CHANNEL_NOT_FOUND')
 
-    const membership = await this.db.query.communityMembers.findFirst({
-      where: {
-        communityId: channel.communityId,
-        userId,
-      },
-    })
-
-    if (!membership)
-      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
-
     const messages = await this.db.query.messages.findMany({
       where: {
-        OR: [
-          { channelId: Number(channelIdOrSlug) },
-          { channel: { slug: channelIdOrSlug } },
-        ],
+        id: params.channelId,
         ...(query.before && {
           id: { lt: query.before },
         }),
@@ -57,30 +43,20 @@ export class MessagesService {
     return { messages, hasMore }
   }
 
-  async createMessage(channelId: number, data: CreateMessageBody, userId: number) {
+  async createMessage(params: CreateMessageParams, data: CreateMessageBody, user: User) {
     const channel = await this.db.query.channels.findFirst({
       where: {
-        id: channelId,
+        id: params.channelId,
       },
     })
     if (!channel)
       throw ApiException.NotFound('Channel not found', 'CHANNEL_NOT_FOUND')
 
-    const membership = await this.db.query.communityMembers.findFirst({
-      where: {
-        communityId: channel.communityId,
-        userId,
-      },
-    })
-
-    if (!membership)
-      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
-
     const [message] = await this.db
       .insert(messages)
       .values({
-        channelId,
-        userId,
+        channelId: params.channelId,
+        userId: user.id,
         content: data.content,
       })
       .returning()
@@ -88,10 +64,11 @@ export class MessagesService {
     return message
   }
 
-  async updateMessage(messageId: number, data: UpdateMessageBody, userId: number) {
+  async updateMessage(params: UpdateMessageParams, data: UpdateMessageBody, user: User) {
     const message = await this.db.query.messages.findFirst({
       where: {
-        id: messageId,
+        id: params.messageId,
+        userId: user.id,
       },
       with: {
         channel: true,
@@ -100,19 +77,6 @@ export class MessagesService {
 
     if (!message)
       throw ApiException.NotFound('Message not found', 'MESSAGE_NOT_FOUND')
-
-    const membership = await this.db.query.communityMembers.findFirst({
-      where: {
-        communityId: message.channel!.communityId,
-        userId,
-      },
-    })
-
-    if (!membership)
-      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
-
-    if (message.userId !== userId)
-      throw ApiException.Forbidden('You do not have permission to update this message', 'FORBIDDEN')
 
     const [updatedMessage] = await this.db
       .update(messages)
@@ -120,16 +84,17 @@ export class MessagesService {
         content: data.content,
         updatedAt: new Date(),
       })
-      .where(eq(messages.id, messageId))
+      .where(and(eq(messages.id, params.messageId), eq(messages.userId, user.id)))
       .returning()
 
     return updatedMessage
   }
 
-  async deleteMessage(messageId: number, userId: number) {
+  async deleteMessage(params: DeleteMessageParams, user: User) {
     const message = await this.db.query.messages.findFirst({
       where: {
-        id: messageId,
+        id: params.messageId,
+        userId: user.id,
       },
       with: {
         channel: true,
@@ -139,21 +104,8 @@ export class MessagesService {
     if (!message)
       throw ApiException.NotFound('Message not found', 'MESSAGE_NOT_FOUND')
 
-    const membership = await this.db.query.communityMembers.findFirst({
-      where: {
-        communityId: message.channel!.communityId,
-        userId,
-      },
-    })
-
-    if (!membership)
-      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
-
-    if (message.userId !== userId && membership.role !== 'owner')
-      throw ApiException.Forbidden('You do not have permission to delete this message', 'FORBIDDEN')
-
     await this.db
       .delete(messages)
-      .where(eq(messages.id, messageId))
+      .where(and(eq(messages.id, params.messageId), eq(messages.userId, user.id)))
   }
 }

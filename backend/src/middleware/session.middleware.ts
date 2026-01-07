@@ -8,7 +8,7 @@ import { ApiException } from '@/lib/api-exception'
 import { factory } from '@/lib/factory'
 import { normalizeUserAgent } from '@/lib/utils'
 
-export function sessionMiddleware(db: DrizzleDatabase, sessionTokens: SessionTokenRepository) {
+export function session(db: DrizzleDatabase, sessionTokens: SessionTokenRepository) {
   return factory.createMiddleware(async (c, next) => {
     const sessionToken = getCookie(c, authConfig.sessionTokenCookie)
     if (!sessionToken)

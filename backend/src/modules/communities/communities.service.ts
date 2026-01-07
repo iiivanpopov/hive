@@ -1,54 +1,28 @@
 import { and, eq } from 'drizzle-orm'
 
+import type { User } from '@/db/tables/users'
 import type { DrizzleDatabase } from '@/db/utils'
 
 import { communities } from '@/db/tables/communities'
 import { communityMembers } from '@/db/tables/community-members'
-import { toUserDto } from '@/db/tables/users/users.utils'
 import { ApiException } from '@/lib/api-exception'
 
 import type { CreateCommunityBody } from './schema/create-community.schema'
-import type { UpdateCommunityBody } from './schema/update-community.schema'
+import type { DeleteCommunityParam } from './schema/delete-community.schema'
+import type { GetCommunityParams } from './schema/get-community.schema'
+import type { LeaveCommunityParam } from './schema/leave-community.schema'
+import type { UpdateCommunityBody, UpdateCommunityParam } from './schema/update-community.schema'
 
 export class CommunitiesService {
   constructor(
     private readonly db: DrizzleDatabase,
   ) { }
 
-  async getCommunityMembers(communityId: number) {
-    const community = await this.db.query.communities.findFirst({
-      where: {
-        id: communityId,
-      },
-    })
-    if (!community)
-      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
-
-    const members = await this.db.query.communityMembers.findMany({
-      where: {
-        communityId,
-      },
-      with: {
-        user: true,
-      },
-    })
-
-    return members.map(member => toUserDto(member.user!))
-  }
-
-  async getJoinedCommunities(userId: number) {
-    const user = await this.db.query.users.findFirst({
-      where: {
-        id: userId,
-      },
-    })
-    if (!user)
-      throw ApiException.NotFound('User not found', 'USER_NOT_FOUND')
-
+  async getJoinedCommunities(user: User) {
     const communities = await this.db.query.communities.findMany({
       where: {
         members: {
-          userId,
+          userId: user.id,
         },
       },
     })
@@ -56,76 +30,40 @@ export class CommunitiesService {
     return communities
   }
 
-  async leaveCommunity(communityId: number, userId: number) {
-    const community = await this.db.query.communities.findFirst({
-      where: {
-        id: communityId,
-      },
-    })
-    if (!community)
-      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
-
-    const membership = await this.db.query.communityMembers.findFirst({
-      where: {
-        communityId,
-        userId,
-      },
-    })
-    if (!membership)
-      throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
-
-    if (community.ownerId === userId)
-      throw ApiException.BadRequest('Community owners cannot leave their own community', 'OWNER_CANNOT_LEAVE')
-
-    await this.db
+  async leaveCommunity(params: LeaveCommunityParam, user: User) {
+    const [community] = await this.db
       .delete(communityMembers)
       .where(
         and(
-          eq(communityMembers.communityId, communityId),
-          eq(communityMembers.userId, userId),
+          eq(communityMembers.communityId, params.communityId),
+          eq(communityMembers.userId, user.id),
         ),
       )
+      .returning()
+
+    return community
   }
 
-  async updateCommunity(communityId: number, data: UpdateCommunityBody, userId: number) {
-    const community = await this.db.query.communities.findFirst({
-      where: {
-        id: communityId,
-      },
-    })
-    if (!community)
-      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
-
-    if (community.ownerId !== userId)
-      throw ApiException.Forbidden('You do not have permission to update this community', 'FORBIDDEN')
+  async updateCommunity(params: UpdateCommunityParam, data: UpdateCommunityBody) {
     const [updatedCommunity] = await this.db
       .update(communities)
       .set({ name: data.name })
-      .where(eq(communities.id, communityId))
+      .where(eq(communities.id, params.communityId))
       .returning()
 
     return updatedCommunity
   }
 
-  async deleteCommunity(communityId: number, userId: number) {
-    const community = await this.db.query.communities.findFirst({
-      where: {
-        id: communityId,
-      },
-    })
-
-    if (!community)
-      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
-
-    if (community.ownerId !== userId)
-      throw ApiException.Forbidden('You do not have permission to delete this community', 'FORBIDDEN')
-
-    await this.db
+  async deleteCommunity(params: DeleteCommunityParam) {
+    const [deletedCommunity] = await this.db
       .delete(communities)
-      .where(eq(communities.id, communityId))
+      .where(eq(communities.id, params.communityId))
+      .returning()
+
+    return deletedCommunity
   }
 
-  async createCommunity(body: CreateCommunityBody, ownerId: number) {
+  async createCommunity(body: CreateCommunityBody, user: User) {
     const communityExists = await this.db.query.communities.findFirst({
       where: {
         name: body.name,
@@ -139,8 +77,7 @@ export class CommunitiesService {
       const [community] = await tx
         .insert(communities)
         .values({
-          ownerId,
-          slug: body.name.toLowerCase().replace(/\s+/g, '-'),
+          ownerId: user.id,
           name: body.name,
         })
         .returning()
@@ -149,7 +86,7 @@ export class CommunitiesService {
         .insert(communityMembers)
         .values({
           communityId: community.id,
-          userId: ownerId,
+          userId: user.id,
           role: 'owner',
         })
 
@@ -159,35 +96,13 @@ export class CommunitiesService {
     return community
   }
 
-  async getCommunity(idOrSlug: string, userId: number) {
+  async getCommunity(params: GetCommunityParams) {
     const community = await this.db.query.communities.findFirst({
       where: {
-        OR: [
-          { id: Number(idOrSlug) },
-          { slug: idOrSlug },
-        ],
-      },
-      with: {
-        channels: true,
-        members: {
-          with: {
-            user: true,
-          },
-        },
+        id: params.communityId,
       },
     })
 
-    if (!community)
-      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
-
-    const membership = community.members.find(m => m.userId === userId)
-
-    if (!membership)
-      throw ApiException.Forbidden('You are not a member of this community', 'NOT_A_MEMBER')
-
-    return {
-      ...community,
-      members: community.members.map(member => toUserDto(member.user!)),
-    }
+    return community!
   }
 }

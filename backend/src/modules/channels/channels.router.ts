@@ -5,13 +5,16 @@ import type { BaseRouter } from '@/lib/base-router.interface'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 
 import { factory } from '@/lib/factory'
-import { sessionMiddleware, validator } from '@/middleware'
+import { session, validator } from '@/middleware'
+import { onlyMember } from '@/middleware/only-member.middleware'
+import { role } from '@/middleware/role.middleware'
 
 import { ChannelsService } from './channels.service'
 import { CreateChannelBodySchema, CreateChannelParamsSchema, CreateChannelResponseSchema } from './schema/create-channel.schema'
-import { DeleteChannelParamsSchema } from './schema/delete-channel.schema'
+import { DeleteChannelParamsSchema, DeletedChannelResponseSchema } from './schema/delete-channel.schema'
+import { GetChannelParamsSchema, GetChannelResponseSchema } from './schema/get-channel.schema'
 import { GetChannelsInCommunityParamsSchema, GetChannelsInCommunityResponseSchema } from './schema/get-channels-in-community.schema'
-import { UpdateChannelBodySchema, UpdateChannelParamsSchema } from './schema/update-channel.schema'
+import { UpdateChannelBodySchema, UpdateChannelParamsSchema, UpdatedChannelResponseSchema } from './schema/update-channel.schema'
 
 export class ChannelsRouter implements BaseRouter {
   readonly basePath = '/'
@@ -28,8 +31,37 @@ export class ChannelsRouter implements BaseRouter {
     const app = factory
       .createApp()
       .basePath(this.basePath)
+      .get(
+        '/channels/:channelId',
+        describeRoute({
+          tags: ['Channels'],
+          summary: 'Get channel by ID',
+          description: 'Retrieve a channel by its unique identifier.',
+          responses: {
+            200: {
+              description: 'Channel retrieved successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(GetChannelResponseSchema),
+                },
+              },
+            },
+          },
+        }),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'channelId' }),
+        role('all'),
+        validator('param', GetChannelParamsSchema),
+        async (c) => {
+          const params = c.req.valid('param')
+
+          const channel = await this.channelsService.getChannelById(params)
+
+          return c.json({ channel })
+        },
+      )
       .post(
-        '/communities/:id/channels',
+        '/communities/:communityId/channels',
         describeRoute({
           tags: ['Channels'],
           summary: 'Create a new channel in a community',
@@ -45,21 +77,22 @@ export class ChannelsRouter implements BaseRouter {
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'communityId' }),
+        role(['owner']),
         validator('param', CreateChannelParamsSchema),
         validator('json', CreateChannelBodySchema),
         async (c) => {
-          const user = c.get('user')
-          const { id } = c.req.valid('param')
+          const params = c.req.valid('param')
           const body = c.req.valid('json')
 
-          const channel = await this.channelsService.createChannel(id, body, user.id)
+          const channel = await this.channelsService.createChannel(params, body)
 
           return c.json({ channel }, 201)
         },
       )
       .get(
-        '/communities/:id/channels',
+        '/communities/:communityId/channels',
         describeRoute({
           tags: ['Channels'],
           summary: 'Get channels in a community',
@@ -75,42 +108,49 @@ export class ChannelsRouter implements BaseRouter {
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'communityId' }),
+        role('all'),
         validator('param', GetChannelsInCommunityParamsSchema),
         async (c) => {
-          const { id } = c.req.valid('param')
-          const user = c.get('user')
+          const params = c.req.valid('param')
 
-          const channels = await this.channelsService.getChannelsByCommunityId(id, user.id)
+          const channels = await this.channelsService.getChannelsByCommunityId(params)
 
           return c.json({ channels })
         },
       )
       .delete(
-        '/channels/:id',
+        '/channels/:channelId',
         describeRoute({
           tags: ['Channels'],
           summary: 'Delete a channel',
           description: 'Delete the specified channel.',
           responses: {
-            204: {
+            200: {
               description: 'Channel deleted successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(DeletedChannelResponseSchema),
+                },
+              },
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'channelId' }),
+        role(['owner']),
         validator('param', DeleteChannelParamsSchema),
         async (c) => {
-          const user = c.get('user')
-          const { id } = c.req.valid('param')
+          const params = c.req.valid('param')
 
-          await this.channelsService.deleteChannel(id, user.id)
+          const channel = await this.channelsService.deleteChannel(params)
 
-          return c.body(null, 204)
+          return c.json({ channel })
         },
       )
       .patch(
-        '/channels/:id',
+        '/channels/:channelId',
         describeRoute({
           tags: ['Channels'],
           summary: 'Update a channel',
@@ -118,20 +158,26 @@ export class ChannelsRouter implements BaseRouter {
           responses: {
             204: {
               description: 'Channel updated successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(UpdatedChannelResponseSchema),
+                },
+              },
             },
           },
         }),
-        sessionMiddleware(this.db, this.sessionTokens),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'channelId' }),
+        role(['owner']),
         validator('param', UpdateChannelParamsSchema),
         validator('json', UpdateChannelBodySchema),
         async (c) => {
-          const user = c.get('user')
           const body = c.req.valid('json')
-          const { id } = c.req.valid('param')
+          const params = c.req.valid('param')
 
-          await this.channelsService.updateChannel(id, body, user.id)
+          const channel = await this.channelsService.updateChannel(params, body)
 
-          return c.body(null, 204)
+          return c.json({ channel })
         },
       )
 

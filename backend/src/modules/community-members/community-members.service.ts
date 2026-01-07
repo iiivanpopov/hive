@@ -1,25 +1,18 @@
 import type { DrizzleDatabase } from '@/db/utils'
 
 import { toUserDto } from '@/db/tables/users/users.utils'
-import { ApiException } from '@/lib/api-exception'
+
+import type { GetCommunityMembersParam } from './schema/get-community-members.schema'
 
 export class CommunityMembersService {
   constructor(
     private readonly db: DrizzleDatabase,
-  ) {}
+  ) { }
 
-  async getCommunityMembers(communityId: number) {
-    const community = await this.db.query.communities.findFirst({
-      where: {
-        id: communityId,
-      },
-    })
-    if (!community)
-      throw ApiException.NotFound('Community not found', 'COMMUNITY_NOT_FOUND')
-
+  async getCommunityMembers(params: GetCommunityMembersParam) {
     const members = await this.db.query.communityMembers.findMany({
       where: {
-        communityId,
+        communityId: params.communityId,
       },
       with: {
         user: true,

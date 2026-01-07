@@ -4,7 +4,7 @@ import { ChannelSchema } from '@/db/tables/channels'
 import { IdSchema } from '@/shared/zod'
 
 export const GetChannelsInCommunityParamsSchema = z.object({
-  id: IdSchema,
+  communityId: IdSchema,
 })
 
 export type GetChannelsInCommunityParams = z.infer<typeof GetChannelsInCommunityParamsSchema>

@@ -14,6 +14,7 @@ beforeEach(async () => {
       password: 'password123',
     },
   })
+
   authCookie = extractSessionTokenCookie(response.headers)
 
   await clientMock.communities.$post({
@@ -23,10 +24,10 @@ beforeEach(async () => {
   }, { headers: { Cookie: authCookie } })
 })
 
-describe('/communities/:id/invitations', () => {
+describe('/communities/:communityId/invitations', () => {
   it('should create a invitation', async () => {
-    const createInvitationResponse = await clientMock.communities[':id'].invitations.$post({
-      param: { id: '1' },
+    const createInvitationResponse = await clientMock.communities[':communityId'].invitations.$post({
+      param: { communityId: '1' },
       json: {},
     }, { headers: { Cookie: authCookie } })
 
@@ -48,8 +49,8 @@ describe('/communities/:id/invitations', () => {
 
 describe('/communities/join/:token', () => {
   it('should join a community via invitation', async () => {
-    const createInvitationResponse = await clientMock.communities[':id'].invitations.$post({
-      param: { id: '1' },
+    const createInvitationResponse = await clientMock.communities[':communityId'].invitations.$post({
+      param: { communityId: '1' },
       json: {},
     }, { headers: { Cookie: authCookie } })
 
@@ -81,17 +82,17 @@ describe('/communities/join/:token', () => {
   })
 })
 
-describe('/invitations/:id', () => {
+describe('/invitations/:invitationId', () => {
   it('should revoke an invitation', async () => {
-    const createInvitationResponse = await clientMock.communities[':id'].invitations.$post({
-      param: { id: '1' },
+    const createInvitationResponse = await clientMock.communities[':communityId'].invitations.$post({
+      param: { communityId: '1' },
       json: {},
     }, { headers: { Cookie: authCookie } })
 
     const { invitation } = await createInvitationResponse.json()
 
-    const revokeInvitationResponse = await clientMock.invitations[':id'].$delete({
-      param: { id: invitation.id.toString() },
+    const revokeInvitationResponse = await clientMock.invitations[':invitationId'].$delete({
+      param: { invitationId: invitation.id.toString() },
     }, { headers: { Cookie: authCookie } })
 
     expect(revokeInvitationResponse.status).toBe(200)

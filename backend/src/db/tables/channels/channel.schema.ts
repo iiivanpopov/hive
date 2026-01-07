@@ -9,7 +9,6 @@ export const ChannelSchema = z.object({
   communityId: IdSchema,
   type: z.enum(channelTypes),
   name: z.string(),
-  slug: z.string(),
   description: z.string().optional(),
   createdAt: z.iso.datetime(),
 })

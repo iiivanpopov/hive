@@ -4,7 +4,7 @@ import { InvitationSchema } from '@/db/tables/invitations'
 import { IdSchema } from '@/shared/zod'
 
 export const DeleteInvitationParamsSchema = z.object({
-  id: IdSchema,
+  invitationId: IdSchema,
 })
 
 export type DeleteInvitationParam = z.infer<typeof DeleteInvitationParamsSchema>

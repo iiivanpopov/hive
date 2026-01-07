@@ -1,9 +1,10 @@
 import z from 'zod'
 
 import { MessageSchema } from '@/db/tables/messages'
+import { IdSchema } from '@/shared/zod'
 
 export const GetChannelMessagesParamsSchema = z.object({
-  id: z.string(),
+  channelId: IdSchema,
 })
 
 export const GetChannelMessagesQuerySchema = z.object({
