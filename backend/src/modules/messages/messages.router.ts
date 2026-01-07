@@ -10,7 +10,7 @@ import { sessionMiddleware, validator } from '@/middleware'
 import { MessagesService } from './messages.service'
 import { CreateMessageBodySchema, CreateMessageParamsSchema, CreateMessageResponseSchema } from './schema/create-message.schema'
 import { DeleteMessageParamsSchema } from './schema/delete-message.schema'
-import { GetChannelMessagesParamsSchema, GetChannelMessagesResponseSchema } from './schema/get-channel-messages.schema'
+import { GetChannelMessagesParamsSchema, GetChannelMessagesQuerySchema, GetChannelMessagesResponseSchema } from './schema/get-channel-messages.schema'
 import { UpdateMessageBodySchema, UpdateMessageParamsSchema, UpdateMessageResponseSchema } from './schema/update-message.schema'
 
 export class MessagesRouter implements BaseRouter {
@@ -47,13 +47,15 @@ export class MessagesRouter implements BaseRouter {
         }),
         sessionMiddleware(this.db, this.sessionTokens),
         validator('param', GetChannelMessagesParamsSchema),
+        validator('query', GetChannelMessagesQuerySchema),
         async (c) => {
           const { id } = c.req.valid('param')
+          const query = c.req.valid('query')
           const user = c.get('user')
 
-          const messages = await this.messagesService.getMessagesInChannel(id, user.id)
+          const response = await this.messagesService.getMessagesInChannel(id, query, user.id)
 
-          return c.json({ messages })
+          return c.json(response)
         },
       )
       .post(

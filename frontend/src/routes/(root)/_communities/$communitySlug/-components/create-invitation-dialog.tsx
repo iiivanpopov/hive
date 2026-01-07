@@ -56,7 +56,7 @@ export function CreateInvitationDialog({ open, onOpenChange }: CreateInvitationD
           id: communityQuery.data.community.id,
         },
         body: {
-          expiresAt: toDate(value.expiresAt).toISOString(),
+          expiresAt: value.expiresAt === '' ? undefined : toDate(value.expiresAt).toISOString(),
         },
       })
 
@@ -69,6 +69,7 @@ export function CreateInvitationDialog({ open, onOpenChange }: CreateInvitationD
       })
 
       formApi.reset()
+      onOpenChange(false)
     },
   })
 

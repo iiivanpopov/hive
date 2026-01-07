@@ -6,6 +6,7 @@ import { messages } from '@/db/tables/messages'
 import { ApiException } from '@/lib/api-exception'
 
 import type { CreateMessageBody } from './schema/create-message.schema'
+import type { GetChannelMessagesQuery } from './schema/get-channel-messages.schema'
 import type { UpdateMessageBody } from './schema/update-message.schema'
 
 export class MessagesService {
@@ -13,7 +14,7 @@ export class MessagesService {
     private readonly db: DrizzleDatabase,
   ) { }
 
-  async getMessagesInChannel(channelIdOrSlug: string, userId: number) {
+  async getMessagesInChannel(channelIdOrSlug: string, query: GetChannelMessagesQuery, userId: number) {
     const channel = await this.db.query.channels.findFirst({
       where: {
         OR: [
@@ -35,19 +36,25 @@ export class MessagesService {
     if (!membership)
       throw ApiException.BadRequest('You are not a member of this community', 'NOT_A_MEMBER')
 
-    const messagesList = await this.db.query.messages.findMany({
+    const messages = await this.db.query.messages.findMany({
       where: {
         OR: [
           { channelId: Number(channelIdOrSlug) },
           { channel: { slug: channelIdOrSlug } },
         ],
+        ...(query.before && {
+          id: { lt: query.before },
+        }),
       },
       orderBy: {
-        createdAt: 'asc',
+        id: 'desc',
       },
+      limit: query.limit + 1,
     })
 
-    return messagesList
+    const hasMore = messages.length > query.limit
+
+    return { messages, hasMore }
   }
 
   async createMessage(channelId: number, data: CreateMessageBody, userId: number) {

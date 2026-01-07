@@ -9,6 +9,7 @@ import type { Theme } from '@/providers/theme-provider'
 
 import { client } from '@/api/client.gen'
 import { Toaster } from '@/components/ui/sonner'
+import { config } from '@/config'
 import { LOCAL_STORAGE } from '@/lib/constants'
 import { fetchLocale } from '@/lib/utils'
 import { I18nProvider } from '@/providers/i18n-provider'
@@ -17,7 +18,7 @@ import { ThemeProvider } from '@/providers/theme-provider'
 import { routeTree } from '@/routeTree.gen'
 
 client.setConfig({
-  baseUrl: import.meta.env.VITE_BACKEND_URL,
+  baseUrl: config.apiUrl,
   credentials: 'include',
 })
 

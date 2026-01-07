@@ -79,6 +79,7 @@ describe('/channels/:id/messages', () => {
 
     const getMessagesResponse = await clientMock.channels[':id'].messages.$get({
       param: { id: '1' },
+      query: { limit: '10' },
     }, { headers: { Cookie: authCookie } })
 
     expect(getMessagesResponse.status).toBe(200)

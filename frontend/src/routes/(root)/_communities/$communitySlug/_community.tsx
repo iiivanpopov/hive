@@ -25,10 +25,12 @@ function RouteComponent() {
   return (
     <div className="flex flex-1">
       <div className="w-48 bg-zinc-100 py-4">
-        <div className="relative py-2 border-l border-b border-t rounded-tl-md rounded-bl-md h-full border-border flex flex-col gap-2">
-          <CommunityMenu />
+        <div className="relative border-l border-b border-t rounded-tl-md rounded-bl-md h-full border-border flex flex-col">
+          <div className="border-r border-border py-2">
+            <CommunityMenu />
+          </div>
 
-          <Separator />
+          <Separator className="mb-2" />
 
           <ChannelList />
         </div>
