@@ -1,3 +1,3 @@
-export const config = {
-  apiUrl: import.meta.env.VITE_BACKEND_URL,
+export const env = {
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL,
 }

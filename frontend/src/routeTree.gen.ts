@@ -9,222 +9,135 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as rootCommunitiesRouteImport } from './routes/(root)/_communities'
-import { Route as rootCommunitiesIndexRouteImport } from './routes/(root)/_communities/index'
-import { Route as authRegisterIndexRouteImport } from './routes/(auth)/register/index'
-import { Route as authRecoveryIndexRouteImport } from './routes/(auth)/recovery/index'
-import { Route as authLoginIndexRouteImport } from './routes/(auth)/login/index'
-import { Route as rootCommunitiesCommunitySlugCommunityRouteImport } from './routes/(root)/_communities/$communitySlug/_community'
-import { Route as rootCommunitiesCommunitySlugCommunityIndexRouteImport } from './routes/(root)/_communities/$communitySlug/_community/index'
-import { Route as rootCommunitiesCommunitySlugCommunityChannelSlugIndexRouteImport } from './routes/(root)/_communities/$communitySlug/_community/$channelSlug/index'
+import { Route as RegisterIndexRouteImport } from './routes/register/index'
+import { Route as RecoveryIndexRouteImport } from './routes/recovery/index'
+import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as chatLayoutRouteImport } from './routes/(chat)/_layout'
+import { Route as chatLayoutIndexRouteImport } from './routes/(chat)/_layout/index'
 
-const rootCommunitiesRoute = rootCommunitiesRouteImport.update({
-  id: '/(root)/_communities',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const rootCommunitiesIndexRoute = rootCommunitiesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootCommunitiesRoute,
-} as any)
-const authRegisterIndexRoute = authRegisterIndexRouteImport.update({
-  id: '/(auth)/register/',
+const RegisterIndexRoute = RegisterIndexRouteImport.update({
+  id: '/register/',
   path: '/register/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const authRecoveryIndexRoute = authRecoveryIndexRouteImport.update({
-  id: '/(auth)/recovery/',
+const RecoveryIndexRoute = RecoveryIndexRouteImport.update({
+  id: '/recovery/',
   path: '/recovery/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const authLoginIndexRoute = authLoginIndexRouteImport.update({
-  id: '/(auth)/login/',
+const LoginIndexRoute = LoginIndexRouteImport.update({
+  id: '/login/',
   path: '/login/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const rootCommunitiesCommunitySlugCommunityRoute =
-  rootCommunitiesCommunitySlugCommunityRouteImport.update({
-    id: '/$communitySlug/_community',
-    path: '/$communitySlug',
-    getParentRoute: () => rootCommunitiesRoute,
-  } as any)
-const rootCommunitiesCommunitySlugCommunityIndexRoute =
-  rootCommunitiesCommunitySlugCommunityIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => rootCommunitiesCommunitySlugCommunityRoute,
-  } as any)
-const rootCommunitiesCommunitySlugCommunityChannelSlugIndexRoute =
-  rootCommunitiesCommunitySlugCommunityChannelSlugIndexRouteImport.update({
-    id: '/$channelSlug/',
-    path: '/$channelSlug/',
-    getParentRoute: () => rootCommunitiesCommunitySlugCommunityRoute,
-  } as any)
+const chatLayoutRoute = chatLayoutRouteImport.update({
+  id: '/(chat)/_layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const chatLayoutIndexRoute = chatLayoutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => chatLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/login': typeof authLoginIndexRoute
-  '/recovery': typeof authRecoveryIndexRoute
-  '/register': typeof authRegisterIndexRoute
-  '/': typeof rootCommunitiesIndexRoute
-  '/$communitySlug': typeof rootCommunitiesCommunitySlugCommunityRouteWithChildren
-  '/$communitySlug/': typeof rootCommunitiesCommunitySlugCommunityIndexRoute
-  '/$communitySlug/$channelSlug': typeof rootCommunitiesCommunitySlugCommunityChannelSlugIndexRoute
+  '/login': typeof LoginIndexRoute
+  '/recovery': typeof RecoveryIndexRoute
+  '/register': typeof RegisterIndexRoute
+  '/': typeof chatLayoutIndexRoute
 }
 export interface FileRoutesByTo {
-  '/login': typeof authLoginIndexRoute
-  '/recovery': typeof authRecoveryIndexRoute
-  '/register': typeof authRegisterIndexRoute
-  '/': typeof rootCommunitiesIndexRoute
-  '/$communitySlug': typeof rootCommunitiesCommunitySlugCommunityIndexRoute
-  '/$communitySlug/$channelSlug': typeof rootCommunitiesCommunitySlugCommunityChannelSlugIndexRoute
+  '/login': typeof LoginIndexRoute
+  '/recovery': typeof RecoveryIndexRoute
+  '/register': typeof RegisterIndexRoute
+  '/': typeof chatLayoutIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/(root)/_communities': typeof rootCommunitiesRouteWithChildren
-  '/(auth)/login/': typeof authLoginIndexRoute
-  '/(auth)/recovery/': typeof authRecoveryIndexRoute
-  '/(auth)/register/': typeof authRegisterIndexRoute
-  '/(root)/_communities/': typeof rootCommunitiesIndexRoute
-  '/(root)/_communities/$communitySlug/_community': typeof rootCommunitiesCommunitySlugCommunityRouteWithChildren
-  '/(root)/_communities/$communitySlug/_community/': typeof rootCommunitiesCommunitySlugCommunityIndexRoute
-  '/(root)/_communities/$communitySlug/_community/$channelSlug/': typeof rootCommunitiesCommunitySlugCommunityChannelSlugIndexRoute
+  '/(chat)/_layout': typeof chatLayoutRouteWithChildren
+  '/login/': typeof LoginIndexRoute
+  '/recovery/': typeof RecoveryIndexRoute
+  '/register/': typeof RegisterIndexRoute
+  '/(chat)/_layout/': typeof chatLayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/login'
-    | '/recovery'
-    | '/register'
-    | '/'
-    | '/$communitySlug'
-    | '/$communitySlug/'
-    | '/$communitySlug/$channelSlug'
+  fullPaths: '/login' | '/recovery' | '/register' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/login'
-    | '/recovery'
-    | '/register'
-    | '/'
-    | '/$communitySlug'
-    | '/$communitySlug/$channelSlug'
+  to: '/login' | '/recovery' | '/register' | '/'
   id:
     | '__root__'
-    | '/(root)/_communities'
-    | '/(auth)/login/'
-    | '/(auth)/recovery/'
-    | '/(auth)/register/'
-    | '/(root)/_communities/'
-    | '/(root)/_communities/$communitySlug/_community'
-    | '/(root)/_communities/$communitySlug/_community/'
-    | '/(root)/_communities/$communitySlug/_community/$channelSlug/'
+    | '/(chat)/_layout'
+    | '/login/'
+    | '/recovery/'
+    | '/register/'
+    | '/(chat)/_layout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  rootCommunitiesRoute: typeof rootCommunitiesRouteWithChildren
-  authLoginIndexRoute: typeof authLoginIndexRoute
-  authRecoveryIndexRoute: typeof authRecoveryIndexRoute
-  authRegisterIndexRoute: typeof authRegisterIndexRoute
+  chatLayoutRoute: typeof chatLayoutRouteWithChildren
+  LoginIndexRoute: typeof LoginIndexRoute
+  RecoveryIndexRoute: typeof RecoveryIndexRoute
+  RegisterIndexRoute: typeof RegisterIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/(root)/_communities': {
-      id: '/(root)/_communities'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof rootCommunitiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(root)/_communities/': {
-      id: '/(root)/_communities/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof rootCommunitiesIndexRouteImport
-      parentRoute: typeof rootCommunitiesRoute
-    }
-    '/(auth)/register/': {
-      id: '/(auth)/register/'
+    '/register/': {
+      id: '/register/'
       path: '/register'
       fullPath: '/register'
-      preLoaderRoute: typeof authRegisterIndexRouteImport
+      preLoaderRoute: typeof RegisterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(auth)/recovery/': {
-      id: '/(auth)/recovery/'
+    '/recovery/': {
+      id: '/recovery/'
       path: '/recovery'
       fullPath: '/recovery'
-      preLoaderRoute: typeof authRecoveryIndexRouteImport
+      preLoaderRoute: typeof RecoveryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(auth)/login/': {
-      id: '/(auth)/login/'
+    '/login/': {
+      id: '/login/'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof authLoginIndexRouteImport
+      preLoaderRoute: typeof LoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(root)/_communities/$communitySlug/_community': {
-      id: '/(root)/_communities/$communitySlug/_community'
-      path: '/$communitySlug'
-      fullPath: '/$communitySlug'
-      preLoaderRoute: typeof rootCommunitiesCommunitySlugCommunityRouteImport
-      parentRoute: typeof rootCommunitiesRoute
+    '/(chat)/_layout': {
+      id: '/(chat)/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof chatLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/(root)/_communities/$communitySlug/_community/': {
-      id: '/(root)/_communities/$communitySlug/_community/'
+    '/(chat)/_layout/': {
+      id: '/(chat)/_layout/'
       path: '/'
-      fullPath: '/$communitySlug/'
-      preLoaderRoute: typeof rootCommunitiesCommunitySlugCommunityIndexRouteImport
-      parentRoute: typeof rootCommunitiesCommunitySlugCommunityRoute
-    }
-    '/(root)/_communities/$communitySlug/_community/$channelSlug/': {
-      id: '/(root)/_communities/$communitySlug/_community/$channelSlug/'
-      path: '/$channelSlug'
-      fullPath: '/$communitySlug/$channelSlug'
-      preLoaderRoute: typeof rootCommunitiesCommunitySlugCommunityChannelSlugIndexRouteImport
-      parentRoute: typeof rootCommunitiesCommunitySlugCommunityRoute
+      fullPath: '/'
+      preLoaderRoute: typeof chatLayoutIndexRouteImport
+      parentRoute: typeof chatLayoutRoute
     }
   }
 }
 
-interface rootCommunitiesCommunitySlugCommunityRouteChildren {
-  rootCommunitiesCommunitySlugCommunityIndexRoute: typeof rootCommunitiesCommunitySlugCommunityIndexRoute
-  rootCommunitiesCommunitySlugCommunityChannelSlugIndexRoute: typeof rootCommunitiesCommunitySlugCommunityChannelSlugIndexRoute
+interface chatLayoutRouteChildren {
+  chatLayoutIndexRoute: typeof chatLayoutIndexRoute
 }
 
-const rootCommunitiesCommunitySlugCommunityRouteChildren: rootCommunitiesCommunitySlugCommunityRouteChildren =
-  {
-    rootCommunitiesCommunitySlugCommunityIndexRoute:
-      rootCommunitiesCommunitySlugCommunityIndexRoute,
-    rootCommunitiesCommunitySlugCommunityChannelSlugIndexRoute:
-      rootCommunitiesCommunitySlugCommunityChannelSlugIndexRoute,
-  }
-
-const rootCommunitiesCommunitySlugCommunityRouteWithChildren =
-  rootCommunitiesCommunitySlugCommunityRoute._addFileChildren(
-    rootCommunitiesCommunitySlugCommunityRouteChildren,
-  )
-
-interface rootCommunitiesRouteChildren {
-  rootCommunitiesIndexRoute: typeof rootCommunitiesIndexRoute
-  rootCommunitiesCommunitySlugCommunityRoute: typeof rootCommunitiesCommunitySlugCommunityRouteWithChildren
+const chatLayoutRouteChildren: chatLayoutRouteChildren = {
+  chatLayoutIndexRoute: chatLayoutIndexRoute,
 }
 
-const rootCommunitiesRouteChildren: rootCommunitiesRouteChildren = {
-  rootCommunitiesIndexRoute: rootCommunitiesIndexRoute,
-  rootCommunitiesCommunitySlugCommunityRoute:
-    rootCommunitiesCommunitySlugCommunityRouteWithChildren,
-}
-
-const rootCommunitiesRouteWithChildren = rootCommunitiesRoute._addFileChildren(
-  rootCommunitiesRouteChildren,
+const chatLayoutRouteWithChildren = chatLayoutRoute._addFileChildren(
+  chatLayoutRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  rootCommunitiesRoute: rootCommunitiesRouteWithChildren,
-  authLoginIndexRoute: authLoginIndexRoute,
-  authRecoveryIndexRoute: authRecoveryIndexRoute,
-  authRegisterIndexRoute: authRegisterIndexRoute,
+  chatLayoutRoute: chatLayoutRouteWithChildren,
+  LoginIndexRoute: LoginIndexRoute,
+  RecoveryIndexRoute: RecoveryIndexRoute,
+  RegisterIndexRoute: RegisterIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

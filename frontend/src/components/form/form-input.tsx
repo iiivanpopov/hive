@@ -13,10 +13,10 @@ export interface FormInputProps extends FormControlProps {
 
 export function FormInput({
   label,
-  autoComplete,
   description,
   error,
   type,
+  autoComplete,
 }: FormInputProps) {
   const field = useFieldContext<string>()
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
@@ -30,9 +30,9 @@ export function FormInput({
       <Input
         id={field.name}
         type={type ?? 'text'}
+        aria-invalid={isInvalid}
         value={field.state.value}
         onBlur={field.handleBlur}
-        aria-invalid={isInvalid}
         autoComplete={autoComplete}
         onChange={e => field.handleChange(e.target.value)}
       />

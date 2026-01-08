@@ -1,12 +1,14 @@
+import type { QueryClient } from '@tanstack/react-query'
+
 import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react-router'
 
 import type { GetAuthMeResponse } from '@/api/types.gen'
 
 import { getAuthMeOptions } from '@/api/@tanstack/react-query.gen'
-import { queryClient } from '@/providers/query-provider'
 
 interface RootRouteContext {
   user: GetAuthMeResponse['user'] | null
+  queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
@@ -19,9 +21,9 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
   head: () => ({
     meta: [{ title: 'Hive' }],
   }),
-  beforeLoad: async () => {
+  beforeLoad: async ({ context }) => {
     try {
-      const query = await queryClient.ensureQueryData(getAuthMeOptions({
+      const query = await context.queryClient.ensureQueryData(getAuthMeOptions({
         meta: {
           toast: false,
         },

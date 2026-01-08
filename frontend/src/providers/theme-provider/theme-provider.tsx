@@ -2,7 +2,7 @@ import type { Dispatch, ReactNode, SetStateAction } from 'react'
 
 import { useState } from 'react'
 
-import { LOCAL_STORAGE } from '@/lib/constants'
+import { LOCAL_STORAGE } from '@/constants/local-storage'
 
 import type { Theme } from './theme-context'
 

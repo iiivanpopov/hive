@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router'
 
 import GoogleIcon from '@/assets/icons/google.svg?react'
+import { env } from '@/config'
 
 import { Button } from '../ui/button'
 
@@ -8,7 +9,7 @@ export function GoogleOauth() {
   const navigate = useNavigate()
 
   const handleClick = async () => {
-    await navigate({ href: `${import.meta.env.VITE_BACKEND_URL}/auth/google` })
+    await navigate({ href: `${env.apiBaseUrl}/auth/google` })
   }
 
   return (
