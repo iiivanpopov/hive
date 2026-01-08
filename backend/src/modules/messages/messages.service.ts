@@ -27,7 +27,7 @@ export class MessagesService {
 
     const messages = await this.db.query.messages.findMany({
       where: {
-        id: params.channelId,
+        channelId: params.channelId,
         ...(query.before && {
           id: { lt: query.before },
         }),

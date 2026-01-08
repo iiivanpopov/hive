@@ -9,7 +9,7 @@ export const GetChannelMessagesParamsSchema = z.object({
 
 export const GetChannelMessagesQuerySchema = z.object({
   limit: z.coerce.number(),
-  before: z.coerce.number().optional(),
+  before: IdSchema.optional(),
 })
 
 export type GetChannelMessagesParams = z.infer<typeof GetChannelMessagesParamsSchema>

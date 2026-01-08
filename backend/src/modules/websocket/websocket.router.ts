@@ -2,13 +2,13 @@ import { describeRoute } from 'hono-openapi'
 import { upgradeWebSocket } from 'hono/bun'
 
 import type { DrizzleDatabase } from '@/db/utils'
-import type { BaseRouter } from '@/lib/base-router.interface'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
+import type { BaseRouter } from '@/types/interfaces'
 
 import { factory } from '@/lib/factory'
 import { session } from '@/middleware'
+import { MessagesService } from '@/modules/messages'
 
-import { MessagesService } from '../messages/messages.service'
 import { WebsocketService } from './websocket.service'
 
 export class WebsocketRouter implements BaseRouter {
@@ -35,7 +35,7 @@ export class WebsocketRouter implements BaseRouter {
           description: 'Establish a WebSocket connection for real-time communication.',
         }),
         session(this.db, this.sessionTokens),
-        upgradeWebSocket(c => this.websocketService.handleConnection(c)),
+        upgradeWebSocket(this.websocketService.handle),
       )
 
     return app

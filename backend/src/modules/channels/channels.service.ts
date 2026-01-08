@@ -100,7 +100,6 @@ export class ChannelsService {
         communityId: params.communityId,
         name: data.name,
         description: data.description,
-        type: data.type,
       })
       .returning()
 

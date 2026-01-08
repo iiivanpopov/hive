@@ -2,7 +2,6 @@ CREATE TABLE `channels` (
 	`id` integer PRIMARY KEY AUTOINCREMENT,
 	`community_id` integer NOT NULL,
 	`name` text NOT NULL,
-	`type` text NOT NULL,
 	`description` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	CONSTRAINT `fk_channels_community_id_communities_id_fk` FOREIGN KEY (`community_id`) REFERENCES `communities`(`id`) ON DELETE CASCADE

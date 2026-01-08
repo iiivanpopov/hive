@@ -25,6 +25,14 @@ export class WsResponse<T = any> implements WsMessage<T> {
     this.payload = payload
     this.timestamp = Date.now()
   }
+
+  toJSON() {
+    return {
+      type: this.type,
+      payload: this.payload,
+      timestamp: this.timestamp,
+    }
+  }
 }
 
 export class CreatedMessageResponse extends WsResponse<Message> {
@@ -50,9 +58,9 @@ export class DeletedMessageResponse extends WsResponse<{
 
 export class ErrorResponse extends WsResponse<{
   message: string
-  code: string
+  code: number
 }> {
-  constructor(message: string, code: string) {
+  constructor(message: string, code: number) {
     super(WsEventType.ERROR, { message, code })
   }
 }

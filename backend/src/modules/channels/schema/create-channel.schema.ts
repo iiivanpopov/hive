@@ -1,7 +1,7 @@
 import z from 'zod'
 
 import { validationConfig } from '@/config'
-import { ChannelSchema, channelTypes } from '@/db/tables/channels'
+import { ChannelSchema } from '@/db/tables/channels'
 import { IdSchema } from '@/shared/zod'
 
 export const CreateChannelBodySchema = z.object({
@@ -13,7 +13,6 @@ export const CreateChannelBodySchema = z.object({
     .string()
     .max(validationConfig.maxChannelDescription)
     .optional(),
-  type: z.enum(channelTypes),
 })
 
 export type CreateChannelBody = z.infer<typeof CreateChannelBodySchema>

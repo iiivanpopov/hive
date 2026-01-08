@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "603ab7c4-93c9-44a2-9627-99a1b0406622",
+  "id": "a1b04109-e1d1-452f-83a6-e372d7a59100",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -57,16 +57,6 @@
       "default": null,
       "generated": null,
       "name": "name",
-      "entityType": "columns",
-      "table": "channels"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "type",
       "entityType": "columns",
       "table": "channels"
     },

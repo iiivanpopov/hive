@@ -17,7 +17,6 @@ async function seedChannel() {
     json: {
       name: 'General',
       description: 'General discussion',
-      type: 'text',
     },
     param: { communityId: '1' },
   }, { headers: { Cookie: authCookie } })

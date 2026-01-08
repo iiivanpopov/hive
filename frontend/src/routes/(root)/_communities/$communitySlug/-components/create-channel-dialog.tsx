@@ -61,7 +61,6 @@ export function CreateChannelDialog({ open, onOpenChange }: CreateChannelDialogP
         body: {
           name: value.name,
           description: value.description,
-          type: 'text', // currently unavailable
         },
         path: {
           id: communityQuery.data.community.id,

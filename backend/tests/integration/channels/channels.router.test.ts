@@ -11,7 +11,6 @@ async function seedChannel() {
     json: {
       name: 'General',
       description: 'General discussion',
-      type: 'text',
     },
     param: { communityId: '1' },
   }, { headers: { Cookie: authCookie } })
@@ -41,7 +40,6 @@ describe('/communities/:id/channels', () => {
       json: {
         name: 'General',
         description: 'General discussion',
-        type: 'text',
       },
       param: { communityId: '1' },
     }, { headers: { Cookie: authCookie } })
@@ -55,7 +53,6 @@ describe('/communities/:id/channels', () => {
       communityId: 1,
       name: 'General',
       description: 'General discussion',
-      type: 'text',
     })
 
     const channel = await databaseMock.query.channels.findFirst({
@@ -68,7 +65,6 @@ describe('/communities/:id/channels', () => {
       communityId: 1,
       name: 'General',
       description: 'General discussion',
-      type: 'text',
     })
   })
 
@@ -89,7 +85,6 @@ describe('/communities/:id/channels', () => {
       communityId: 1,
       name: 'General',
       description: 'General discussion',
-      type: 'text',
     })
   })
 })
