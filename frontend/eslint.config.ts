@@ -13,6 +13,7 @@ export default antfu({
     'react-refresh/only-export-components': 'off',
     'react-hooks/exhaustive-deps': 'off',
     'react/no-array-index-key': 'off',
+    'react-hooks/refs': 'off',
   },
   basePath: path.resolve(__dirname),
 })

@@ -1,9 +1,8 @@
 import { useNavigate } from '@tanstack/react-router'
 
 import GoogleIcon from '@/assets/icons/google.svg?react'
+import { Button } from '@/components/ui/button'
 import { env } from '@/config'
-
-import { Button } from '../ui/button'
 
 export function GoogleOauth() {
   const navigate = useNavigate()

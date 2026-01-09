@@ -14,6 +14,7 @@ import { Route as RecoveryIndexRouteImport } from './routes/recovery/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as chatLayoutRouteImport } from './routes/(chat)/_layout'
 import { Route as chatLayoutIndexRouteImport } from './routes/(chat)/_layout/index'
+import { Route as chatLayoutCommunityIdIndexRouteImport } from './routes/(chat)/_layout/$communityId/index'
 
 const RegisterIndexRoute = RegisterIndexRouteImport.update({
   id: '/register/',
@@ -39,18 +40,26 @@ const chatLayoutIndexRoute = chatLayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => chatLayoutRoute,
 } as any)
+const chatLayoutCommunityIdIndexRoute =
+  chatLayoutCommunityIdIndexRouteImport.update({
+    id: '/$communityId/',
+    path: '/$communityId/',
+    getParentRoute: () => chatLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginIndexRoute
   '/recovery': typeof RecoveryIndexRoute
   '/register': typeof RegisterIndexRoute
   '/': typeof chatLayoutIndexRoute
+  '/$communityId': typeof chatLayoutCommunityIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginIndexRoute
   '/recovery': typeof RecoveryIndexRoute
   '/register': typeof RegisterIndexRoute
   '/': typeof chatLayoutIndexRoute
+  '/$communityId': typeof chatLayoutCommunityIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,12 +68,13 @@ export interface FileRoutesById {
   '/recovery/': typeof RecoveryIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/(chat)/_layout/': typeof chatLayoutIndexRoute
+  '/(chat)/_layout/$communityId/': typeof chatLayoutCommunityIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/recovery' | '/register' | '/'
+  fullPaths: '/login' | '/recovery' | '/register' | '/' | '/$communityId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/recovery' | '/register' | '/'
+  to: '/login' | '/recovery' | '/register' | '/' | '/$communityId'
   id:
     | '__root__'
     | '/(chat)/_layout'
@@ -72,6 +82,7 @@ export interface FileRouteTypes {
     | '/recovery/'
     | '/register/'
     | '/(chat)/_layout/'
+    | '/(chat)/_layout/$communityId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,15 +129,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof chatLayoutIndexRouteImport
       parentRoute: typeof chatLayoutRoute
     }
+    '/(chat)/_layout/$communityId/': {
+      id: '/(chat)/_layout/$communityId/'
+      path: '/$communityId'
+      fullPath: '/$communityId'
+      preLoaderRoute: typeof chatLayoutCommunityIdIndexRouteImport
+      parentRoute: typeof chatLayoutRoute
+    }
   }
 }
 
 interface chatLayoutRouteChildren {
   chatLayoutIndexRoute: typeof chatLayoutIndexRoute
+  chatLayoutCommunityIdIndexRoute: typeof chatLayoutCommunityIdIndexRoute
 }
 
 const chatLayoutRouteChildren: chatLayoutRouteChildren = {
   chatLayoutIndexRoute: chatLayoutIndexRoute,
+  chatLayoutCommunityIdIndexRoute: chatLayoutCommunityIdIndexRoute,
 }
 
 const chatLayoutRouteWithChildren = chatLayoutRoute._addFileChildren(

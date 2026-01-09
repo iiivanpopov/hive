@@ -1,6 +1,6 @@
 import { FormattedMessage } from 'react-intl'
 
-import type { I18nKey } from '@/providers/i18n-provider'
+import type { I18nKey } from '../types'
 
 export interface I18nTextProps {
   id: I18nKey

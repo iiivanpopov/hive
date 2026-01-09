@@ -3,6 +3,7 @@ import { HomeIcon } from 'lucide-react'
 
 import { getCommunitiesJoinedOptions } from '@/api/@tanstack/react-query.gen'
 import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 
 import { CommunityList, CommunityListLoading } from './-components/community-list'
 
@@ -29,7 +30,7 @@ function Layout() {
           </Button>
         </Link>
 
-        <div className="w-8 h-px bg-border" />
+        <Separator className="w-8!" />
 
         <CommunityList />
       </div>

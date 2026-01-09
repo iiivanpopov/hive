@@ -11,12 +11,11 @@ import type { Theme } from '@/providers/theme-provider'
 import { client } from '@/api/client.gen'
 import { Toaster } from '@/components/ui/sonner'
 import { env } from '@/config'
+import { LOCAL_STORAGE } from '@/constants/local-storage'
 import { I18nProvider } from '@/i18n/i18n-provider'
 import { loadLocale } from '@/i18n/utils/load-locale'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { routeTree } from '@/routeTree.gen'
-
-import { LOCAL_STORAGE } from './constants/local-storage'
 
 client.setConfig({
   baseUrl: env.apiBaseUrl,
