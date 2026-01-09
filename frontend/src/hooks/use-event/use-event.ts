@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/refs */
 import { useCallback, useRef } from 'react'
 
 export function useEvent<Params extends unknown[], Return>(callback: (...args: Params) => Return): ((...args: Params) => Return) {
