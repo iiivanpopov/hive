@@ -72,5 +72,10 @@
   "toast.community-joined": "Joined \"{name}\"",
   "toast.leaved-community": "Left \"{name}\"",
   "toast.channel-created": "Channel created",
-  "toast.invitation-created": "Invitation \"{token}\" created"
+  "toast.invitation-created": "Invitation \"{token}\" created",
+
+  "dropdown.user.label": "Account",
+  "dropdown.user.profile.label":"Profile",
+  "dropdown.user.settings.label": "Settings",
+  "dropdown.user.logout.label": "Logout"
 }

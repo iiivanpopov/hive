@@ -4,8 +4,10 @@ import { HomeIcon } from 'lucide-react'
 import { getCommunitiesJoinedOptions } from '@/api/@tanstack/react-query.gen'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { queryClient } from '@/providers/query-provider'
 
 import { CommunityList, CommunityListLoading } from './-components/community-list'
+import { CurrentUser } from './-components/current-user'
 
 export const Route = createFileRoute('/(chat)/_layout')({
   component: Layout,
@@ -14,12 +16,12 @@ export const Route = createFileRoute('/(chat)/_layout')({
     if (!context.user)
       throw redirect({ to: '/login' })
   },
-  loader: ({ context }) => context.queryClient.ensureQueryData(getCommunitiesJoinedOptions()),
+  loader: () => queryClient.ensureQueryData(getCommunitiesJoinedOptions()),
 })
 
 function Layout() {
   return (
-    <div className="flex h-screen w-screen bg-zinc-100 p-4 pl-0">
+    <div className="flex h-screen w-screen bg-zinc-100 p-4 pl-0 relative">
       <div className="flex-col h-full w-20 flex items-center gap-4">
         <Link to="/">
           <Button
@@ -38,13 +40,15 @@ function Layout() {
       <div className="border border-border size-full rounded-xl">
         <Outlet />
       </div>
+
+      <CurrentUser />
     </div>
   )
 }
 
 function LayoutLoading() {
   return (
-    <div className="flex h-screen w-screen bg-zinc-100 p-4 pl-0">
+    <div className="flex h-screen w-screen bg-zinc-100 p-4 pl-0 relative">
       <div className="flex-col h-full w-20 flex items-center gap-4">
         <Link to="/">
           <Button
@@ -56,7 +60,7 @@ function LayoutLoading() {
           </Button>
         </Link>
 
-        <div className="w-8 h-px bg-border" />
+        <Separator className="w-8!" />
 
         <CommunityListLoading />
       </div>

@@ -12,7 +12,7 @@ export function CommunityList() {
   return (
     <div
       ref={refs.container}
-      className="relative w-full h-6/8 overflow-hidden"
+      className="relative w-full h-10/12 overflow-hidden"
     >
       <div className="no-scrollbar overflow-y-auto h-full flex flex-col items-center gap-4">
         {queries.communities.data.communities.map((community, i) => {
@@ -23,13 +23,14 @@ export function CommunityList() {
             <div
               key={community.id}
               ref={isFirst ? refs.firstItem : null}
-              className="relative w-20"
+              className="relative w-20 flex justify-center items-center"
             >
               <Link
                 to="/$communityId"
                 params={{ communityId: String(community.id) }}
+                className="block size-10"
               >
-                <div className="m-[0_auto] size-10 rounded-md flex justify-center items-center bg-primary text-primary-foreground font-bold text-2xl cursor-pointer">
+                <div className="size-10 rounded-md flex justify-center items-center bg-primary text-primary-foreground font-bold text-2xl cursor-pointer">
                   {community.name.at(0)!.toUpperCase()}
                 </div>
               </Link>

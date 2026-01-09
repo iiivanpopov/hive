@@ -5,6 +5,7 @@ import z from 'zod'
 import { getCommunitiesJoinedQueryKey, postCommunitiesMutation } from '@/api/@tanstack/react-query.gen'
 import { useForm } from '@/components/form/hooks'
 import { useI18n } from '@/i18n/hooks/use-i18n'
+import { queryClient } from '@/providers/query-provider'
 
 const CreateCommunitySchema = z.object({
   name: z
@@ -31,11 +32,11 @@ export function useCreateCommunityDialog({ onOpenChange }: UseCreateCommunityDia
     onMutate: async (newCommunity) => {
       const queryKey = getCommunitiesJoinedQueryKey()
 
-      await context.queryClient.cancelQueries({ queryKey })
+      await queryClient.cancelQueries({ queryKey })
 
-      const previousCommunities = context.queryClient.getQueryData(queryKey)
+      const previousCommunities = queryClient.getQueryData(queryKey)
 
-      context.queryClient.setQueryData(
+      queryClient.setQueryData(
         queryKey,
         (old: any) => {
           if (!old)
@@ -60,14 +61,14 @@ export function useCreateCommunityDialog({ onOpenChange }: UseCreateCommunityDia
     },
     onError: (_err, _newCommunity, onMutateResult) => {
       if (onMutateResult?.previousCommunities) {
-        context.queryClient.setQueryData(
+        queryClient.setQueryData(
           getCommunitiesJoinedQueryKey(),
           onMutateResult.previousCommunities,
         )
       }
     },
     onSettled: () => {
-      context.queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: getCommunitiesJoinedQueryKey(),
       })
     },
