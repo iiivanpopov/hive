@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouteContext, useRouter } from '@tanstack/react-router'
 
 import { postAuthLogoutMutation } from '@/api/@tanstack/react-query.gen'
-import { queryClient } from '@/providers/query-provider'
+import { queryClient } from '@/routes/-contexts/query'
 
 export function useCurrentUser() {
   const context = useRouteContext({ from: '__root__' })

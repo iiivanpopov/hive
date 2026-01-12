@@ -1,8 +1,8 @@
-import { CogIcon, LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react'
+import { LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { I18nText } from '@/i18n/components/i18n-text'
+import { I18nText } from '@/routes/-contexts/i18n/components/i18n-text'
 
 import { useCurrentUser } from './hooks/use-current-user'
 
@@ -43,7 +43,7 @@ export function CurrentUser() {
         size="icon"
         variant="ghost"
       >
-        <CogIcon />
+        <SettingsIcon size={20} />
       </Button>
     </div>
   )

@@ -4,10 +4,11 @@ import { PlusIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 import { AddCommunityDialog } from './components/add-community-dialog'
+import { AddCommunityDialogProvider } from './contexts/add-community-dialog-context'
 import { useCommunityList } from './hooks/use-community-list'
 
 export function CommunityList() {
-  const { state, functions, refs, queries } = useCommunityList()
+  const { features, state, refs, queries } = useCommunityList()
 
   return (
     <div
@@ -46,27 +47,28 @@ export function CommunityList() {
           <Button
             size="icon-lg"
             variant="outline"
-            onClick={() => functions.setShowAddCommunityDialog(true)}
+            onClick={() => features.addCommunityDialog.open()}
           >
             <PlusIcon />
           </Button>
         </div>
 
-        <AddCommunityDialog
-          open={state.showAddCommunityDialog}
-          onOpenChange={functions.setShowAddCommunityDialog}
-        />
+        {features.addCommunityDialog.opened && (
+          <AddCommunityDialogProvider>
+            <AddCommunityDialog addCommunityDialog={features.addCommunityDialog} />
+          </AddCommunityDialogProvider>
+        )}
       </div>
 
       <div
-        data-active={state.showScrollTopBadge}
-        className="scale-0 opacity-0 data-active:opacity-100 data-active:scale-100 transition-all duration-200 ease-in-out absolute top-0 left-0 right-0 text-center mx-2 py-0.75 bg-background rounded-sm pointer-events-none text-sm"
+        data-open={features.scrollTopBadge.opened}
+        className="scale-0 opacity-0 data-open:opacity-100 data-open:scale-100 transition-all duration-200 ease-in-out absolute top-0 left-0 right-0 text-center mx-2 py-0.75 bg-background rounded-sm pointer-events-none text-sm"
       >
         more...
       </div>
       <div
-        data-active={state.showScrollBottomBadge}
-        className="scale-0 opacity-0 data-active:opacity-100 data-active:scale-100 transition-all duration-200 ease-in-out absolute bottom-0 left-0 right-0 text-center mx-2 py-0.75 bg-background rounded-sm pointer-events-none text-sm"
+        data-open={features.scrollBottomBadge.opened}
+        className="scale-0 opacity-0 data-open:opacity-100 data-open:scale-100 transition-all duration-200 ease-in-out absolute bottom-0 left-0 right-0 text-center mx-2 py-0.75 bg-background rounded-sm pointer-events-none text-sm"
       >
         more...
       </div>

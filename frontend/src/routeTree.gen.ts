@@ -9,28 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RegisterIndexRouteImport } from './routes/register/index'
-import { Route as RecoveryIndexRouteImport } from './routes/recovery/index'
-import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as chatLayoutRouteImport } from './routes/(chat)/_layout'
 import { Route as chatLayoutIndexRouteImport } from './routes/(chat)/_layout/index'
+import { Route as authRegisterIndexRouteImport } from './routes/(auth)/register/index'
+import { Route as authRecoveryIndexRouteImport } from './routes/(auth)/recovery/index'
+import { Route as authLoginIndexRouteImport } from './routes/(auth)/login/index'
 import { Route as chatLayoutCommunityIdIndexRouteImport } from './routes/(chat)/_layout/$communityId/index'
 
-const RegisterIndexRoute = RegisterIndexRouteImport.update({
-  id: '/register/',
-  path: '/register/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecoveryIndexRoute = RecoveryIndexRouteImport.update({
-  id: '/recovery/',
-  path: '/recovery/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginIndexRoute = LoginIndexRouteImport.update({
-  id: '/login/',
-  path: '/login/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const chatLayoutRoute = chatLayoutRouteImport.update({
   id: '/(chat)/_layout',
   getParentRoute: () => rootRouteImport,
@@ -40,6 +25,21 @@ const chatLayoutIndexRoute = chatLayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => chatLayoutRoute,
 } as any)
+const authRegisterIndexRoute = authRegisterIndexRouteImport.update({
+  id: '/(auth)/register/',
+  path: '/register/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authRecoveryIndexRoute = authRecoveryIndexRouteImport.update({
+  id: '/(auth)/recovery/',
+  path: '/recovery/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authLoginIndexRoute = authLoginIndexRouteImport.update({
+  id: '/(auth)/login/',
+  path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const chatLayoutCommunityIdIndexRoute =
   chatLayoutCommunityIdIndexRouteImport.update({
     id: '/$communityId/',
@@ -48,25 +48,25 @@ const chatLayoutCommunityIdIndexRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/login': typeof LoginIndexRoute
-  '/recovery': typeof RecoveryIndexRoute
-  '/register': typeof RegisterIndexRoute
+  '/login': typeof authLoginIndexRoute
+  '/recovery': typeof authRecoveryIndexRoute
+  '/register': typeof authRegisterIndexRoute
   '/': typeof chatLayoutIndexRoute
   '/$communityId': typeof chatLayoutCommunityIdIndexRoute
 }
 export interface FileRoutesByTo {
-  '/login': typeof LoginIndexRoute
-  '/recovery': typeof RecoveryIndexRoute
-  '/register': typeof RegisterIndexRoute
+  '/login': typeof authLoginIndexRoute
+  '/recovery': typeof authRecoveryIndexRoute
+  '/register': typeof authRegisterIndexRoute
   '/': typeof chatLayoutIndexRoute
   '/$communityId': typeof chatLayoutCommunityIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(chat)/_layout': typeof chatLayoutRouteWithChildren
-  '/login/': typeof LoginIndexRoute
-  '/recovery/': typeof RecoveryIndexRoute
-  '/register/': typeof RegisterIndexRoute
+  '/(auth)/login/': typeof authLoginIndexRoute
+  '/(auth)/recovery/': typeof authRecoveryIndexRoute
+  '/(auth)/register/': typeof authRegisterIndexRoute
   '/(chat)/_layout/': typeof chatLayoutIndexRoute
   '/(chat)/_layout/$communityId/': typeof chatLayoutCommunityIdIndexRoute
 }
@@ -78,43 +78,22 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/(chat)/_layout'
-    | '/login/'
-    | '/recovery/'
-    | '/register/'
+    | '/(auth)/login/'
+    | '/(auth)/recovery/'
+    | '/(auth)/register/'
     | '/(chat)/_layout/'
     | '/(chat)/_layout/$communityId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   chatLayoutRoute: typeof chatLayoutRouteWithChildren
-  LoginIndexRoute: typeof LoginIndexRoute
-  RecoveryIndexRoute: typeof RecoveryIndexRoute
-  RegisterIndexRoute: typeof RegisterIndexRoute
+  authLoginIndexRoute: typeof authLoginIndexRoute
+  authRecoveryIndexRoute: typeof authRecoveryIndexRoute
+  authRegisterIndexRoute: typeof authRegisterIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/register/': {
-      id: '/register/'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recovery/': {
-      id: '/recovery/'
-      path: '/recovery'
-      fullPath: '/recovery'
-      preLoaderRoute: typeof RecoveryIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login/': {
-      id: '/login/'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(chat)/_layout': {
       id: '/(chat)/_layout'
       path: ''
@@ -128,6 +107,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof chatLayoutIndexRouteImport
       parentRoute: typeof chatLayoutRoute
+    }
+    '/(auth)/register/': {
+      id: '/(auth)/register/'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/recovery/': {
+      id: '/(auth)/recovery/'
+      path: '/recovery'
+      fullPath: '/recovery'
+      preLoaderRoute: typeof authRecoveryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/login/': {
+      id: '/(auth)/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(chat)/_layout/$communityId/': {
       id: '/(chat)/_layout/$communityId/'
@@ -155,9 +155,9 @@ const chatLayoutRouteWithChildren = chatLayoutRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   chatLayoutRoute: chatLayoutRouteWithChildren,
-  LoginIndexRoute: LoginIndexRoute,
-  RecoveryIndexRoute: RecoveryIndexRoute,
-  RegisterIndexRoute: RegisterIndexRoute,
+  authLoginIndexRoute: authLoginIndexRoute,
+  authRecoveryIndexRoute: authRecoveryIndexRoute,
+  authRegisterIndexRoute: authRegisterIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -3,7 +3,8 @@ import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react
 import type { GetAuthMeResponse } from '@/api/types.gen'
 
 import { getAuthMeOptions } from '@/api/@tanstack/react-query.gen'
-import { queryClient } from '@/providers/query-provider'
+
+import { queryClient } from './-contexts/query'
 
 interface RootRouteContext {
   user: GetAuthMeResponse['user'] | null

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Typography } from '@/components/ui/typography'
-import { I18nText } from '@/i18n/components/i18n-text'
+import { I18nText } from '@/routes/-contexts/i18n/components/i18n-text'
 
 export const Route = createFileRoute('/(chat)/_layout/')({
   component: CommunitiesPage,

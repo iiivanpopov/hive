@@ -3,7 +3,7 @@ import { useParams } from '@tanstack/react-router'
 import { useRef } from 'react'
 
 import { getCommunitiesJoinedOptions } from '@/api/@tanstack/react-query.gen'
-import { useBoolean } from '@/hooks/use-boolean'
+import { useDisclosure } from '@/hooks/use-disclosure'
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer'
 
 export function useCommunityList() {
@@ -15,31 +15,30 @@ export function useCommunityList() {
   const firstItemRef = useRef<HTMLDivElement>(null)
   const lastItemRef = useRef<HTMLDivElement>(null)
 
-  const [showScrollTopBadge, setShowScrollTopBadge] = useBoolean(false)
-  const [showScrollBottomBadge, setShowScrollBottomBadge] = useBoolean(false)
-  const [showAddCommunityDialog, setShowAddCommunityDialog] = useBoolean(false)
+  const addCommunityDialog = useDisclosure()
+  const scrollTopBadge = useDisclosure()
+  const scrollBottomBadge = useDisclosure()
 
   useIntersectionObserver(firstItemRef, {
     root: containerRef,
     threshold: 0.2,
-    onChange: entries => setShowScrollTopBadge(entries.every(entry => !entry.isIntersecting)),
+    onChange: entries => scrollTopBadge.toggle(entries.every(entry => !entry.isIntersecting)),
   })
 
   useIntersectionObserver(lastItemRef, {
     root: containerRef,
     threshold: 0.2,
-    onChange: entries => setShowScrollBottomBadge(entries.every(entry => !entry.isIntersecting)),
+    onChange: entries => scrollBottomBadge.toggle(entries.every(entry => !entry.isIntersecting)),
   })
 
   return {
-    state: {
-      showScrollTopBadge,
-      showScrollBottomBadge,
-      showAddCommunityDialog,
-      params,
+    features: {
+      addCommunityDialog,
+      scrollTopBadge,
+      scrollBottomBadge,
     },
-    functions: {
-      setShowAddCommunityDialog,
+    state: {
+      params,
     },
     refs: {
       container: containerRef,

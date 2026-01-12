@@ -7,3 +7,4 @@ dist
 *.sqlite
 frontend/api
 *.log
+routeTree.gen.ts
