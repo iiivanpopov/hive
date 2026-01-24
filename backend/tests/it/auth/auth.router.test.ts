@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+import { afterEach, beforeAll, describe, expect, it } from 'bun:test'
 
 import { migrateDatabase, resetDatabase } from '@/db/utils'
 import { cacheMock } from '@/tests/mocks/cache.mock'
@@ -64,7 +64,7 @@ describe('/register', () => {
     const response = await clientMock.auth.register.$post({ json: payload })
     const body = await response.json()
 
-    expect(response.status).toBe(400)
+    expect(response.status as unknown).toBe(400)
     expect(body).toMatchObject({
       error: { code: 'USER_EXISTS' },
     })
@@ -98,7 +98,7 @@ describe('/confirm-email', () => {
       param: { token },
     })
 
-    expect(response.status).toBe(204)
+    expect(response.status as unknown).toBe(204)
   })
 
   it('should resend confirmation email', async () => {
@@ -115,7 +115,7 @@ describe('/confirm-email', () => {
       json: { email: payload.email },
     })
 
-    expect(response.status).toBe(204)
+    expect(response.status as unknown).toBe(204)
     expect(sendMailMock).toHaveBeenCalledTimes(2)
 
     const mail = sendMailMock.mock.calls.at(-1)![0]
@@ -145,7 +145,7 @@ describe('/confirm-email', () => {
       json: { email: payload.email },
     })
 
-    expect(response.status).toBe(429)
+    expect(response.status as unknown).toBe(429)
   })
 })
 
@@ -160,7 +160,7 @@ describe('/login', () => {
 
     const body = await response.json()
 
-    expect(response.status).toBe(401)
+    expect(response.status as unknown).toBe(401)
     expect(body).toMatchObject({
       error: { code: 'INVALID_CREDENTIALS' },
     })
@@ -182,7 +182,7 @@ describe('/login', () => {
       },
     })
 
-    expect(response.status).toBe(204)
+    expect(response.status as unknown).toBe(204)
     expect(response.headers.get('Set-Cookie')).toBeTruthy()
   })
 })
@@ -191,7 +191,7 @@ describe('/logout', () => {
   it('logs out a user', async () => {
     const response = await clientMock.auth.logout.$post()
 
-    expect(response.status).toBe(204)
+    expect(response.status as unknown).toBe(204)
     expect(response.headers.get('Set-Cookie')).toBeTruthy()
   })
 })
@@ -210,7 +210,7 @@ describe('/request-reset', () => {
       json: { email: 'testuser@gmail.com' },
     })
 
-    expect(response.status).toBe(204)
+    expect(response.status as unknown).toBe(204)
     expect(sendMailMock).toHaveBeenCalled()
 
     const mail = sendMailMock.mock.calls.at(-1)![0]
@@ -226,7 +226,7 @@ describe('/request-reset', () => {
       json: { email: 'testuser@gmail.com' },
     })
 
-    expect(response.status).toBe(204)
+    expect(response.status as unknown).toBe(204)
     expect(sendMailMock).not.toHaveBeenCalled()
   })
 
@@ -249,7 +249,7 @@ describe('/request-reset', () => {
       json: { email: 'testuser@gmail.com' },
     })
 
-    expect(response.status).toBe(429)
+    expect(response.status as unknown).toBe(429)
     expect(await response.json()).toMatchObject({
       error: { code: 'TOO_MANY_PASSWORD_RESET_ATTEMPTS' },
     })
@@ -261,7 +261,7 @@ describe('/request-reset', () => {
         json: { email: 'testuser@gmail.com' },
       })
 
-      expect(response.status).toBe(204)
+      expect(response.status as unknown).toBe(204)
     }
   })
 })
@@ -288,7 +288,7 @@ describe('/reset-password', () => {
       json: { newPassword: 'password456' },
     })
 
-    expect(response.status).toBe(204)
+    expect(response.status as unknown).toBe(204)
   })
 })
 
@@ -317,7 +317,7 @@ describe('/change-password', () => {
       },
     )
 
-    expect(response.status).toBe(204)
+    expect(response.status as unknown).toBe(204)
   })
 
   it('rejects invalid current password', async () => {
@@ -342,7 +342,7 @@ describe('/change-password', () => {
       { headers: { Cookie: cookie } },
     )
 
-    expect(response.status).toBe(401)
+    expect(response.status as unknown).toBe(401)
     expect(await response.json()).toMatchObject({
       error: { code: 'INVALID_CURRENT_PASSWORD' },
     })

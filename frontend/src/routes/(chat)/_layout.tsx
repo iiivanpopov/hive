@@ -4,7 +4,7 @@ import { HomeIcon } from 'lucide-react'
 import { getCommunitiesJoinedOptions } from '@/api/@tanstack/react-query.gen'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { queryClient } from '@/contexts/query'
+import { queryClient } from '@/providers/query-provider'
 
 import { CommunityList, CommunityListLoading, CurrentUser } from './-components'
 

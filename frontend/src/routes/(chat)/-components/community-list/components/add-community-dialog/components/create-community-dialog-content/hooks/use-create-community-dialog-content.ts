@@ -4,8 +4,8 @@ import z from 'zod'
 
 import { getCommunitiesJoinedQueryKey, postCommunitiesMutation } from '@/api/@tanstack/react-query.gen'
 import { useForm } from '@/components/form/hooks'
-import { queryClient } from '@/contexts/query'
 import { useI18n } from '@/i18n/hooks/use-i18n'
+import { queryClient } from '@/providers/query-provider'
 
 const CreateCommunitySchema = z.object({
   name: z

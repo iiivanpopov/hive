@@ -11,8 +11,6 @@ export default defineConfig({
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
-      semicolons: false,
-      quoteStyle: 'single',
     }),
     react(),
     tailwindcss(),
@@ -22,6 +20,6 @@ export default defineConfig({
       '@/api': path.resolve(__dirname, 'api'),
       '@': path.resolve(__dirname, 'src'),
     },
-    extensions: ['.tsx', '.ts', '.json'],
+    extensions: ['.tsx', '.ts', '.json', '.js'],
   },
 })

@@ -4,16 +4,16 @@ import '@/styles/global.css'
 import { createRoot } from 'react-dom/client'
 import { toast, Toaster } from 'sonner'
 
-import type { Theme } from '@/contexts/theme'
 import type { Locale } from '@/i18n/types'
+import type { Theme } from '@/providers/theme-provider'
 
 import { client } from '@/api/client.gen'
 import { env } from '@/config/env'
 import { LOCAL_STORAGE } from '@/constants/local-storage'
-import { QueryProvider } from '@/contexts/query'
-import { ThemeProvider } from '@/contexts/theme'
-import { I18nProvider } from '@/i18n/contexts/i18n-context'
+import { I18nProvider } from '@/i18n/providers/i18n-provider'
 import { loadLocale } from '@/i18n/utils'
+import { QueryProvider } from '@/providers/query-provider'
+import { ThemeProvider } from '@/providers/theme-provider'
 import { routeTree } from '@/routeTree.gen'
 
 client.setConfig({

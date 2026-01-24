@@ -4,8 +4,8 @@ import { PlusIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 import { AddCommunityDialog } from './components'
-import { AddCommunityDialogProvider } from './contexts'
 import { useCommunityList } from './hooks'
+import { AddCommunityDialogProvider } from './providers'
 
 export function CommunityList() {
   const { features, state, refs, queries } = useCommunityList()

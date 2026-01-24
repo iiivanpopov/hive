@@ -4,9 +4,9 @@ import type { useDisclosure } from '@/hooks/use-disclosure'
 
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 
-import type { AddCommunityDialogScreen } from '../../contexts/add-community-dialog-context'
+import type { AddCommunityDialogScreen } from '../../providers'
 
-import { useAddCommunityDialog } from '../../contexts/add-community-dialog-context'
+import { useAddCommunityDialog } from '../../providers'
 import { AddCommunityDialogContent, CreateCommunityDialogContent, JoinCommunityDialog } from './components'
 
 interface AddCommunityDialogProps {
