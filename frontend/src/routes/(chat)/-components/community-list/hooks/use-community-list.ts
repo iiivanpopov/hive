@@ -15,7 +15,6 @@ export function useCommunityList() {
   const firstItemRef = useRef<HTMLDivElement>(null)
   const lastItemRef = useRef<HTMLDivElement>(null)
 
-  const addCommunityDialog = useDisclosure()
   const scrollTopBadge = useDisclosure()
   const scrollBottomBadge = useDisclosure()
 
@@ -44,7 +43,6 @@ export function useCommunityList() {
       communities: communitiesQuery,
     },
     features: {
-      addCommunityDialog,
       scrollTopBadge,
       scrollBottomBadge,
     },

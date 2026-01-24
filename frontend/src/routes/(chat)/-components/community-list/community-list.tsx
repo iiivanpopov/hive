@@ -1,7 +1,4 @@
 import { Link } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
-
-import { Button } from '@/components/ui/button'
 
 import { AddCommunityDialog } from './components'
 import { useCommunityList } from './hooks'
@@ -43,22 +40,9 @@ export function CommunityList() {
           )
         })}
 
-        <div ref={refs.lastItem}>
-          <Button
-            size="icon-lg"
-            variant="outline"
-            className="squircle rounded-xl"
-            onClick={() => features.addCommunityDialog.open()}
-          >
-            <PlusIcon />
-          </Button>
-        </div>
-
-        {features.addCommunityDialog.opened && (
-          <AddCommunityDialogProvider>
-            <AddCommunityDialog addCommunityDialog={features.addCommunityDialog} />
-          </AddCommunityDialogProvider>
-        )}
+        <AddCommunityDialogProvider>
+          <AddCommunityDialog ref={refs.lastItem} />
+        </AddCommunityDialogProvider>
       </div>
 
       <div

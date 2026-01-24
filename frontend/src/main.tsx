@@ -5,7 +5,6 @@ import { createRoot } from 'react-dom/client'
 import { toast, Toaster } from 'sonner'
 
 import type { Locale } from '@/i18n/types'
-import type { Theme } from '@/providers/theme-provider'
 
 import { client } from '@/api/client.gen'
 import { env } from '@/config/env'

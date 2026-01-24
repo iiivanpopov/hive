@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { useRouteContext } from '@tanstack/react-router'
+import { useRouteContext, useRouter } from '@tanstack/react-router'
 import z from 'zod'
 
 import { getCommunitiesJoinedQueryKey, postCommunitiesMutation } from '@/api/@tanstack/react-query.gen'
@@ -22,6 +22,7 @@ const createCommunityFormDefaultValues = {
 export function useCreateCommunityDialogContent() {
   const i18n = useI18n()
   const context = useRouteContext({ from: '/(chat)/_layout' })
+  const router = useRouter()
 
   const addCommunityDialog = useAddCommunityDialog()
 
@@ -80,8 +81,17 @@ export function useCreateCommunityDialogContent() {
         body: value,
       })
 
-      if (mutation.community)
-        formApi.reset()
+      if (!mutation.community)
+        return
+
+      formApi.reset()
+      addCommunityDialog.dialog.close()
+      router.navigate({
+        to: '/$communityId',
+        params: {
+          communityId: String(mutation.community.id),
+        },
+      })
     },
   })
 

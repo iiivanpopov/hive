@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
 import z from 'zod'
 
 import { postCommunitiesJoinTokenMutation } from '@/api/@tanstack/react-query.gen'
@@ -18,6 +19,7 @@ const joinCommunityFormDefaultValues = {
 
 export function useJoinCommunityDialogContent() {
   const i18n = useI18n()
+  const router = useRouter()
 
   const addCommunityDialog = useAddCommunityDialog()
 
@@ -26,9 +28,22 @@ export function useJoinCommunityDialogContent() {
   const joinCommunityForm = useForm({
     defaultValues: joinCommunityFormDefaultValues,
     validators: { onChange: JoinCommunitySchema },
-    onSubmit: async ({ value }) => {
-      await joinCommunityMutation.mutateAsync({
+    onSubmit: async ({ value, formApi }) => {
+      const mutation = await joinCommunityMutation.mutateAsync({
         path: value,
+      })
+
+      if (!mutation.community)
+        return
+
+      formApi.reset()
+      addCommunityDialog.dialog.close()
+
+      router.navigate({
+        to: '/$communityId',
+        params: {
+          communityId: String(mutation.community.id),
+        },
       })
     },
   })

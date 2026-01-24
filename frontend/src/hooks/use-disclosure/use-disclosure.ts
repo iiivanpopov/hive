@@ -38,19 +38,9 @@ export function useDisclosure(initialValue = false, options?: UseDisclosureOptio
     })
 
   const toggle = (newOpened?: boolean) => {
-    if (newOpened !== undefined) {
-      setOpened(newOpened)
-    }
-    else {
-      setOpened((opened) => {
-        if (!opened) {
-          options?.onOpen?.()
-          return true
-        }
-        options?.onClose?.()
-        return false
-      })
-    }
+    const nextOpened = newOpened !== undefined ? newOpened : !opened
+    setOpened(nextOpened)
+    nextOpened ? options?.onOpen?.() : options?.onClose?.()
   }
 
   return { opened, open, close, toggle }

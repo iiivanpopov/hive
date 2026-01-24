@@ -1,17 +1,14 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, RefObject } from 'react'
 
-import type { useDisclosure } from '@/hooks/use-disclosure'
+import { PlusIcon } from 'lucide-react'
 
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 
 import type { AddCommunityDialogScreen } from '../../providers'
 
 import { useAddCommunityDialog } from '../../providers'
 import { AddCommunityDialogContent, CreateCommunityDialogContent, JoinCommunityDialog } from './components'
-
-interface AddCommunityDialogProps {
-  addCommunityDialog: ReturnType<typeof useDisclosure>
-}
 
 const screens: Record<AddCommunityDialogScreen, ReactNode> = {
   add: <AddCommunityDialogContent />,
@@ -19,11 +16,29 @@ const screens: Record<AddCommunityDialogScreen, ReactNode> = {
   create: <CreateCommunityDialogContent />,
 }
 
-export function AddCommunityDialog({ addCommunityDialog }: AddCommunityDialogProps) {
-  const { screen } = useAddCommunityDialog()
+interface AddCommunityDialogProps {
+  ref: RefObject<HTMLDivElement | null>
+}
+
+export function AddCommunityDialog({ ref }: AddCommunityDialogProps) {
+  const { dialog, screen } = useAddCommunityDialog()
 
   return (
-    <Dialog open onOpenChange={addCommunityDialog.toggle}>
+    <Dialog open={dialog.opened} onOpenChange={dialog.toggle}>
+      <DialogTrigger
+        render={props => (
+          <div ref={ref}>
+            <Button
+              {...props}
+              size="icon-lg"
+              variant="outline"
+              className="squircle rounded-xl"
+            >
+              <PlusIcon />
+            </Button>
+          </div>
+        )}
+      />
       <DialogContent>
         {screens[screen]}
       </DialogContent>
