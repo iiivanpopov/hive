@@ -25,7 +25,7 @@
   "field.channel-name.label": "Channel name",
   "field.channel-description.label": "Channel description",
   "field.channel-description.description": "Optional, max 255 characters",
-  "field.join-token.label": "Join token",
+  "field.join-token.label": "Invitation token",
   "field.invitation-expires-at.label": "Expires at",
   "field.message.placeholder": "Message...",
 
@@ -57,7 +57,7 @@
   "dialog.leave-community.description": "Are you sure you want to leave?",
   "dialog.create-channel.title": "Create channel",
   "dialog.add-community.title": "Add community",
-  "dialog.add-community.description": "Add a new community to your list.",
+  "dialog.add-community.description": "Join or create your own new community.",
   "dialog.join-community.title": "Join community",
   "dialog.create-invitation.title": "Create invitation",
   "dialog.create-community.title": "Create community",
@@ -67,6 +67,7 @@
   "button.create-channel": "Create channel",
   "button.join-community": "Join community",
   "button.create-invitation": "Create invitation",
+  "button.go-back": "Go back",
 
   "toast.community-created": "Community \"{name}\" created",
   "toast.community-joined": "Joined \"{name}\"",

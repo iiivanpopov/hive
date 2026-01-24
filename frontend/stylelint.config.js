@@ -4,5 +4,6 @@ export default stylelint({
   rules: {
     'at-rule-no-unknown': null,
     'import-notation': null,
+    'property-no-unknown': null,
   },
 })

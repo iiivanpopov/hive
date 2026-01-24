@@ -8,16 +8,12 @@ export function useCurrentUser() {
   const context = useRouteContext({ from: '__root__' })
   const router = useRouter()
 
-  const logoutMutation = useMutation({
-    ...postAuthLogoutMutation(),
-    onSuccess: async () => {
-      queryClient.clear()
-      await router.invalidate()
-    },
-  })
+  const logoutMutation = useMutation(postAuthLogoutMutation())
 
-  const handleLogout = async () => {
+  const onLogout = async () => {
     await logoutMutation.mutateAsync({})
+    queryClient.clear()
+    router.invalidate()
   }
 
   return {
@@ -25,7 +21,7 @@ export function useCurrentUser() {
       context,
     },
     functions: {
-      handleLogout,
+      onLogout,
     },
   }
 }

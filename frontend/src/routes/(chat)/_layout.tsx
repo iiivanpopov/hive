@@ -20,12 +20,13 @@ export const Route = createFileRoute('/(chat)/_layout')({
 
 function Layout() {
   return (
-    <div className="flex h-screen w-screen bg-zinc-100 p-4 pl-0 relative">
+    <div className="flex h-screen w-screen bg-zinc-100 dark:bg-background p-4 pl-0 relative">
       <div className="flex-col h-full w-20 flex items-center gap-4">
         <Link to="/">
           <Button
             size="icon-lg"
             variant="outline"
+            className="squircle rounded-xl"
           >
             <HomeIcon />
           </Button>
@@ -47,7 +48,7 @@ function Layout() {
 
 function LayoutLoading() {
   return (
-    <div className="flex h-screen w-screen bg-zinc-100 p-4 pl-0 relative">
+    <div className="flex h-screen w-screen bg-zinc-100 dark:bg-background p-4 pl-0 relative">
       <div className="flex-col h-full w-20 flex items-center gap-4">
         <Link to="/">
           <Button

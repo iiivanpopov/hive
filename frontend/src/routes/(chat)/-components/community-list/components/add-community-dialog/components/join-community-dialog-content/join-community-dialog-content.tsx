@@ -37,7 +37,13 @@ export function JoinCommunityDialog() {
           )}
         </form.AppField>
       </form>
-      <DialogFooter>
+      <DialogFooter className="flex justify-between!">
+        <Button
+          variant="secondary"
+          onClick={() => features.addCommunityDialog.setScreen('add')}
+        >
+          <I18nText id="button.go-back" />
+        </Button>
         <Button
           form="join-community-form"
           type="submit"

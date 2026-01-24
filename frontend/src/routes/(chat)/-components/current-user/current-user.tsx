@@ -10,7 +10,7 @@ export function CurrentUser() {
   const { state, functions } = useCurrentUser()
 
   return (
-    <div className="bg-background border rounded-md border-border w-64 absolute bottom-3 left-4 py-2 px-3 flex justify-between items-center">
+    <div className="bg-zinc-100 dark:bg-background border rounded-md border-border w-64 absolute bottom-3 left-4 py-2 px-3 flex justify-between items-center">
       <DropdownMenu>
         <DropdownMenuTrigger className="font-semibold truncate cursor-pointer px-2 py-1 rounded-md hover:bg-black/10">
           {state.context.user!.name ?? state.context.user!.username}
@@ -29,9 +29,10 @@ export function CurrentUser() {
               <SettingsIcon className="size-4" />
               <I18nText id="dropdown.user.settings.label" />
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive"
-              onClick={functions.handleLogout}
+              onClick={functions.onLogout}
             >
               <LogOutIcon className="size-4" />
               <I18nText id="dropdown.user.logout.label" />

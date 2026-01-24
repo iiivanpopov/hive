@@ -4,7 +4,7 @@ export function CommunityListLoading() {
       {Array.from({ length: 10 }).map((_, index) => (
         <div
           key={index}
-          className="size-10 rounded-md animate-pulse bg-zinc-200"
+          className="size-10 rounded-md animate-pulse bg-zinc-950"
           style={{ animationDelay: `${index * 0.1}s` }}
         />
       ))}

@@ -11,7 +11,6 @@ import {
 import {
   FieldGroup,
   FieldLegend,
-  FieldSeparator,
   FieldSet,
 } from '@/components/ui/field'
 import { Spinner } from '@/components/ui/spinner'
@@ -122,9 +121,9 @@ function LoginPage() {
           <I18nText id="button.submit" />
         </Button>
 
-        <FieldSeparator className="my-1">
+        <span className="text-muted-foreground my-1">
           <I18nText id="text.or-continue-with" />
-        </FieldSeparator>
+        </span>
 
         <GoogleOauth />
       </CardFooter>

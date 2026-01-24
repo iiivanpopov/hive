@@ -6,6 +6,7 @@ import { getCommunitiesJoinedQueryKey, postCommunitiesMutation } from '@/api/@ta
 import { useForm } from '@/components/form/hooks'
 import { useI18n } from '@/i18n/hooks/use-i18n'
 import { queryClient } from '@/providers/query-provider'
+import { useAddCommunityDialog } from '@/routes/(chat)/-components/community-list/providers'
 
 const CreateCommunitySchema = z.object({
   name: z
@@ -21,6 +22,8 @@ const createCommunityFormDefaultValues = {
 export function useCreateCommunityDialogContent() {
   const i18n = useI18n()
   const context = useRouteContext({ from: '/(chat)/_layout' })
+
+  const addCommunityDialog = useAddCommunityDialog()
 
   const createCommunityMutation = useMutation({
     ...postCommunitiesMutation(),
@@ -85,6 +88,7 @@ export function useCreateCommunityDialogContent() {
   return {
     form: createCommunityForm,
     features: {
+      addCommunityDialog,
       i18n,
     },
   }

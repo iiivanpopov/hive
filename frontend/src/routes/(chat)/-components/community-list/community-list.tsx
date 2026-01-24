@@ -31,7 +31,7 @@ export function CommunityList() {
                 params={{ communityId: String(community.id) }}
                 className="block size-10"
               >
-                <div className="size-10 rounded-md flex justify-center items-center bg-primary text-primary-foreground font-bold text-2xl cursor-pointer">
+                <div className="size-10 squircle rounded-xl flex justify-center items-center bg-primary text-primary-foreground font-bold text-2xl cursor-pointer">
                   {community.name.at(0)!.toUpperCase()}
                 </div>
               </Link>
@@ -47,6 +47,7 @@ export function CommunityList() {
           <Button
             size="icon-lg"
             variant="outline"
+            className="squircle rounded-xl"
             onClick={() => features.addCommunityDialog.open()}
           >
             <PlusIcon />
@@ -62,13 +63,13 @@ export function CommunityList() {
 
       <div
         data-open={features.scrollTopBadge.opened}
-        className="scale-0 opacity-0 data-open:opacity-100 data-open:scale-100 transition-all duration-200 ease-in-out absolute top-0 left-0 right-0 text-center mx-2 py-0.75 bg-background rounded-sm pointer-events-none text-sm"
+        className="scale-0 opacity-0 data-open:opacity-100 data-open:scale-100 transition-all duration-200 ease-in-out absolute top-0 left-0 right-0 text-center mx-2 py-0.75 bg-zinc-100 dark:bg-neutral-900 rounded-sm pointer-events-none text-sm"
       >
         more...
       </div>
       <div
         data-open={features.scrollBottomBadge.opened}
-        className="scale-0 opacity-0 data-open:opacity-100 data-open:scale-100 transition-all duration-200 ease-in-out absolute bottom-0 left-0 right-0 text-center mx-2 py-0.75 bg-background rounded-sm pointer-events-none text-sm"
+        className="scale-0 opacity-0 data-open:opacity-100 data-open:scale-100 transition-all duration-200 ease-in-out absolute bottom-0 left-0 right-0 text-center mx-2 py-0.75 bg-zinc-100 dark:bg-neutral-900 rounded-sm pointer-events-none text-sm"
       >
         more...
       </div>

@@ -191,7 +191,7 @@ describe('/logout', () => {
   it('logs out a user', async () => {
     const response = await clientMock.auth.logout.$post()
 
-    expect(response.status as unknown).toBe(204)
+    expect(response.status as unknown).toBe(200)
     expect(response.headers.get('Set-Cookie')).toBeTruthy()
   })
 })

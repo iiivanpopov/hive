@@ -19,6 +19,7 @@ import { AuthService } from './auth.service'
 import { ChangePasswordBodySchema } from './schema/change-password.schema'
 import { ConfirmEmailResendBodySchema, ConfirmParamsSchema } from './schema/confirm-email.schema'
 import { LoginBodySchema } from './schema/login.schema'
+import { LogoutResponseSchema } from './schema/logout.schema'
 import { MeResponseSchema } from './schema/me.schema'
 import { RegisterBodySchema } from './schema/register.schema'
 import { RequestResetSchema } from './schema/request-reset.schema'
@@ -111,8 +112,13 @@ export class AuthRouter {
           summary: 'Logout from current session',
           description: 'Invalidate the current user session token.',
           responses: {
-            204: {
+            200: {
               description: 'User logged out successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(LogoutResponseSchema),
+                },
+              },
             },
           },
         }),
@@ -123,7 +129,7 @@ export class AuthRouter {
 
           deleteCookie(c, authConfig.sessionTokenCookie)
 
-          return c.body(null, 204)
+          return c.json({ message: 'Logged out successfully' })
         },
       )
       .post(

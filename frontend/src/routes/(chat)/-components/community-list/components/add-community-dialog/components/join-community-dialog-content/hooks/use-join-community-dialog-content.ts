@@ -4,6 +4,7 @@ import z from 'zod'
 import { postCommunitiesJoinTokenMutation } from '@/api/@tanstack/react-query.gen'
 import { useForm } from '@/components/form/hooks'
 import { useI18n } from '@/i18n/hooks'
+import { useAddCommunityDialog } from '@/routes/(chat)/-components/community-list/providers'
 
 const JoinCommunitySchema = z.object({
   token: z
@@ -18,9 +19,9 @@ const joinCommunityFormDefaultValues = {
 export function useJoinCommunityDialogContent() {
   const i18n = useI18n()
 
-  const joinCommunityMutation = useMutation({
-    ...postCommunitiesJoinTokenMutation(),
-  })
+  const addCommunityDialog = useAddCommunityDialog()
+
+  const joinCommunityMutation = useMutation(postCommunitiesJoinTokenMutation())
 
   const joinCommunityForm = useForm({
     defaultValues: joinCommunityFormDefaultValues,
@@ -36,6 +37,7 @@ export function useJoinCommunityDialogContent() {
     form: joinCommunityForm,
     features: {
       i18n,
+      addCommunityDialog,
     },
   }
 }
