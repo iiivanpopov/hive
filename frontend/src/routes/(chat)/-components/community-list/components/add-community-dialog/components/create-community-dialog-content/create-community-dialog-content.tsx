@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Spinner } from '@/components/ui/spinner'
-import { I18nText } from '@/routes/-contexts/i18n/components/i18n-text'
+import { I18nText } from '@/i18n/components'
 
 import { useCreateCommunityDialogContent } from './hooks/use-create-community-dialog-content'
 

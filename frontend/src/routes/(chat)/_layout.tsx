@@ -4,10 +4,9 @@ import { HomeIcon } from 'lucide-react'
 import { getCommunitiesJoinedOptions } from '@/api/@tanstack/react-query.gen'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { queryClient } from '@/contexts/query'
 
-import { queryClient } from '../-contexts/query'
-import { CommunityList, CommunityListLoading } from './-components/community-list'
-import { CurrentUser } from './-components/current-user'
+import { CommunityList, CommunityListLoading, CurrentUser } from './-components'
 
 export const Route = createFileRoute('/(chat)/_layout')({
   component: Layout,

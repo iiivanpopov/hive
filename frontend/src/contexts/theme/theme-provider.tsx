@@ -2,7 +2,7 @@ import type { Dispatch, ReactNode, SetStateAction } from 'react'
 
 import { useCallback, useMemo, useState } from 'react'
 
-import { LOCAL_STORAGE } from '@/routes/-constants/local-storage'
+import { LOCAL_STORAGE } from '@/constants/local-storage'
 
 import type { Theme } from './theme-context'
 

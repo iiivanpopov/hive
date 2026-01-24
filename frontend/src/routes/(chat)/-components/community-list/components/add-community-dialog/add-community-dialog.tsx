@@ -7,9 +7,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import type { AddCommunityDialogScreen } from '../../contexts/add-community-dialog-context'
 
 import { useAddCommunityDialog } from '../../contexts/add-community-dialog-context'
-import { AddCommunityDialogContent } from './components/add-community-dialog-content'
-import { CreateCommunityDialogContent } from './components/create-community-dialog-content'
-import { JoinCommunityDialog } from './components/join-community-dialog-content'
+import { AddCommunityDialogContent, CreateCommunityDialogContent, JoinCommunityDialog } from './components'
 
 interface AddCommunityDialogProps {
   addCommunityDialog: ReturnType<typeof useDisclosure>

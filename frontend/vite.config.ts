@@ -22,5 +22,6 @@ export default defineConfig({
       '@/api': path.resolve(__dirname, 'api'),
       '@': path.resolve(__dirname, 'src'),
     },
+    extensions: ['.tsx', '.ts', '.json'],
   },
 })

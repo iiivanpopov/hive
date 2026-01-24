@@ -1,9 +1,9 @@
 import { use } from 'react'
 import { useIntl } from 'react-intl'
 
-import type { I18nKey } from '@/routes/-contexts/i18n/types'
+import { I18nContext } from '@/i18n/contexts/i18n-context'
 
-import { I18nContext } from '@/routes/-contexts/i18n'
+import type { I18nKey } from '../types'
 
 export function useI18n() {
   const context = use(I18nContext)

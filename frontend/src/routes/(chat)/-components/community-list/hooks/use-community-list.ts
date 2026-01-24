@@ -32,11 +32,6 @@ export function useCommunityList() {
   })
 
   return {
-    features: {
-      addCommunityDialog,
-      scrollTopBadge,
-      scrollBottomBadge,
-    },
     state: {
       params,
     },
@@ -47,6 +42,11 @@ export function useCommunityList() {
     },
     queries: {
       communities: communitiesQuery,
+    },
+    features: {
+      addCommunityDialog,
+      scrollTopBadge,
+      scrollBottomBadge,
     },
   }
 }

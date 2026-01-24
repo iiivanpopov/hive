@@ -2,9 +2,9 @@ import { LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { I18nText } from '@/routes/-contexts/i18n/components/i18n-text'
+import { I18nText } from '@/i18n/components'
 
-import { useCurrentUser } from './hooks/use-current-user'
+import { useCurrentUser } from './hooks'
 
 export function CurrentUser() {
   const { state, functions } = useCurrentUser()

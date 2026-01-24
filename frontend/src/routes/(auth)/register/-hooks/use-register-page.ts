@@ -4,8 +4,8 @@ import z from 'zod'
 
 import { postAuthRegisterMutation } from '@/api/@tanstack/react-query.gen'
 import { useForm } from '@/components/form/hooks'
+import { useI18n } from '@/i18n/hooks'
 import { EmailSchema } from '@/lib/zod'
-import { useI18n } from '@/routes/-contexts/i18n/use-i18n'
 
 const RegisterFormSchema = z.object({
   email: EmailSchema,

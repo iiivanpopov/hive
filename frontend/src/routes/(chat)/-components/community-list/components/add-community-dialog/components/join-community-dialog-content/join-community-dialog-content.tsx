@@ -3,7 +3,7 @@ import type { useDisclosure } from '@/hooks/use-disclosure'
 import { Button } from '@/components/ui/button'
 import { DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Spinner } from '@/components/ui/spinner'
-import { I18nText } from '@/routes/-contexts/i18n/components/i18n-text'
+import { I18nText } from '@/i18n/components'
 
 import { useJoinCommunityDialogContent } from './hooks/use-join-community-dialog-content'
 

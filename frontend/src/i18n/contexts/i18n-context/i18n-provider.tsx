@@ -3,12 +3,12 @@ import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import { useCallback, useMemo, useState } from 'react'
 import { IntlProvider } from 'react-intl'
 
-import type { Locale } from '@/routes/-contexts/i18n/types'
+import type { Locale } from '@/i18n/types'
 
-import { LOCAL_STORAGE } from '@/routes/-constants/local-storage'
+import { LOCAL_STORAGE } from '@/constants/local-storage'
 
+import { loadLocale } from '../../utils'
 import { I18nContext } from './i18n-context'
-import { loadLocale } from './utils/load-locale'
 
 export interface I18nProviderProps {
   initialLocale: Locale

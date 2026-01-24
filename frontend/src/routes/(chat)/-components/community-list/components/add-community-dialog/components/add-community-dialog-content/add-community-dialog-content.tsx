@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { I18nText } from '@/routes/-contexts/i18n/components/i18n-text'
+import { I18nText } from '@/i18n/components'
 
-import { useAddCommunityDialog } from '../../../../contexts/add-community-dialog-context'
+import { useAddCommunityDialog } from '../../../../contexts'
 
 export function AddCommunityDialogContent() {
   const addCommunityDialog = useAddCommunityDialog()

@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react'
 
 import { createContext } from 'react'
 
-import type { Locale } from '@/routes/-contexts/i18n/types'
+import type { Locale } from '../../types'
 
 export interface I18nContextState {
   locale: Locale

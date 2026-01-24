@@ -16,10 +16,10 @@ import {
 } from '@/components/ui/field'
 import { Spinner } from '@/components/ui/spinner'
 import { Typography } from '@/components/ui/typography'
-import { I18nText } from '@/routes/-contexts/i18n/components/i18n-text'
+import { I18nText } from '@/i18n/components'
 
-import { GoogleOauth } from '../-components/google-oauth'
-import { useLoginPage } from './-hooks/use-login-page'
+import { GoogleOauth } from '../-components'
+import { useLoginPage } from './-hooks'
 
 export const Route = createFileRoute('/(auth)/login/')({
   component: LoginPage,

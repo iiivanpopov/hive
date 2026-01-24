@@ -16,10 +16,10 @@ import {
 } from '@/components/ui/field'
 import { Spinner } from '@/components/ui/spinner'
 import { Typography } from '@/components/ui/typography'
-import { I18nText } from '@/routes/-contexts/i18n/components/i18n-text'
+import { I18nText } from '@/i18n/components'
 
-import { GoogleOauth } from '../-components/google-oauth'
-import { useRegisterPage } from './-hooks/use-register-page'
+import { GoogleOauth } from '../-components'
+import { useRegisterPage } from './-hooks'
 
 export const Route = createFileRoute('/(auth)/register/')({
   component: RegisterPage,

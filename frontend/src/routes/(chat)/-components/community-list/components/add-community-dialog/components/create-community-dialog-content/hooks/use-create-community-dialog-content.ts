@@ -4,8 +4,8 @@ import z from 'zod'
 
 import { getCommunitiesJoinedQueryKey, postCommunitiesMutation } from '@/api/@tanstack/react-query.gen'
 import { useForm } from '@/components/form/hooks'
-import { useI18n } from '@/routes/-contexts/i18n/use-i18n'
-import { queryClient } from '@/routes/-contexts/query'
+import { queryClient } from '@/contexts/query'
+import { useI18n } from '@/i18n/hooks/use-i18n'
 
 const CreateCommunitySchema = z.object({
   name: z
@@ -83,9 +83,9 @@ export function useCreateCommunityDialogContent() {
   })
 
   return {
+    form: createCommunityForm,
     features: {
       i18n,
     },
-    form: createCommunityForm,
   }
 }

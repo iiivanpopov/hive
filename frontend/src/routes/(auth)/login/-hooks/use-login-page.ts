@@ -4,7 +4,7 @@ import z from 'zod'
 
 import { postAuthLoginMutation } from '@/api/@tanstack/react-query.gen'
 import { useForm } from '@/components/form/hooks'
-import { useI18n } from '@/routes/-contexts/i18n/use-i18n'
+import { useI18n } from '@/i18n/hooks'
 
 const LoginFormSchema = z.object({
   identity: z.string().min(5, 'validation.identity.min'),
