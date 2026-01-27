@@ -6,7 +6,7 @@ import { getCommunitiesJoinedQueryKey, postCommunitiesMutation } from '@/api/@ta
 import { useForm } from '@/components/form/hooks'
 import { useI18n } from '@/i18n/hooks/use-i18n'
 import { queryClient } from '@/providers/query-provider'
-import { useAddCommunityDialog } from '@/routes/(chat)/-components/community-list/providers'
+import { useAddCommunityDialog } from '@/routes/(app)/-components/community-list/providers'
 
 const CreateCommunitySchema = z.object({
   name: z
@@ -21,7 +21,7 @@ const createCommunityFormDefaultValues = {
 
 export function useCreateCommunityDialogContent() {
   const i18n = useI18n()
-  const context = useRouteContext({ from: '/(chat)/_layout' })
+  const context = useRouteContext({ from: '/(app)/_layout' })
   const router = useRouter()
 
   const addCommunityDialog = useAddCommunityDialog()
@@ -87,7 +87,7 @@ export function useCreateCommunityDialogContent() {
       formApi.reset()
       addCommunityDialog.dialog.close()
       router.navigate({
-        to: '/$communityId',
+        to: '/c/$communityId',
         params: {
           communityId: String(mutation.community.id),
         },

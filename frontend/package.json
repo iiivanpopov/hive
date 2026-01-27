@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
-    "@fontsource/comfortaa": "^5.2.8",
+    "@fontsource/geist": "^5.2.8",
     "@tanstack/react-form": "^1.27.7",
     "@tanstack/react-query": "^5.90.16",
     "@tanstack/react-router": "^1.146.2",

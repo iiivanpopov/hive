@@ -32,7 +32,7 @@ export function AddCommunityDialog({ ref }: AddCommunityDialogProps) {
               {...props}
               size="icon-lg"
               variant="outline"
-              className="squircle rounded-xl"
+              className="rounded-md"
             >
               <PlusIcon />
             </Button>

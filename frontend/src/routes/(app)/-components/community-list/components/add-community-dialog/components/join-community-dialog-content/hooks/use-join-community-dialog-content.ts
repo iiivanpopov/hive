@@ -5,7 +5,7 @@ import z from 'zod'
 import { postCommunitiesJoinTokenMutation } from '@/api/@tanstack/react-query.gen'
 import { useForm } from '@/components/form/hooks'
 import { useI18n } from '@/i18n/hooks'
-import { useAddCommunityDialog } from '@/routes/(chat)/-components/community-list/providers'
+import { useAddCommunityDialog } from '@/routes/(app)/-components/community-list/providers'
 
 const JoinCommunitySchema = z.object({
   token: z
@@ -40,7 +40,7 @@ export function useJoinCommunityDialogContent() {
       addCommunityDialog.dialog.close()
 
       router.navigate({
-        to: '/$communityId',
+        to: '/c/$communityId',
         params: {
           communityId: String(mutation.community.id),
         },

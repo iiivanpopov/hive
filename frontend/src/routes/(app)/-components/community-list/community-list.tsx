@@ -24,17 +24,17 @@ export function CommunityList() {
               className="relative w-20 flex justify-center items-center"
             >
               <Link
-                to="/$communityId"
+                to="/c/$communityId"
                 params={{ communityId: String(community.id) }}
                 className="block size-10"
               >
-                <div className="size-10 squircle rounded-xl flex justify-center items-center bg-primary text-primary-foreground font-bold text-2xl cursor-pointer">
+                <div className="size-10 rounded-md flex justify-center items-center bg-zinc-100 dark:bg-zinc-800 text-primary-foreground font-bold text-2xl cursor-pointer">
                   {community.name.at(0)!.toUpperCase()}
                 </div>
               </Link>
               <div
                 data-active={isActive}
-                className="scale-0 opacity-0 data-active:scale-100 data-active:opacity-100 transition-all absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1.5 rounded-tr-3xl rounded-br-3xl bg-primary"
+                className="scale-0 opacity-0 data-active:scale-100 data-active:opacity-100 transition-all absolute left-0 top-1/2 -translate-y-1/2 h-7 w-1.25 rounded-tr-3xl rounded-br-3xl bg-primary"
               />
             </div>
           )
