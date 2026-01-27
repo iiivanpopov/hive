@@ -1,15 +1,9 @@
-import type { useDisclosure } from '@/hooks/use-disclosure'
-
 import { Button } from '@/components/ui/button'
 import { DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Spinner } from '@/components/ui/spinner'
 import { I18nText } from '@/i18n/components'
 
 import { useJoinCommunityDialogContent } from './hooks/use-join-community-dialog-content'
-
-export interface JoinCommunityDialogProps {
-  joinCommunityDialog: ReturnType<typeof useDisclosure>
-}
 
 export function JoinCommunityDialog() {
   const { features, form } = useJoinCommunityDialogContent()

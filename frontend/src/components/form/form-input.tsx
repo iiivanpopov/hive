@@ -1,4 +1,6 @@
-import type { HTMLInputAutoCompleteAttribute, HTMLInputTypeAttribute } from 'react'
+import type { ComponentProps } from 'react'
+
+import type { OmitFormProps } from '@/components/form/types.ts'
 
 import type { FormControlProps } from './form-base'
 
@@ -6,17 +8,13 @@ import { Input } from '../ui/input'
 import { FormBase } from './form-base'
 import { useFieldContext } from './hooks'
 
-export interface FormInputProps extends FormControlProps {
-  type?: HTMLInputTypeAttribute | undefined
-  autoComplete?: HTMLInputAutoCompleteAttribute | undefined
-}
+export type FormInputProps = FormControlProps & OmitFormProps<ComponentProps<'input'>>
 
 export function FormInput({
   label,
   description,
   error,
-  type,
-  autoComplete,
+  ...props
 }: FormInputProps) {
   const field = useFieldContext<string>()
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
@@ -28,12 +26,11 @@ export function FormInput({
       error={error}
     >
       <Input
+        {...props}
         id={field.name}
-        type={type ?? 'text'}
         aria-invalid={isInvalid}
         value={field.state.value}
         onBlur={field.handleBlur}
-        autoComplete={autoComplete}
         onChange={e => field.handleChange(e.target.value)}
       />
     </FormBase>

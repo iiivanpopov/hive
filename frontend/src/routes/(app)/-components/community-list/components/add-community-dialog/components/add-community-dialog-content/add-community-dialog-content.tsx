@@ -5,7 +5,7 @@ import { I18nText } from '@/i18n/components'
 import { useAddCommunityDialog } from '../../../../providers'
 
 export function AddCommunityDialogContent() {
-  const addCommunityDialog = useAddCommunityDialog()
+  const { setScreen } = useAddCommunityDialog()
 
   return (
     <>
@@ -21,13 +21,13 @@ export function AddCommunityDialogContent() {
       <DialogFooter>
         <Button
           className="w-1/2"
-          onClick={() => addCommunityDialog.setScreen('create')}
+          onClick={() => setScreen('create')}
         >
           <I18nText id="button.create" />
         </Button>
         <Button
           className="w-1/2"
-          onClick={() => addCommunityDialog.setScreen('join')}
+          onClick={() => setScreen('join')}
         >
           <I18nText id="button.join" />
         </Button>

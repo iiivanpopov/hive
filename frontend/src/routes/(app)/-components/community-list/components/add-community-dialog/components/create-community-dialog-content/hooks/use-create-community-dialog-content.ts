@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query'
-import { useRouteContext, useRouter } from '@tanstack/react-router'
+import { useRouter } from '@tanstack/react-router'
 import z from 'zod'
 
-import { getCommunitiesJoinedQueryKey, postCommunitiesMutation } from '@/api/@tanstack/react-query.gen'
+import { getCommunitiesJoinedOptions, postCommunitiesMutation } from '@/api/@tanstack/react-query.gen'
 import { useForm } from '@/components/form/hooks'
 import { useI18n } from '@/i18n/hooks/use-i18n'
 import { queryClient } from '@/providers/query-provider'
@@ -15,88 +15,45 @@ const CreateCommunitySchema = z.object({
     .max(20, 'validation.community-name.max'),
 })
 
-const createCommunityFormDefaultValues = {
+const formDefaultValues = {
   name: '',
 }
 
 export function useCreateCommunityDialogContent() {
   const i18n = useI18n()
-  const context = useRouteContext({ from: '/(app)/_layout' })
   const router = useRouter()
 
   const addCommunityDialog = useAddCommunityDialog()
 
-  const createCommunityMutation = useMutation({
-    ...postCommunitiesMutation(),
-    onMutate: async (newCommunity) => {
-      const queryKey = getCommunitiesJoinedQueryKey()
+  const createCommunityMutation = useMutation(postCommunitiesMutation())
 
-      await queryClient.cancelQueries({ queryKey })
-
-      const previousCommunities = queryClient.getQueryData(queryKey)
-
-      queryClient.setQueryData(
-        queryKey,
-        (old: any) => {
-          if (!old)
-            return old
-
-          return {
-            ...old,
-            communities: [
-              ...old.communities,
-              {
-                id: Math.random(),
-                name: newCommunity.body!.name,
-                ownerId: context.user?.id,
-                createdAt: new Date().toISOString(),
-              },
-            ],
-          }
-        },
-      )
-
-      return { previousCommunities }
-    },
-    onError: (_err, _newCommunity, onMutateResult) => {
-      if (onMutateResult?.previousCommunities) {
-        queryClient.setQueryData(
-          getCommunitiesJoinedQueryKey(),
-          onMutateResult.previousCommunities,
-        )
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: getCommunitiesJoinedQueryKey(),
-      })
-    },
-  })
-
-  const createCommunityForm = useForm({
-    defaultValues: createCommunityFormDefaultValues,
+  const form = useForm({
+    defaultValues: formDefaultValues,
     validators: { onChange: CreateCommunitySchema },
     onSubmit: async ({ value, formApi }) => {
-      const mutation = await createCommunityMutation.mutateAsync({
+      const { community } = await createCommunityMutation.mutateAsync({
         body: value,
       })
 
-      if (!mutation.community)
+      if (!community)
         return
 
-      formApi.reset()
       addCommunityDialog.dialog.close()
+      formApi.reset()
+
       router.navigate({
         to: '/c/$communityId',
         params: {
-          communityId: String(mutation.community.id),
+          communityId: String(community.id),
         },
       })
+
+      queryClient.invalidateQueries(getCommunitiesJoinedOptions())
     },
   })
 
   return {
-    form: createCommunityForm,
+    form,
     features: {
       addCommunityDialog,
       i18n,

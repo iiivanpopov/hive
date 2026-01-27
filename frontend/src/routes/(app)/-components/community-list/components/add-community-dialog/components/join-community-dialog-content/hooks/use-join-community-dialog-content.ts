@@ -13,7 +13,7 @@ const JoinCommunitySchema = z.object({
     .length(16, 'validation.join-token.length'),
 })
 
-const joinCommunityFormDefaultValues = {
+const formDefaultValues = {
   token: '',
 }
 
@@ -25,8 +25,8 @@ export function useJoinCommunityDialogContent() {
 
   const joinCommunityMutation = useMutation(postCommunitiesJoinTokenMutation())
 
-  const joinCommunityForm = useForm({
-    defaultValues: joinCommunityFormDefaultValues,
+  const form = useForm({
+    defaultValues: formDefaultValues,
     validators: { onChange: JoinCommunitySchema },
     onSubmit: async ({ value, formApi }) => {
       const mutation = await joinCommunityMutation.mutateAsync({
@@ -49,7 +49,7 @@ export function useJoinCommunityDialogContent() {
   })
 
   return {
-    form: joinCommunityForm,
+    form,
     features: {
       i18n,
       addCommunityDialog,

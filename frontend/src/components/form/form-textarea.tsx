@@ -1,16 +1,20 @@
+import type { ComponentProps } from 'react'
+
+import type { OmitFormProps } from '@/components/form/types.ts'
+
 import type { FormControlProps } from './form-base'
 
 import { Textarea } from '../ui/textarea'
 import { FormBase } from './form-base'
 import { useFieldContext } from './hooks'
 
-export interface FormTextareaProps extends FormControlProps {
-}
+export type FormTextareaProps = FormControlProps & OmitFormProps<ComponentProps<'textarea'>>
 
 export function FormTextarea({
   label,
   description,
   error,
+  ...props
 }: FormTextareaProps) {
   const field = useFieldContext<string>()
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
@@ -22,10 +26,11 @@ export function FormTextarea({
       error={error}
     >
       <Textarea
+        {...props}
+        aria-invalid={isInvalid}
         id={field.name}
         value={field.state.value}
         onBlur={field.handleBlur}
-        aria-invalid={isInvalid}
         onChange={e => field.handleChange(e.target.value)}
       />
     </FormBase>

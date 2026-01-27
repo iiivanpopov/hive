@@ -67,9 +67,9 @@ function LoginPage() {
               <form.AppField name="password">
                 {field => (
                   <field.Input
+                    type="password"
                     label={i18n.t('field.password.label')}
                     description={i18n.t('field.password.description')}
-                    type="password"
                     error={i18n.t(field.state.meta.errors)}
                     autoComplete="current-password"
                   />

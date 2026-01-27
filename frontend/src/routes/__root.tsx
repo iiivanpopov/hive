@@ -24,11 +24,8 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
       meta: {
         toast: false,
       },
-    })).catch()
+    })).catch(() => null)
 
-    if (query?.user)
-      return query
-
-    return { user: null }
+    return query?.user ? query : { user: null }
   },
 })

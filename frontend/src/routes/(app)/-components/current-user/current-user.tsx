@@ -13,7 +13,7 @@ export function CurrentUser() {
   return (
     <div className="bg-zinc-100 dark:bg-background border rounded-md border-border w-64 absolute bottom-3 left-4 py-2 px-3 flex justify-between items-center">
       <DropdownMenu>
-        <DropdownMenuTrigger className="font-semibold truncate cursor-pointer px-2 py-1 rounded-md hover:bg-black/10 hover:dark:bg-white/5 transition-colors">
+        <DropdownMenuTrigger className="tracking-tight font-medium truncate cursor-pointer px-2 py-1 rounded-md hover:bg-black/10 hover:dark:bg-white/5 transition-colors">
           {state.context.user!.name ?? state.context.user!.username}
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">

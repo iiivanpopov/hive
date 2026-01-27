@@ -10,8 +10,8 @@ export function useCurrentUser() {
 
   const logoutMutation = useMutation(postAuthLogoutMutation())
 
-  const onLogout = async () => {
-    await logoutMutation.mutateAsync({})
+  const onLogout = () => {
+    logoutMutation.mutate({})
     queryClient.clear()
     router.invalidate()
   }

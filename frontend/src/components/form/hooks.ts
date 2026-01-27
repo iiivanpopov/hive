@@ -10,9 +10,7 @@ const { useAppForm: useForm } = createFormHook({
     Input: FormInput,
     Textarea: FormTextarea,
   },
-  formComponents: {
-
-  },
+  formComponents: {},
   fieldContext,
   formContext,
 })
