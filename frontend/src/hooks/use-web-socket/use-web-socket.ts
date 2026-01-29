@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/immutability */
 import { useEffect, useRef, useState } from 'react'
 
-import { getRetry } from '@/lib/utils'
+import { getRetry } from '@/utils'
 
 import { useEvent } from '../use-event/use-event'
 

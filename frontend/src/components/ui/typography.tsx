@@ -3,7 +3,7 @@ import type { ElementType } from 'react'
 
 import { cva } from 'class-variance-authority'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils'
 
 const typographyVariants = cva(
   'font-outfit text-foreground',

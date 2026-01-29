@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [
     svgr(),
     tanstackRouter({
+      routesDirectory: path.resolve(__dirname, 'src/app/routes'),
       target: 'react',
       autoCodeSplitting: true,
     }),

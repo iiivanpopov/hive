@@ -2,7 +2,7 @@
   "ts": true,
   "aliases": {
     "hooks": "@/hooks",
-    "utils": "@/lib/utils"
+    "utils": "@/utils"
   },
   "case": "kebab"
 }

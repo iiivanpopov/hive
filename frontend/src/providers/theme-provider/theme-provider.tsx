@@ -2,13 +2,13 @@ import type { Dispatch, ReactNode, SetStateAction } from 'react'
 
 import { useCallback, useMemo, useState } from 'react'
 
-import { LOCAL_STORAGE } from '@/constants/local-storage'
+import { LOCAL_STORAGE } from '@/constants/local-storage.ts'
 
 import type { Theme } from './theme-context'
 
 import { ThemeContext } from './theme-context'
 
-interface ThemeProviderProps {
+export interface ThemeProviderProps {
   initialTheme: Theme
   children: ReactNode
 }

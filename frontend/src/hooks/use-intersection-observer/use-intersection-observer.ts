@@ -1,35 +1,25 @@
 /* eslint-disable react-hooks-extra/no-direct-set-state-in-use-effect */
 import { useEffect, useRef, useState } from 'react'
 
-import type { HookTarget } from '@/lib/utils/is-target'
+import type { StateRef } from '@/hooks/use-ref-state'
+import type { HookTarget } from '@/utils/is-target'
 
-import { isTarget } from '@/lib/utils'
+import { useRefState } from '@/hooks/use-ref-state'
+import { isTarget } from '@/utils'
 
-import type { StateRef } from '../use-ref-state/use-ref-state'
-
-import { useRefState } from '../use-ref-state/use-ref-state'
-
-/** The intersection observer callback type */
 export type UseIntersectionObserverCallback = (
   entries: IntersectionObserverEntry[],
   observer: IntersectionObserver,
 ) => void
 
-/** The intersection observer options type */
 export interface UseIntersectionObserverOptions extends Omit<IntersectionObserverInit, 'root'> {
-  /** The enabled state of the intersection observer */
   enabled?: boolean
-  /** The callback to execute when intersection is detected */
   onChange?: UseIntersectionObserverCallback
-  /** The root element to observe */
   root?: HookTarget
 }
 
-/** The intersection observer return type */
 export interface UseIntersectionObserverReturn {
-  /** The intersection observer entry */
   entries?: IntersectionObserverEntry[]
-  /** The intersection observer instance */
   observer?: IntersectionObserver
 }
 

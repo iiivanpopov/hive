@@ -8,18 +8,23 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as appLayoutRouteImport } from './routes/(app)/_layout'
-import { Route as authRegisterIndexRouteImport } from './routes/(auth)/register/index'
-import { Route as authRecoveryIndexRouteImport } from './routes/(auth)/recovery/index'
-import { Route as authLoginIndexRouteImport } from './routes/(auth)/login/index'
-import { Route as appLayoutIndexRouteImport } from './routes/(app)/_layout/index'
-import { Route as appLayoutSettingsIndexRouteImport } from './routes/(app)/_layout/settings/index'
-import { Route as appLayoutCCommunityIdIndexRouteImport } from './routes/(app)/_layout/c/$communityId/index'
+import { Route as rootRouteImport } from './app/routes/__root'
+import { Route as layoutLayoutRouteImport } from './app/routes/(layout)/_layout'
+import { Route as layoutLayoutIndexRouteImport } from './app/routes/(layout)/_layout/index'
+import { Route as authRegisterIndexRouteImport } from './app/routes/(auth)/register/index'
+import { Route as authRecoveryIndexRouteImport } from './app/routes/(auth)/recovery/index'
+import { Route as authLoginIndexRouteImport } from './app/routes/(auth)/login/index'
+import { Route as layoutLayoutSettingsIndexRouteImport } from './app/routes/(layout)/_layout/settings/index'
+import { Route as layoutLayoutCCommunityIdIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/index'
 
-const appLayoutRoute = appLayoutRouteImport.update({
-  id: '/(app)/_layout',
+const layoutLayoutRoute = layoutLayoutRouteImport.update({
+  id: '/(layout)/_layout',
   getParentRoute: () => rootRouteImport,
+} as any)
+const layoutLayoutIndexRoute = layoutLayoutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => layoutLayoutRoute,
 } as any)
 const authRegisterIndexRoute = authRegisterIndexRouteImport.update({
   id: '/(auth)/register/',
@@ -36,79 +41,75 @@ const authLoginIndexRoute = authLoginIndexRouteImport.update({
   path: '/login/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const appLayoutIndexRoute = appLayoutIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => appLayoutRoute,
-} as any)
-const appLayoutSettingsIndexRoute = appLayoutSettingsIndexRouteImport.update({
-  id: '/settings/',
-  path: '/settings/',
-  getParentRoute: () => appLayoutRoute,
-} as any)
-const appLayoutCCommunityIdIndexRoute =
-  appLayoutCCommunityIdIndexRouteImport.update({
+const layoutLayoutSettingsIndexRoute =
+  layoutLayoutSettingsIndexRouteImport.update({
+    id: '/settings/',
+    path: '/settings/',
+    getParentRoute: () => layoutLayoutRoute,
+  } as any)
+const layoutLayoutCCommunityIdIndexRoute =
+  layoutLayoutCCommunityIdIndexRouteImport.update({
     id: '/c/$communityId/',
     path: '/c/$communityId/',
-    getParentRoute: () => appLayoutRoute,
+    getParentRoute: () => layoutLayoutRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof appLayoutIndexRoute
   '/login': typeof authLoginIndexRoute
   '/recovery': typeof authRecoveryIndexRoute
   '/register': typeof authRegisterIndexRoute
-  '/settings': typeof appLayoutSettingsIndexRoute
-  '/c/$communityId': typeof appLayoutCCommunityIdIndexRoute
+  '/': typeof layoutLayoutIndexRoute
+  '/settings': typeof layoutLayoutSettingsIndexRoute
+  '/c/$communityId': typeof layoutLayoutCCommunityIdIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof appLayoutIndexRoute
   '/login': typeof authLoginIndexRoute
   '/recovery': typeof authRecoveryIndexRoute
   '/register': typeof authRegisterIndexRoute
-  '/settings': typeof appLayoutSettingsIndexRoute
-  '/c/$communityId': typeof appLayoutCCommunityIdIndexRoute
+  '/': typeof layoutLayoutIndexRoute
+  '/settings': typeof layoutLayoutSettingsIndexRoute
+  '/c/$communityId': typeof layoutLayoutCCommunityIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/(app)/_layout': typeof appLayoutRouteWithChildren
-  '/(app)/_layout/': typeof appLayoutIndexRoute
+  '/(layout)/_layout': typeof layoutLayoutRouteWithChildren
   '/(auth)/login/': typeof authLoginIndexRoute
   '/(auth)/recovery/': typeof authRecoveryIndexRoute
   '/(auth)/register/': typeof authRegisterIndexRoute
-  '/(app)/_layout/settings/': typeof appLayoutSettingsIndexRoute
-  '/(app)/_layout/c/$communityId/': typeof appLayoutCCommunityIdIndexRoute
+  '/(layout)/_layout/': typeof layoutLayoutIndexRoute
+  '/(layout)/_layout/settings/': typeof layoutLayoutSettingsIndexRoute
+  '/(layout)/_layout/c/$communityId/': typeof layoutLayoutCCommunityIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/login'
     | '/recovery'
     | '/register'
+    | '/'
     | '/settings'
     | '/c/$communityId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/login'
     | '/recovery'
     | '/register'
+    | '/'
     | '/settings'
     | '/c/$communityId'
   id:
     | '__root__'
-    | '/(app)/_layout'
-    | '/(app)/_layout/'
+    | '/(layout)/_layout'
     | '/(auth)/login/'
     | '/(auth)/recovery/'
     | '/(auth)/register/'
-    | '/(app)/_layout/settings/'
-    | '/(app)/_layout/c/$communityId/'
+    | '/(layout)/_layout/'
+    | '/(layout)/_layout/settings/'
+    | '/(layout)/_layout/c/$communityId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  appLayoutRoute: typeof appLayoutRouteWithChildren
+  layoutLayoutRoute: typeof layoutLayoutRouteWithChildren
   authLoginIndexRoute: typeof authLoginIndexRoute
   authRecoveryIndexRoute: typeof authRecoveryIndexRoute
   authRegisterIndexRoute: typeof authRegisterIndexRoute
@@ -116,12 +117,19 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/(app)/_layout': {
-      id: '/(app)/_layout'
+    '/(layout)/_layout': {
+      id: '/(layout)/_layout'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof appLayoutRouteImport
+      preLoaderRoute: typeof layoutLayoutRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/(layout)/_layout/': {
+      id: '/(layout)/_layout/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof layoutLayoutIndexRouteImport
+      parentRoute: typeof layoutLayoutRoute
     }
     '/(auth)/register/': {
       id: '/(auth)/register/'
@@ -144,48 +152,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(app)/_layout/': {
-      id: '/(app)/_layout/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof appLayoutIndexRouteImport
-      parentRoute: typeof appLayoutRoute
-    }
-    '/(app)/_layout/settings/': {
-      id: '/(app)/_layout/settings/'
+    '/(layout)/_layout/settings/': {
+      id: '/(layout)/_layout/settings/'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof appLayoutSettingsIndexRouteImport
-      parentRoute: typeof appLayoutRoute
+      preLoaderRoute: typeof layoutLayoutSettingsIndexRouteImport
+      parentRoute: typeof layoutLayoutRoute
     }
-    '/(app)/_layout/c/$communityId/': {
-      id: '/(app)/_layout/c/$communityId/'
+    '/(layout)/_layout/c/$communityId/': {
+      id: '/(layout)/_layout/c/$communityId/'
       path: '/c/$communityId'
       fullPath: '/c/$communityId'
-      preLoaderRoute: typeof appLayoutCCommunityIdIndexRouteImport
-      parentRoute: typeof appLayoutRoute
+      preLoaderRoute: typeof layoutLayoutCCommunityIdIndexRouteImport
+      parentRoute: typeof layoutLayoutRoute
     }
   }
 }
 
-interface appLayoutRouteChildren {
-  appLayoutIndexRoute: typeof appLayoutIndexRoute
-  appLayoutSettingsIndexRoute: typeof appLayoutSettingsIndexRoute
-  appLayoutCCommunityIdIndexRoute: typeof appLayoutCCommunityIdIndexRoute
+interface layoutLayoutRouteChildren {
+  layoutLayoutIndexRoute: typeof layoutLayoutIndexRoute
+  layoutLayoutSettingsIndexRoute: typeof layoutLayoutSettingsIndexRoute
+  layoutLayoutCCommunityIdIndexRoute: typeof layoutLayoutCCommunityIdIndexRoute
 }
 
-const appLayoutRouteChildren: appLayoutRouteChildren = {
-  appLayoutIndexRoute: appLayoutIndexRoute,
-  appLayoutSettingsIndexRoute: appLayoutSettingsIndexRoute,
-  appLayoutCCommunityIdIndexRoute: appLayoutCCommunityIdIndexRoute,
+const layoutLayoutRouteChildren: layoutLayoutRouteChildren = {
+  layoutLayoutIndexRoute: layoutLayoutIndexRoute,
+  layoutLayoutSettingsIndexRoute: layoutLayoutSettingsIndexRoute,
+  layoutLayoutCCommunityIdIndexRoute: layoutLayoutCCommunityIdIndexRoute,
 }
 
-const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(
-  appLayoutRouteChildren,
+const layoutLayoutRouteWithChildren = layoutLayoutRoute._addFileChildren(
+  layoutLayoutRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  appLayoutRoute: appLayoutRouteWithChildren,
+  layoutLayoutRoute: layoutLayoutRouteWithChildren,
   authLoginIndexRoute: authLoginIndexRoute,
   authRecoveryIndexRoute: authRecoveryIndexRoute,
   authRegisterIndexRoute: authRegisterIndexRoute,
