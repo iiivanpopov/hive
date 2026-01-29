@@ -74,7 +74,7 @@ export class AuthRouter {
             maxAge: authConfig.sessionTokenTtl,
           })
 
-          return c.body(null, 204)
+          return c.json({ success: true }, 201)
         },
       )
       .post(
@@ -102,7 +102,7 @@ export class AuthRouter {
             maxAge: authConfig.sessionTokenTtl,
           })
 
-          return c.body(null, 204)
+          return c.json({ success: true }, 200)
         },
       )
       .post(

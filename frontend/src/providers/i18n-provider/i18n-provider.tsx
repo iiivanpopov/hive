@@ -20,25 +20,23 @@ export function I18nProvider({ initialLocale, initialMessages, children }: I18nP
   const [locale, setLocale] = useState<Locale>(initialLocale)
   const [messages, setMessages] = useState<Record<string, string>>(initialMessages)
 
-  const setLocalePatched: Dispatch<SetStateAction<Locale>> = useCallback(
-    async (newLocale) => {
-      const nextLocale = typeof newLocale === 'function'
+  const setLocalePatched: Dispatch<SetStateAction<Locale>> = useCallback(async (newLocale) => {
+    const nextLocale
+      = typeof newLocale === 'function'
         ? newLocale(locale)
         : newLocale
+    const nextMessages = await loadLocale(nextLocale)
 
-      const messages = await loadLocale(nextLocale)
-      setMessages(messages)
+    setMessages(nextMessages)
+    setLocale(nextLocale)
 
-      setLocale(nextLocale)
-      localStorage.setItem(LOCAL_STORAGE.locale, nextLocale)
-    },
-    [locale],
-  )
+    localStorage.setItem(LOCAL_STORAGE.locale, nextLocale)
+  }, [locale])
 
-  const contextValue = useMemo(
-    () => ({ locale, setLocale: setLocalePatched }),
-    [locale, setLocalePatched],
-  )
+  const contextValue = useMemo(() => ({
+    locale,
+    setLocale: setLocalePatched,
+  }), [locale, setLocalePatched])
 
   return (
     <I18nContext value={contextValue}>

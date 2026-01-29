@@ -4,7 +4,7 @@ export function CommunityListLoading() {
   return (
     <div className="relative w-full h-4/5 overflow-hidden">
       <div className="no-scrollbar overflow-y-auto h-full flex flex-col items-center gap-4">
-        {Array.from({ length: 15 }).map((_, index) => (
+        {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
             className="relative w-20 flex justify-center items-center"

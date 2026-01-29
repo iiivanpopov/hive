@@ -11,10 +11,18 @@ export function CurrentUser() {
   const { state, functions } = useCurrentUser()
 
   return (
-    <div className="bg-popover border rounded-md border-border w-48 absolute bottom-3 left-4 p-1.5 flex justify-between items-center">
+    <div className="bg-popover border rounded-md border-border w-64 absolute bottom-2 left-2 p-2 flex justify-between items-center gap-2">
       <DropdownMenu>
-        <DropdownMenuTrigger className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
-          {state.context.user!.name ?? state.context.user!.username}
+        <DropdownMenuTrigger className="hover:bg-muted dark:hover:bg-muted/50 flex w-full gap-3 py-1 px-1.5 rounded-sm items-center transition-colors cursor-pointer">
+          <div className="size-10 rounded-full dark:bg-zinc-700 bg-zinc-200" />
+          <div className="h-10 w-32">
+            <div className="text-left font-semibold truncate">
+              {state.user?.name ?? state.user?.username}
+            </div>
+            <div className="text-xs text-left text-muted-foreground">
+              <I18nText id="text.online" />
+            </div>
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuGroup>
@@ -43,9 +51,9 @@ export function CurrentUser() {
       </DropdownMenu>
       <Link
         to="/settings"
-        className={buttonVariants({ size: 'icon-sm', variant: 'ghost' })}
+        className={buttonVariants({ variant: 'ghost', size: 'icon-lg' })}
       >
-        <SettingsIcon className="size-5" />
+        <SettingsIcon />
       </Link>
     </div>
   )

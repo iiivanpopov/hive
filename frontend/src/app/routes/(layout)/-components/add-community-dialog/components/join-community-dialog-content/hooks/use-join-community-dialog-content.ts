@@ -33,9 +33,6 @@ export function useJoinCommunityDialogContent() {
         path: value,
       })
 
-      if (!mutation.community)
-        return
-
       formApi.reset()
       addCommunityDialog.dialog.close()
 

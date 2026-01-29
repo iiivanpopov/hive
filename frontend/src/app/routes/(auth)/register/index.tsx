@@ -30,7 +30,7 @@ export const Route = createFileRoute('/(auth)/register/')({
 })
 
 function RegisterPage() {
-  const { i18n, form, mutations } = useRegisterPage()
+  const { form, mutations, features } = useRegisterPage()
 
   return (
     <Card className="absolute left-1/2 top-1/2 w-xs -translate-x-1/2 -translate-y-1/2">
@@ -57,9 +57,9 @@ function RegisterPage() {
               <form.AppField name="username">
                 {field => (
                   <field.Input
-                    label={i18n.t('field.username.label')}
-                    description={i18n.t('field.username.description')}
-                    error={i18n.t(field.state.meta.errors)}
+                    label={features.i18n.t('field.username.label')}
+                    description={features.i18n.t('field.username.description')}
+                    error={features.i18n.t(field.state.meta.errors)}
                     autoComplete="username"
                   />
                 )}
@@ -68,9 +68,9 @@ function RegisterPage() {
               <form.AppField name="email">
                 {field => (
                   <field.Input
-                    label={i18n.t('field.email.label')}
+                    label={features.i18n.t('field.email.label')}
+                    error={features.i18n.t(field.state.meta.errors)}
                     type="email"
-                    error={i18n.t(field.state.meta.errors)}
                     autoComplete="email"
                   />
                 )}
@@ -79,10 +79,10 @@ function RegisterPage() {
               <form.AppField name="password">
                 {field => (
                   <field.Input
-                    label={i18n.t('field.password.label')}
+                    label={features.i18n.t('field.password.label')}
+                    description={features.i18n.t('field.password.description')}
+                    error={features.i18n.t(field.state.meta.errors)}
                     type="password"
-                    description={i18n.t('field.password.description')}
-                    error={i18n.t(field.state.meta.errors)}
                     autoComplete="new-password"
                   />
                 )}
@@ -91,9 +91,9 @@ function RegisterPage() {
               <form.AppField name="confirmPassword">
                 {field => (
                   <field.Input
-                    label={i18n.t('field.confirm-password.label')}
+                    label={features.i18n.t('field.confirm-password.label')}
+                    error={features.i18n.t(field.state.meta.errors)}
                     type="password"
-                    error={i18n.t(field.state.meta.errors)}
                     autoComplete="current-password"
                   />
                 )}

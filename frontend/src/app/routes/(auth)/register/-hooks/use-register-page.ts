@@ -1,9 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from '@tanstack/react-router'
 import z from 'zod'
 
-import { postAuthRegisterMutation } from '@/api/@tanstack/react-query.gen.ts'
+import { getAuthMeOptions, postAuthRegisterMutation } from '@/api/@tanstack/react-query.gen.ts'
 import { useForm } from '@/components/form/hooks.ts'
+import { queryClient } from '@/lib/query-client.ts'
 import { EmailSchema } from '@/lib/zod.ts'
 import { useI18n } from '@/providers/i18n-provider'
 
@@ -43,30 +44,28 @@ const registerFormDefaultValues = {
 
 export function useRegisterPage() {
   const i18n = useI18n()
-  const navigate = useNavigate()
+  const router = useRouter()
 
-  const registerMutation = useMutation({
-    ...postAuthRegisterMutation(),
-    onSuccess: async () => {
-      await navigate({ to: '/' })
-    },
-  })
+  const registerMutation = useMutation(postAuthRegisterMutation())
 
   const form = useForm({
     defaultValues: registerFormDefaultValues,
     validators: { onChange: RegisterFormSchema },
     onSubmit: async ({ value }) => {
-      await registerMutation.mutateAsync({
-        body: value,
-      })
+      await registerMutation.mutateAsync({ body: value })
+
+      await queryClient.invalidateQueries(getAuthMeOptions())
+      await router.invalidate()
     },
   })
 
   return {
-    i18n,
     form,
     mutations: {
       register: registerMutation,
+    },
+    features: {
+      i18n,
     },
   }
 }

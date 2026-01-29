@@ -1,16 +1,20 @@
 import { Link } from '@tanstack/react-router'
 
 import { buttonVariants } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator.tsx'
 
 import { useCommunityList } from './hooks'
 
 export function CommunityList() {
-  const { features, state, refs, queries } = useCommunityList()
+  const { state, refs, queries, features } = useCommunityList()
+
+  if (!queries.communities.data.communities.length)
+    return null
 
   return (
     <div
       ref={refs.container}
-      className="relative w-full h-4/5 overflow-hidden"
+      className="relative w-full max-h-[80%]"
     >
       <div className="no-scrollbar overflow-y-auto h-full flex flex-col items-center gap-4">
         {queries.communities.data.communities.map((community, i) => (
@@ -33,6 +37,8 @@ export function CommunityList() {
           </div>
         ))}
       </div>
+
+      <Separator className="mx-auto w-8! mt-4" />
 
       <div
         data-open={features.scrollTopBadge.opened ? 'true' : undefined}

@@ -16,20 +16,19 @@ export interface ThemeProviderProps {
 export function ThemeProvider({ initialTheme, children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(initialTheme)
 
-  const setThemePatched: Dispatch<SetStateAction<Theme>> = useCallback(
-    (newTheme) => {
-      const nextTheme = typeof newTheme === 'function'
+  const setThemePatched: Dispatch<SetStateAction<Theme>> = useCallback((newTheme) => {
+    const nextTheme
+      = typeof newTheme === 'function'
         ? newTheme(theme)
         : newTheme
 
-      setTheme(nextTheme)
+    setTheme(nextTheme)
 
-      document.documentElement.classList.remove('dark', 'light')
-      document.documentElement.classList.add(nextTheme)
-      localStorage.setItem(LOCAL_STORAGE.theme, nextTheme)
-    },
-    [theme],
-  )
+    document.documentElement.classList.remove('dark', 'light')
+    document.documentElement.classList.add(nextTheme)
+
+    localStorage.setItem(LOCAL_STORAGE.theme, nextTheme)
+  }, [theme])
 
   const contextValue = useMemo(() => ({
     theme,

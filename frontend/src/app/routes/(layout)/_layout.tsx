@@ -4,9 +4,9 @@ import { HomeIcon } from 'lucide-react'
 import { getCommunitiesJoinedOptions } from '@/api/@tanstack/react-query.gen.ts'
 import { buttonVariants } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator.tsx'
-import { queryClient } from '@/providers/query-provider'
+import { queryClient } from '@/lib/query-client.ts'
 
-import { AddCommunityDialog, CommunityList, CommunityListLoading, CurrentUser } from './-components'
+import { AddCommunityDialog, CommunityList, CommunityListLoading, CurrentUser, CurrentUserLoading } from './-components'
 
 export const Route = createFileRoute('/(layout)/_layout')({
   component: Layout,
@@ -33,9 +33,9 @@ function Layout() {
 
         <CommunityList />
 
-        <Separator className="w-8!" />
-
-        <AddCommunityDialog />
+        <div className="mt-4">
+          <AddCommunityDialog />
+        </div>
       </div>
 
       <div className="border border-border size-full rounded-xl">
@@ -66,6 +66,8 @@ function LayoutLoading() {
       <div className="border border-border size-full rounded-xl">
         <Outlet />
       </div>
+
+      <CurrentUserLoading />
     </div>
   )
 }

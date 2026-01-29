@@ -1,9 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from '@tanstack/react-router'
 import z from 'zod'
 
-import { postAuthLoginMutation } from '@/api/@tanstack/react-query.gen.ts'
+import { getAuthMeOptions, postAuthLoginMutation } from '@/api/@tanstack/react-query.gen.ts'
 import { useForm } from '@/components/form/hooks.ts'
+import { queryClient } from '@/lib/query-client.ts'
 import { useI18n } from '@/providers/i18n-provider'
 
 const LoginFormSchema = z.object({
@@ -18,29 +19,29 @@ const loginFormDefaultValues = {
 }
 
 export function useLoginPage() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const i18n = useI18n()
 
-  const loginMutation = useMutation({
-    ...postAuthLoginMutation(),
-    onSuccess: async () => {
-      await navigate({ to: '/' })
-    },
-  })
+  const loginMutation = useMutation(postAuthLoginMutation())
 
   const form = useForm({
     defaultValues: loginFormDefaultValues,
     validators: { onChange: LoginFormSchema },
     onSubmit: async ({ value }) => {
       await loginMutation.mutateAsync({ body: value })
+
+      await queryClient.invalidateQueries(getAuthMeOptions())
+      await router.invalidate()
     },
   })
 
   return {
-    i18n,
     form,
     mutations: {
       login: loginMutation,
+    },
+    features: {
+      i18n,
     },
   }
 }

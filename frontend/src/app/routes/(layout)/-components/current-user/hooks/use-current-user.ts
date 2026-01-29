@@ -2,10 +2,10 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouteContext, useRouter } from '@tanstack/react-router'
 
 import { postAuthLogoutMutation } from '@/api/@tanstack/react-query.gen.ts'
-import { queryClient } from '@/providers/query-provider'
+import { queryClient } from '@/lib/query-client.ts'
 
 export function useCurrentUser() {
-  const context = useRouteContext({ from: '__root__' })
+  const { user } = useRouteContext({ from: '__root__' })
   const router = useRouter()
 
   const logoutMutation = useMutation(postAuthLogoutMutation())
@@ -13,12 +13,12 @@ export function useCurrentUser() {
   const onLogout = async () => {
     await logoutMutation.mutateAsync({})
     queryClient.clear()
-    router.invalidate()
+    await router.invalidate()
   }
 
   return {
     state: {
-      context,
+      user,
     },
     functions: {
       onLogout,

@@ -29,7 +29,7 @@ export const Route = createFileRoute('/(auth)/login/')({
 })
 
 function LoginPage() {
-  const { i18n, form, mutations } = useLoginPage()
+  const { form, mutations, features } = useLoginPage()
 
   return (
     <Card className="absolute left-1/2 top-1/2 w-xs -translate-x-1/2 -translate-y-1/2">
@@ -56,9 +56,9 @@ function LoginPage() {
               <form.AppField name="identity">
                 {field => (
                   <field.Input
-                    label={i18n.t('field.identity.label')}
-                    description={i18n.t('field.identity.description')}
-                    error={i18n.t(field.state.meta.errors)}
+                    label={features.i18n.t('field.identity.label')}
+                    description={features.i18n.t('field.identity.description')}
+                    error={features.i18n.t(field.state.meta.errors)}
                     autoComplete="username"
                   />
                 )}
@@ -68,9 +68,9 @@ function LoginPage() {
                 {field => (
                   <field.Input
                     type="password"
-                    label={i18n.t('field.password.label')}
-                    description={i18n.t('field.password.description')}
-                    error={i18n.t(field.state.meta.errors)}
+                    label={features.i18n.t('field.password.label')}
+                    description={features.i18n.t('field.password.description')}
+                    error={features.i18n.t(field.state.meta.errors)}
                     autoComplete="current-password"
                   />
                 )}

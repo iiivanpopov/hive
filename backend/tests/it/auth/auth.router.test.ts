@@ -182,7 +182,7 @@ describe('/login', () => {
       },
     })
 
-    expect(response.status as unknown).toBe(204)
+    expect(response.status as unknown).toBe(200)
     expect(response.headers.get('Set-Cookie')).toBeTruthy()
   })
 })
