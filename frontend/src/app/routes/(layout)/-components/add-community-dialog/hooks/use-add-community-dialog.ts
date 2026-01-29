@@ -1,6 +1,6 @@
 import { use } from 'react'
 
-import { AddCommunityDialogContext } from '@/app/routes/(layout)/-components'
+import { AddCommunityDialogContext } from '../add-community-dialog-context.ts'
 
 export function useAddCommunityDialog() {
   return use(AddCommunityDialogContext)

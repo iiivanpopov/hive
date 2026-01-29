@@ -1,20 +1,15 @@
-import { useNavigate } from '@tanstack/react-router'
-
 import GoogleIcon from '@/assets/icons/google.svg?react'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { env } from '@/config/env.ts'
 
 export function GoogleOauth() {
-  const navigate = useNavigate()
-
   return (
-    <Button
-      onClick={() => navigate({ href: `${env.apiUrl}/auth/google` })}
-      className="w-full"
-      variant="outline"
+    <a
+      href={`${env.apiUrl}/auth/google`}
+      className={buttonVariants({ variant: 'outline', class: 'w-full' })}
     >
       <GoogleIcon className="size-4 fill-secondary-foreground" />
       Google
-    </Button>
+    </a>
   )
 }

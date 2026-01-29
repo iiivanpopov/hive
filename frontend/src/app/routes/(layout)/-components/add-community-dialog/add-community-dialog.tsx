@@ -1,22 +1,16 @@
-import type { Dispatch, ReactNode, SetStateAction } from 'react'
+import type { ReactNode } from 'react'
 
 import { PlusIcon } from 'lucide-react'
-import { createContext, useState } from 'react'
+import { useState } from 'react'
 
 import { buttonVariants } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog.tsx'
 import { useDisclosure } from '@/hooks/use-disclosure'
 
+import type { AddCommunityDialogScreen } from './add-community-dialog-context.ts'
+
+import { AddCommunityDialogContext } from './add-community-dialog-context.ts'
 import { AddCommunityDialogContent, CreateCommunityDialogContent, JoinCommunityDialog } from './components'
-
-export type AddCommunityDialogScreen = 'add' | 'join' | 'create'
-export interface AddCommunityDialogContext {
-  screen: AddCommunityDialogScreen
-  setScreen: Dispatch<SetStateAction<AddCommunityDialogScreen>>
-  dialog: ReturnType<typeof useDisclosure>
-}
-
-export const AddCommunityDialogContext = createContext<AddCommunityDialogContext>(null!)
 
 const screens: Record<AddCommunityDialogScreen, ReactNode> = {
   add: <AddCommunityDialogContent />,
@@ -29,15 +23,15 @@ export function AddCommunityDialog() {
   const dialog = useDisclosure(false, { onOpen: () => setScreen('add') })
 
   return (
-    <Dialog open={dialog.opened} onOpenChange={dialog.toggle}>
-      <DialogTrigger className={buttonVariants({ size: 'icon-lg', variant: 'secondary' })}>
-        <PlusIcon />
-      </DialogTrigger>
-      <DialogContent>
-        <AddCommunityDialogContext value={{ screen, setScreen, dialog }}>
+    <AddCommunityDialogContext value={{ screen, setScreen, dialog }}>
+      <Dialog open={dialog.opened} onOpenChange={dialog.toggle}>
+        <DialogTrigger className={buttonVariants({ size: 'icon-lg', variant: 'secondary' })}>
+          <PlusIcon />
+        </DialogTrigger>
+        <DialogContent>
           {screens[screen]}
-        </AddCommunityDialogContext>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </AddCommunityDialogContext>
   )
 }
