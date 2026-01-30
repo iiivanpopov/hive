@@ -55,12 +55,12 @@ const layoutLayoutCCommunityIdIndexRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/login': typeof authLoginIndexRoute
-  '/recovery': typeof authRecoveryIndexRoute
-  '/register': typeof authRegisterIndexRoute
+  '/login/': typeof authLoginIndexRoute
+  '/recovery/': typeof authRecoveryIndexRoute
+  '/register/': typeof authRegisterIndexRoute
   '/': typeof layoutLayoutIndexRoute
-  '/settings': typeof layoutLayoutSettingsIndexRoute
-  '/c/$communityId': typeof layoutLayoutCCommunityIdIndexRoute
+  '/settings/': typeof layoutLayoutSettingsIndexRoute
+  '/c/$communityId/': typeof layoutLayoutCCommunityIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginIndexRoute
@@ -83,12 +83,12 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/login'
-    | '/recovery'
-    | '/register'
+    | '/login/'
+    | '/recovery/'
+    | '/register/'
     | '/'
-    | '/settings'
-    | '/c/$communityId'
+    | '/settings/'
+    | '/c/$communityId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -134,35 +134,35 @@ declare module '@tanstack/react-router' {
     '/(auth)/register/': {
       id: '/(auth)/register/'
       path: '/register'
-      fullPath: '/register'
+      fullPath: '/register/'
       preLoaderRoute: typeof authRegisterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/recovery/': {
       id: '/(auth)/recovery/'
       path: '/recovery'
-      fullPath: '/recovery'
+      fullPath: '/recovery/'
       preLoaderRoute: typeof authRecoveryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/login/': {
       id: '/(auth)/login/'
       path: '/login'
-      fullPath: '/login'
+      fullPath: '/login/'
       preLoaderRoute: typeof authLoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(layout)/_layout/settings/': {
       id: '/(layout)/_layout/settings/'
       path: '/settings'
-      fullPath: '/settings'
+      fullPath: '/settings/'
       preLoaderRoute: typeof layoutLayoutSettingsIndexRouteImport
       parentRoute: typeof layoutLayoutRoute
     }
     '/(layout)/_layout/c/$communityId/': {
       id: '/(layout)/_layout/c/$communityId/'
       path: '/c/$communityId'
-      fullPath: '/c/$communityId'
+      fullPath: '/c/$communityId/'
       preLoaderRoute: typeof layoutLayoutCCommunityIdIndexRouteImport
       parentRoute: typeof layoutLayoutRoute
     }

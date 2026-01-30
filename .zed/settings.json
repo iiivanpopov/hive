@@ -1,25 +1,27 @@
 {
+  "prettier": {
+    "allowed": false
+  },
   "languages": {
-    "JavaScript": {
+    "JSONC": {
       "format_on_save": "on",
-      "language_servers": ["vtsls", "eslint", "!oxlint", "!typescript-language-server", "..."],
-      "formatter": [
-        { "code_action": "source.fixAll.eslint" },
-      ]
+      "language_servers": ["!oxlint", "!oxfmt", "eslint", "..."],
+      "formatter": [{ "code_action": "source.fixAll.eslint" }]
+    },
+    "JSON": {
+      "format_on_save": "on",
+      "language_servers": ["!oxlint", "!oxfmt", "eslint", "..."],
+      "formatter": [{ "code_action": "source.fixAll.eslint" }]
     },
     "TypeScript": {
       "format_on_save": "on",
-      "language_servers": ["vtsls", "eslint", "!oxlint", "!typescript-language-server", "..."],
-      "formatter": [
-        { "code_action": "source.fixAll.eslint" },
-      ]
+      "language_servers": ["!oxlint", "!oxfmt", "..."],
+      "formatter": [{ "code_action": "source.fixAll.eslint" }]
     },
     "TSX": {
       "format_on_save": "on",
-      "language_servers": ["vtsls", "eslint", "!oxlint", "!typescript-language-server", "..."],
-      "formatter": [
-        { "code_action": "source.fixAll.eslint" },
-      ]
+      "language_servers": ["!oxlint", "!oxfmt", "..."],
+      "formatter": [{ "code_action": "source.fixAll.eslint" }]
     }
   }
 }
