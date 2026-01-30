@@ -5,6 +5,7 @@
   "button.back": "Go back",
   "button.create-community": "Create community",
   "button.join-community": "Join community",
+  "button.create-invitation": "Create invitation",
 
   "auth.login.title": "Sign in to your account",
   "auth.register.title": "Create your account",
@@ -20,6 +21,8 @@
   "input.locale.label": "Language",
   "input.community-name.label": "Community name",
   "input.invite-token.label": "Invitation token",
+  "input.expires-at.label": "Expires at",
+  "input.expires-at.description": "Expires at {day} {time}",
 
   "auth.no-account": "Don't have an account?",
   "auth.have-account": "Already have an account?",
@@ -46,14 +49,28 @@
   "validation.community-name.min": "Community name must be at least 3 characters",
   "validation.community-name.max": "Community name must not exceed 20 characters",
   "validation.invite-token.invalid": "Invitation token must be exactly 16 characters",
+  "validation.expires-at.future": "Expiration date must be in the future",
 
   "dialog.add-community.title": "Add a community",
   "dialog.add-community.description": "Join an existing community or create your own.",
   "dialog.join-community.title": "Join a community",
   "dialog.create-community.title": "Create a community",
+  "dialog.create-invitation.title": "Create invitation",
+  "dialog.view-invitation.title": "Invitation created",
 
   "dropdown.account.label": "Account",
   "dropdown.account.profile": "Profile",
   "dropdown.account.settings": "Settings",
-  "dropdown.account.logout": "Log out"
+  "dropdown.account.logout": "Log out",
+
+  "channels.text.title": "Text Channels",
+
+  "dropdown.create-invitation.title": "Create invitation",
+  "dropdown.leave-community.title": "Leave community",
+
+  "toast.create-invitation.success": "Invitation created successfully",
+
+  "invitation.ready": "Here is your invitation token",
+
+  "button.close": "Close"
 }

@@ -8,7 +8,7 @@
     "build:prod": "NODE_ENV=production bun --bun vite build",
     "api:generate": "bun heyapi.script.ts",
     "lint": "bun --bun eslint .",
-    "lint:css": "bun stylelint \"./src/**/*.css\"",
+    "lint:css": "bun --bun stylelint \"./src/**/*.css\"",
     "test": "echo \"Frontend tests are not yet implemented\""
   },
   "dependencies": {
@@ -19,9 +19,11 @@
     "@tanstack/react-router": "^1.157.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.563.0",
     "next-themes": "^0.4.6",
     "react": "^19.2.4",
+    "react-day-picker": "^9.13.0",
     "react-dom": "^19.2.4",
     "react-intl": "^8.1.1",
     "sonner": "^2.0.7",
@@ -40,7 +42,6 @@
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "^5.1.2",
     "@yelaiii/stylelint": "^2.0.2",
-    "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "catalog:",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.26",

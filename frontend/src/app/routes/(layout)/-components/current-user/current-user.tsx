@@ -11,7 +11,7 @@ export function CurrentUser() {
   const { state, functions } = useCurrentUser()
 
   return (
-    <div className="bg-popover border rounded-md border-border w-64 absolute bottom-2 left-2 p-2 flex justify-between items-center gap-2">
+    <div className="bg-popover border rounded-md border-border w-64 absolute bottom-2 left-2 p-1 flex justify-between items-center gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger className="hover:bg-muted dark:hover:bg-muted/50 flex w-full gap-3 py-1 px-1.5 rounded-sm items-center transition-colors cursor-pointer">
           <div className="size-10 rounded-full dark:bg-zinc-700 bg-zinc-200" />

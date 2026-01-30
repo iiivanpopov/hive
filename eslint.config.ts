@@ -9,6 +9,7 @@ export const globalESLintConfig: Parameters<typeof antfu>[0] & {
   rules: {
     'antfu/no-top-level-await': 'off',
     'node/prefer-global/buffer': 'off',
+    'ts/ban-ts-comment': 'off',
     'perfectionist/sort-imports': ['error', {
       environment: 'bun',
     }],

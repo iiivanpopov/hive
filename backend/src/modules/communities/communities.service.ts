@@ -67,6 +67,9 @@ export class CommunitiesService {
     const communityExists = await this.db.query.communities.findFirst({
       where: {
         name: body.name,
+        owner: {
+          id: user.id,
+        },
       },
     })
 

@@ -15,7 +15,9 @@ import { Route as authRegisterIndexRouteImport } from './app/routes/(auth)/regis
 import { Route as authRecoveryIndexRouteImport } from './app/routes/(auth)/recovery/index'
 import { Route as authLoginIndexRouteImport } from './app/routes/(auth)/login/index'
 import { Route as layoutLayoutSettingsIndexRouteImport } from './app/routes/(layout)/_layout/settings/index'
-import { Route as layoutLayoutCCommunityIdIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/index'
+import { Route as layoutLayoutCCommunityIdLayoutRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout'
+import { Route as layoutLayoutCCommunityIdLayoutIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout/index'
+import { Route as layoutLayoutCCommunityIdLayoutChannelIdIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout/$channelId/index'
 
 const layoutLayoutRoute = layoutLayoutRouteImport.update({
   id: '/(layout)/_layout',
@@ -47,11 +49,23 @@ const layoutLayoutSettingsIndexRoute =
     path: '/settings/',
     getParentRoute: () => layoutLayoutRoute,
   } as any)
-const layoutLayoutCCommunityIdIndexRoute =
-  layoutLayoutCCommunityIdIndexRouteImport.update({
-    id: '/c/$communityId/',
-    path: '/c/$communityId/',
+const layoutLayoutCCommunityIdLayoutRoute =
+  layoutLayoutCCommunityIdLayoutRouteImport.update({
+    id: '/c/$communityId/_layout',
+    path: '/c/$communityId',
     getParentRoute: () => layoutLayoutRoute,
+  } as any)
+const layoutLayoutCCommunityIdLayoutIndexRoute =
+  layoutLayoutCCommunityIdLayoutIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => layoutLayoutCCommunityIdLayoutRoute,
+  } as any)
+const layoutLayoutCCommunityIdLayoutChannelIdIndexRoute =
+  layoutLayoutCCommunityIdLayoutChannelIdIndexRouteImport.update({
+    id: '/$channelId/',
+    path: '/$channelId/',
+    getParentRoute: () => layoutLayoutCCommunityIdLayoutRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -60,7 +74,9 @@ export interface FileRoutesByFullPath {
   '/register/': typeof authRegisterIndexRoute
   '/': typeof layoutLayoutIndexRoute
   '/settings/': typeof layoutLayoutSettingsIndexRoute
-  '/c/$communityId/': typeof layoutLayoutCCommunityIdIndexRoute
+  '/c/$communityId': typeof layoutLayoutCCommunityIdLayoutRouteWithChildren
+  '/c/$communityId/': typeof layoutLayoutCCommunityIdLayoutIndexRoute
+  '/c/$communityId/$channelId/': typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginIndexRoute
@@ -68,7 +84,8 @@ export interface FileRoutesByTo {
   '/register': typeof authRegisterIndexRoute
   '/': typeof layoutLayoutIndexRoute
   '/settings': typeof layoutLayoutSettingsIndexRoute
-  '/c/$communityId': typeof layoutLayoutCCommunityIdIndexRoute
+  '/c/$communityId': typeof layoutLayoutCCommunityIdLayoutIndexRoute
+  '/c/$communityId/$channelId': typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -78,7 +95,9 @@ export interface FileRoutesById {
   '/(auth)/register/': typeof authRegisterIndexRoute
   '/(layout)/_layout/': typeof layoutLayoutIndexRoute
   '/(layout)/_layout/settings/': typeof layoutLayoutSettingsIndexRoute
-  '/(layout)/_layout/c/$communityId/': typeof layoutLayoutCCommunityIdIndexRoute
+  '/(layout)/_layout/c/$communityId/_layout': typeof layoutLayoutCCommunityIdLayoutRouteWithChildren
+  '/(layout)/_layout/c/$communityId/_layout/': typeof layoutLayoutCCommunityIdLayoutIndexRoute
+  '/(layout)/_layout/c/$communityId/_layout/$channelId/': typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -88,7 +107,9 @@ export interface FileRouteTypes {
     | '/register/'
     | '/'
     | '/settings/'
+    | '/c/$communityId'
     | '/c/$communityId/'
+    | '/c/$communityId/$channelId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -97,6 +118,7 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/c/$communityId'
+    | '/c/$communityId/$channelId'
   id:
     | '__root__'
     | '/(layout)/_layout'
@@ -105,7 +127,9 @@ export interface FileRouteTypes {
     | '/(auth)/register/'
     | '/(layout)/_layout/'
     | '/(layout)/_layout/settings/'
-    | '/(layout)/_layout/c/$communityId/'
+    | '/(layout)/_layout/c/$communityId/_layout'
+    | '/(layout)/_layout/c/$communityId/_layout/'
+    | '/(layout)/_layout/c/$communityId/_layout/$channelId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -159,26 +183,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof layoutLayoutSettingsIndexRouteImport
       parentRoute: typeof layoutLayoutRoute
     }
-    '/(layout)/_layout/c/$communityId/': {
-      id: '/(layout)/_layout/c/$communityId/'
+    '/(layout)/_layout/c/$communityId/_layout': {
+      id: '/(layout)/_layout/c/$communityId/_layout'
       path: '/c/$communityId'
-      fullPath: '/c/$communityId/'
-      preLoaderRoute: typeof layoutLayoutCCommunityIdIndexRouteImport
+      fullPath: '/c/$communityId'
+      preLoaderRoute: typeof layoutLayoutCCommunityIdLayoutRouteImport
       parentRoute: typeof layoutLayoutRoute
+    }
+    '/(layout)/_layout/c/$communityId/_layout/': {
+      id: '/(layout)/_layout/c/$communityId/_layout/'
+      path: '/'
+      fullPath: '/c/$communityId/'
+      preLoaderRoute: typeof layoutLayoutCCommunityIdLayoutIndexRouteImport
+      parentRoute: typeof layoutLayoutCCommunityIdLayoutRoute
+    }
+    '/(layout)/_layout/c/$communityId/_layout/$channelId/': {
+      id: '/(layout)/_layout/c/$communityId/_layout/$channelId/'
+      path: '/$channelId'
+      fullPath: '/c/$communityId/$channelId/'
+      preLoaderRoute: typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRouteImport
+      parentRoute: typeof layoutLayoutCCommunityIdLayoutRoute
     }
   }
 }
 
+interface layoutLayoutCCommunityIdLayoutRouteChildren {
+  layoutLayoutCCommunityIdLayoutIndexRoute: typeof layoutLayoutCCommunityIdLayoutIndexRoute
+  layoutLayoutCCommunityIdLayoutChannelIdIndexRoute: typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
+}
+
+const layoutLayoutCCommunityIdLayoutRouteChildren: layoutLayoutCCommunityIdLayoutRouteChildren =
+  {
+    layoutLayoutCCommunityIdLayoutIndexRoute:
+      layoutLayoutCCommunityIdLayoutIndexRoute,
+    layoutLayoutCCommunityIdLayoutChannelIdIndexRoute:
+      layoutLayoutCCommunityIdLayoutChannelIdIndexRoute,
+  }
+
+const layoutLayoutCCommunityIdLayoutRouteWithChildren =
+  layoutLayoutCCommunityIdLayoutRoute._addFileChildren(
+    layoutLayoutCCommunityIdLayoutRouteChildren,
+  )
+
 interface layoutLayoutRouteChildren {
   layoutLayoutIndexRoute: typeof layoutLayoutIndexRoute
   layoutLayoutSettingsIndexRoute: typeof layoutLayoutSettingsIndexRoute
-  layoutLayoutCCommunityIdIndexRoute: typeof layoutLayoutCCommunityIdIndexRoute
+  layoutLayoutCCommunityIdLayoutRoute: typeof layoutLayoutCCommunityIdLayoutRouteWithChildren
 }
 
 const layoutLayoutRouteChildren: layoutLayoutRouteChildren = {
   layoutLayoutIndexRoute: layoutLayoutIndexRoute,
   layoutLayoutSettingsIndexRoute: layoutLayoutSettingsIndexRoute,
-  layoutLayoutCCommunityIdIndexRoute: layoutLayoutCCommunityIdIndexRoute,
+  layoutLayoutCCommunityIdLayoutRoute:
+    layoutLayoutCCommunityIdLayoutRouteWithChildren,
 }
 
 const layoutLayoutRouteWithChildren = layoutLayoutRoute._addFileChildren(

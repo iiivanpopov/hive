@@ -5,22 +5,44 @@
   "languages": {
     "JSONC": {
       "format_on_save": "on",
-      "language_servers": ["!oxlint", "!oxfmt", "eslint", "..."],
+      "language_servers": [
+        "!oxlint",
+        "!oxfmt",
+        "json-language-server",
+        "eslint"
+      ],
       "formatter": [{ "code_action": "source.fixAll.eslint" }]
     },
     "JSON": {
       "format_on_save": "on",
-      "language_servers": ["!oxlint", "!oxfmt", "eslint", "..."],
+      "language_servers": [
+        "!oxlint",
+        "!oxfmt",
+        "json-language-server",
+        "eslint"
+      ],
       "formatter": [{ "code_action": "source.fixAll.eslint" }]
     },
     "TypeScript": {
       "format_on_save": "on",
-      "language_servers": ["!oxlint", "!oxfmt", "..."],
+      "language_servers": [
+        "!oxlint",
+        "!oxfmt",
+        "vtsls",
+        "eslint",
+        "tailwindcss-language-server"
+      ],
       "formatter": [{ "code_action": "source.fixAll.eslint" }]
     },
     "TSX": {
       "format_on_save": "on",
-      "language_servers": ["!oxlint", "!oxfmt", "..."],
+      "language_servers": [
+        "!oxlint",
+        "!oxfmt",
+        "vtsls",
+        "eslint",
+        "tailwindcss-language-server"
+      ],
       "formatter": [{ "code_action": "source.fixAll.eslint" }]
     }
   }

@@ -33,6 +33,7 @@ const router = createRouter({
   context: {
     user: null,
   },
+  defaultPreload: 'intent',
 })
 
 declare module '@tanstack/react-router' {

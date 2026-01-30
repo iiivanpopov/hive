@@ -2,9 +2,10 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import z from 'zod'
 
-import { postCommunitiesJoinTokenMutation } from '@/api/@tanstack/react-query.gen.ts'
-import { useAddCommunityDialog } from '@/app/routes/(layout)/-components/add-community-dialog/hooks'
+import { getCommunitiesJoinedOptions, postCommunitiesJoinTokenMutation } from '@/api/@tanstack/react-query.gen.ts'
+import { useAddCommunityDialog } from '@/app/routes/(layout)/-components/add-community-dialog/hooks/use-add-community-dialog'
 import { useForm } from '@/components/form/hooks.ts'
+import { queryClient } from '@/lib/query-client'
 import { useI18n } from '@/providers/i18n-provider'
 
 const JoinCommunitySchema = z.object({
@@ -35,6 +36,8 @@ export function useJoinCommunityDialogContent() {
 
       formApi.reset()
       addCommunityDialog.dialog.close()
+
+      await queryClient.invalidateQueries(getCommunitiesJoinedOptions())
 
       router.navigate({
         to: '/c/$communityId',
