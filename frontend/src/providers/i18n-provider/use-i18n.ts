@@ -44,7 +44,7 @@ export function useI18n() {
 
   return {
     t,
-    value: locale,
-    set: setLocale,
+    locale,
+    setLocale,
   }
 }

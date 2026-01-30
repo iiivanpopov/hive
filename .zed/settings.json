@@ -1,0 +1,25 @@
+{
+  "languages": {
+    "JavaScript": {
+      "format_on_save": "on",
+      "language_servers": ["vtsls", "eslint", "!oxlint", "!typescript-language-server", "..."],
+      "formatter": [
+        { "code_action": "source.fixAll.eslint" },
+      ]
+    },
+    "TypeScript": {
+      "format_on_save": "on",
+      "language_servers": ["vtsls", "eslint", "!oxlint", "!typescript-language-server", "..."],
+      "formatter": [
+        { "code_action": "source.fixAll.eslint" },
+      ]
+    },
+    "TSX": {
+      "format_on_save": "on",
+      "language_servers": ["vtsls", "eslint", "!oxlint", "!typescript-language-server", "..."],
+      "formatter": [
+        { "code_action": "source.fixAll.eslint" },
+      ]
+    }
+  }
+}

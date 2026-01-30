@@ -14,7 +14,7 @@ export function CommunityList() {
   return (
     <div
       ref={refs.container}
-      className="relative w-full max-h-[80%]"
+      className="relative w-full h-[78%]"
     >
       <div className="no-scrollbar overflow-y-auto h-full flex flex-col items-center gap-4">
         {queries.communities.data.communities.map((community, i) => (

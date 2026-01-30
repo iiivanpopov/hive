@@ -21,6 +21,9 @@
   "field.username.description": "Min 5 characters",
   "field.identity.description": "Username or email",
 
+  "field.locale.label": "Locale",
+  "field.theme.label": "Theme",
+
   "field.community-name.label": "Community name",
   "field.channel-name.label": "Channel name",
   "field.channel-description.label": "Channel description",
@@ -37,6 +40,11 @@
   "text.no-channel-selected": "No channel selected",
   "text.no-messages": "No messages",
   "text.online": "Online",
+
+  "section.appearance.title": "Appearance",
+  "section.appearance.description": "Configure your appearance preferences.",
+
+  "section.i18n.title": "Internationalization",
 
   "link.sign-up": "Sign up",
   "link.sign-in": "Sign in",

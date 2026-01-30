@@ -9,8 +9,8 @@ export const Route = createFileRoute('/(layout)/_layout/')({
 
 function CommunitiesPage() {
   return (
-    <div className="size-full flex justify-center items-center">
-      <Typography variant="heading" className="text-center">
+    <div className="h-full flex justify-center items-center">
+      <Typography variant="heading">
         <I18nText id="text.no-community-selected" />
       </Typography>
     </div>
