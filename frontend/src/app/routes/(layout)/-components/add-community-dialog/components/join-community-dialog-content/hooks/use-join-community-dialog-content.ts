@@ -10,7 +10,7 @@ import { useI18n } from '@/providers/i18n-provider'
 const JoinCommunitySchema = z.object({
   token: z
     .string()
-    .length(16, 'validation.join-token.length'),
+    .length(16, 'validation.invite-token.invalid'),
 })
 
 const formDefaultValues = {

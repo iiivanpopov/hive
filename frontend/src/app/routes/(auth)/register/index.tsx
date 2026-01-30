@@ -36,7 +36,7 @@ function RegisterPage() {
     <Card className="absolute left-1/2 top-1/2 w-xs -translate-x-1/2 -translate-y-1/2">
       <CardHeader>
         <CardTitle>
-          <I18nText id="form.register.title" />
+          <I18nText id="auth.register.title" />
         </CardTitle>
       </CardHeader>
 
@@ -50,15 +50,15 @@ function RegisterPage() {
         <CardContent>
           <FieldSet>
             <FieldLegend className="sr-only">
-              <I18nText id="form.register.title" />
+              <I18nText id="auth.register.title" />
             </FieldLegend>
 
             <FieldGroup>
               <form.AppField name="username">
                 {field => (
                   <field.Input
-                    label={features.i18n.t('field.username.label')}
-                    description={features.i18n.t('field.username.description')}
+                    label={features.i18n.t('input.username.label')}
+                    description={features.i18n.t('input.username.hint')}
                     error={features.i18n.t(field.state.meta.errors)}
                     autoComplete="username"
                   />
@@ -68,7 +68,7 @@ function RegisterPage() {
               <form.AppField name="email">
                 {field => (
                   <field.Input
-                    label={features.i18n.t('field.email.label')}
+                    label={features.i18n.t('input.email.label')}
                     error={features.i18n.t(field.state.meta.errors)}
                     type="email"
                     autoComplete="email"
@@ -79,8 +79,8 @@ function RegisterPage() {
               <form.AppField name="password">
                 {field => (
                   <field.Input
-                    label={features.i18n.t('field.password.label')}
-                    description={features.i18n.t('field.password.description')}
+                    label={features.i18n.t('input.password.label')}
+                    description={features.i18n.t('input.password.hint')}
                     error={features.i18n.t(field.state.meta.errors)}
                     type="password"
                     autoComplete="new-password"
@@ -91,7 +91,7 @@ function RegisterPage() {
               <form.AppField name="confirmPassword">
                 {field => (
                   <field.Input
-                    label={features.i18n.t('field.confirm-password.label')}
+                    label={features.i18n.t('input.password-confirm.label')}
                     error={features.i18n.t(field.state.meta.errors)}
                     type="password"
                     autoComplete="current-password"
@@ -108,7 +108,7 @@ function RegisterPage() {
           variant="caption"
           className="text-center"
         >
-          <I18nText id="text.have-an-account" />
+          <I18nText id="auth.have-account" />
           {' '}
           <Link
             to="/login"
@@ -129,7 +129,7 @@ function RegisterPage() {
         </Button>
 
         <FieldSeparator className="my-1">
-          <I18nText id="text.or-continue-with" />
+          <I18nText id="auth.continue-with" />
         </FieldSeparator>
 
         <GoogleOauth />

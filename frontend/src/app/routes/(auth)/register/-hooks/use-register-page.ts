@@ -23,12 +23,12 @@ const RegisterFormSchema = z.object({
   if (data.password !== data.confirmPassword) {
     ctx.addIssue({
       path: ['confirmPassword'],
-      message: 'validation.passwords-do-not-match',
+      message: 'validation.passwords.mismatch',
       code: 'custom',
     })
     ctx.addIssue({
       path: ['password'],
-      message: 'validation.passwords-do-not-match',
+      message: 'validation.passwords.mismatch',
       code: 'custom',
     })
   }

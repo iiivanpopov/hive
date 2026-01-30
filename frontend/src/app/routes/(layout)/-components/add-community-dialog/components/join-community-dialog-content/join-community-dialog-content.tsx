@@ -25,7 +25,7 @@ export function JoinCommunityDialog() {
         <form.AppField name="token">
           {field => (
             <field.Input
-              label={features.i18n.t('field.join-token.label')}
+              label={features.i18n.t('input.invite-token.label')}
               error={features.i18n.t(field.state.meta.errors)}
             />
           )}
@@ -36,7 +36,7 @@ export function JoinCommunityDialog() {
           variant="secondary"
           onClick={() => features.addCommunityDialog.setScreen('add')}
         >
-          <I18nText id="button.go-back" />
+          <I18nText id="button.back" />
         </Button>
         <Button
           form="join-community-form"

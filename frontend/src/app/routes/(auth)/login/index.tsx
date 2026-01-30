@@ -35,7 +35,7 @@ function LoginPage() {
     <Card className="absolute left-1/2 top-1/2 w-xs -translate-x-1/2 -translate-y-1/2">
       <CardHeader>
         <CardTitle>
-          <I18nText id="form.login.title" />
+          <I18nText id="auth.login.title" />
         </CardTitle>
       </CardHeader>
 
@@ -49,15 +49,15 @@ function LoginPage() {
         <CardContent>
           <FieldSet>
             <FieldLegend className="sr-only">
-              <I18nText id="form.login.title" />
+              <I18nText id="auth.login.title" />
             </FieldLegend>
 
             <FieldGroup>
               <form.AppField name="identity">
                 {field => (
                   <field.Input
-                    label={features.i18n.t('field.identity.label')}
-                    description={features.i18n.t('field.identity.description')}
+                    label={features.i18n.t('input.username-or-email.label')}
+                    description={features.i18n.t('input.username-or-email.hint')}
                     error={features.i18n.t(field.state.meta.errors)}
                     autoComplete="username"
                   />
@@ -68,8 +68,8 @@ function LoginPage() {
                 {field => (
                   <field.Input
                     type="password"
-                    label={features.i18n.t('field.password.label')}
-                    description={features.i18n.t('field.password.description')}
+                    label={features.i18n.t('input.password.label')}
+                    description={features.i18n.t('input.password.hint')}
                     error={features.i18n.t(field.state.meta.errors)}
                     autoComplete="current-password"
                   />
@@ -86,7 +86,7 @@ function LoginPage() {
             variant="caption"
             className="text-center mb-4"
           >
-            <I18nText id="text.forgot-password" />
+            <I18nText id="auth.forgot-password" />
             {' '}
             <Link
               to="/recovery"
@@ -101,7 +101,7 @@ function LoginPage() {
           variant="caption"
           className="text-center"
         >
-          <I18nText id="text.don-not-have-an-account" />
+          <I18nText id="auth.no-account" />
           {' '}
           <Link
             to="/register"
@@ -122,7 +122,7 @@ function LoginPage() {
         </Button>
 
         <span className="text-muted-foreground my-1">
-          <I18nText id="text.or-continue-with" />
+          <I18nText id="auth.continue-with" />
         </span>
 
         <GoogleOauth />

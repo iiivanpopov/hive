@@ -38,7 +38,7 @@ function SettingsPage() {
     <div className="flex flex-col gap-6 p-8">
       <div className="flex flex-col gap-3">
         <Typography variant="heading">
-          <I18nText id="section.appearance.title" />
+          <I18nText id="settings.appearance.title" />
         </Typography>
         <div>
           <Button
@@ -63,7 +63,7 @@ function SettingsPage() {
 
       <div className="flex flex-col gap-3">
         <Typography variant="heading">
-          <I18nText id="section.i18n.title" />
+          <I18nText id="settings.language.title" />
         </Typography>
         <div>
           <Select value={features.i18n.locale} onValueChange={functions.onLocaleChange}>
@@ -73,7 +73,7 @@ function SettingsPage() {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>
-                  <I18nText id="field.locale.label" />
+                  <I18nText id="input.locale.label" />
                 </SelectLabel>
                 {LOCALES.map(locale => (
                   <SelectItem key={locale.value} value={locale.value}>

@@ -20,23 +20,23 @@ export function CurrentUser() {
               {state.user?.name ?? state.user?.username}
             </div>
             <div className="text-xs text-left text-muted-foreground">
-              <I18nText id="text.online" />
+              <I18nText id="status.online" />
             </div>
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuGroup>
             <DropdownMenuLabel>
-              <I18nText id="dropdown.user.label" />
+              <I18nText id="dropdown.account.label" />
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <UserIcon className="size-4" />
-              <I18nText id="dropdown.user.profile.label" />
+              <I18nText id="dropdown.account.profile" />
             </DropdownMenuItem>
             <DropdownMenuItem render={props => <Link to="/settings" {...props} />}>
               <SettingsIcon className="size-4" />
-              <I18nText id="dropdown.user.settings.label" />
+              <I18nText id="dropdown.account.settings" />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -44,7 +44,7 @@ export function CurrentUser() {
               onClick={functions.onLogout}
             >
               <LogOutIcon className="size-4" />
-              <I18nText id="dropdown.user.logout.label" />
+              <I18nText id="dropdown.account.logout" />
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

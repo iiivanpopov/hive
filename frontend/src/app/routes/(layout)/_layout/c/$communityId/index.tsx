@@ -19,7 +19,7 @@ function CommunityPage() {
   return (
     <div className="h-full flex justify-center items-center">
       <Typography variant="heading">
-        <I18nText id="text.no-channel-selected" />
+        <I18nText id="empty.no-channel" />
       </Typography>
     </div>
   )

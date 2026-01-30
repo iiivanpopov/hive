@@ -8,7 +8,7 @@ import { queryClient } from '@/lib/query-client.ts'
 import { useI18n } from '@/providers/i18n-provider'
 
 const LoginFormSchema = z.object({
-  identity: z.string().min(5, 'validation.identity.min'),
+  identity: z.string().min(5, 'validation.username-or-email.min'),
   password: z.string().min(6, 'validation.password.min'),
 })
 export type LoginFormData = z.infer<typeof LoginFormSchema>
