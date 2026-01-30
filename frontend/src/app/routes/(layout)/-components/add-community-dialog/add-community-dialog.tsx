@@ -1,16 +1,14 @@
 import type { ReactNode } from 'react'
 
 import { PlusIcon } from 'lucide-react'
-import { useState } from 'react'
 
 import { buttonVariants } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog.tsx'
-import { useDisclosure } from '@/hooks/use-disclosure'
 
-import type { AddCommunityDialogScreen } from './add-community-dialog-context.ts'
+import type { AddCommunityDialogScreen } from '../../-providers/add-community-dialog-provider/add-community-dialog-context.ts'
 
-import { AddCommunityDialogContext } from './add-community-dialog-context.ts'
-import { AddCommunityDialogContent, CreateCommunityDialogContent, JoinCommunityDialog } from './components'
+import { useAddCommunityDialog } from '../../-providers/add-community-dialog-provider'
+import { AddCommunityDialogContent, CreateCommunityDialogContent, JoinCommunityDialog } from './components/index.ts'
 
 const screens: Record<AddCommunityDialogScreen, ReactNode> = {
   add: <AddCommunityDialogContent />,
@@ -19,19 +17,16 @@ const screens: Record<AddCommunityDialogScreen, ReactNode> = {
 }
 
 export function AddCommunityDialog() {
-  const [screen, setScreen] = useState<'add' | 'join' | 'create'>('add')
-  const dialog = useDisclosure(false, { onOpen: () => setScreen('add') })
+  const { dialog, screen } = useAddCommunityDialog()
 
   return (
-    <AddCommunityDialogContext value={{ screen, setScreen, dialog }}>
-      <Dialog open={dialog.opened} onOpenChange={dialog.toggle}>
-        <DialogTrigger className={buttonVariants({ size: 'icon-lg', variant: 'secondary' })}>
-          <PlusIcon />
-        </DialogTrigger>
-        <DialogContent>
-          {screens[screen]}
-        </DialogContent>
-      </Dialog>
-    </AddCommunityDialogContext>
+    <Dialog open={dialog.opened} onOpenChange={dialog.toggle}>
+      <DialogTrigger className={buttonVariants({ size: 'icon-lg', variant: 'secondary' })}>
+        <PlusIcon />
+      </DialogTrigger>
+      <DialogContent>
+        {screens[screen]}
+      </DialogContent>
+    </Dialog>
   )
 }

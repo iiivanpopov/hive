@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { buttonVariants } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator.tsx'
 
-import { useCommunityList } from './hooks'
+import { useCommunityList } from './hooks/use-community-list'
 
 export function CommunityList() {
   const { state, refs, queries, features } = useCommunityList()

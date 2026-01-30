@@ -5,7 +5,7 @@ import { I18nText } from '@/components/i18n'
 import { buttonVariants } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu.tsx'
 
-import { useCurrentUser } from './hooks'
+import { useCurrentUser } from './hooks/use-current-user'
 
 export function CurrentUser() {
   const { state, functions } = useCurrentUser()

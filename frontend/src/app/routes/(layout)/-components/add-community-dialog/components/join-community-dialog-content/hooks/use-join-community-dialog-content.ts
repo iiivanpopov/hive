@@ -3,7 +3,7 @@ import { useRouter } from '@tanstack/react-router'
 import z from 'zod'
 
 import { getCommunitiesJoinedOptions, postCommunitiesJoinTokenMutation } from '@/api/@tanstack/react-query.gen.ts'
-import { useAddCommunityDialog } from '@/app/routes/(layout)/-components/add-community-dialog/hooks/use-add-community-dialog'
+import { useAddCommunityDialog } from '@/app/routes/(layout)/-providers/add-community-dialog-provider/use-add-community-dialog'
 import { useForm } from '@/components/form/hooks.ts'
 import { queryClient } from '@/lib/query-client'
 import { useI18n } from '@/providers/i18n-provider'

@@ -1,1 +1,1 @@
-export * from './add-community-dialog-content.tsx'
+export * from './add-community-dialog-content'

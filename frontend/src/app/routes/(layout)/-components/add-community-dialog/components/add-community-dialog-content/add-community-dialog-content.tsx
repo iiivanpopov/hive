@@ -1,4 +1,4 @@
-import { useAddCommunityDialog } from '@/app/routes/(layout)/-components/add-community-dialog/hooks/use-add-community-dialog'
+import { useAddCommunityDialog } from '@/app/routes/(layout)/-providers/add-community-dialog-provider/use-add-community-dialog'
 import { I18nText } from '@/components/i18n'
 import { Button } from '@/components/ui/button'
 import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog.tsx'

@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator.tsx'
 import { queryClient } from '@/lib/query-client.ts'
 
 import { AddCommunityDialog, CommunityList, CommunityListLoading, CurrentUser, CurrentUserLoading } from './-components'
+import { AddCommunityDialogProvider } from './-providers/add-community-dialog-provider'
 
 export const Route = createFileRoute('/(layout)/_layout')({
   component: Layout,
@@ -20,30 +21,32 @@ export const Route = createFileRoute('/(layout)/_layout')({
 
 function Layout() {
   return (
-    <div className="flex h-screen w-screen p-4 pl-0 relative">
-      <div className="flex-col h-full w-20 flex items-center">
-        <Link
-          to="/"
-          className={buttonVariants({ size: 'icon-lg', variant: 'secondary' })}
-        >
-          <HomeIcon />
-        </Link>
+    <AddCommunityDialogProvider>
+      <div className="flex h-screen w-screen p-4 pl-0 relative">
+        <div className="flex-col h-full w-20 flex items-center">
+          <Link
+            to="/"
+            className={buttonVariants({ size: 'icon-lg', variant: 'secondary' })}
+          >
+            <HomeIcon />
+          </Link>
 
-        <Separator className="w-8! mt-4" />
+          <Separator className="w-8! mt-4" />
 
-        <CommunityList />
+          <CommunityList />
 
-        <div className="mt-4">
-          <AddCommunityDialog />
+          <div className="mt-4">
+            <AddCommunityDialog />
+          </div>
         </div>
-      </div>
 
-      <div className="border border-border size-full rounded-xl">
-        <Outlet />
-      </div>
+        <div className="border border-border size-full rounded-xl">
+          <Outlet />
+        </div>
 
-      <CurrentUser />
-    </div>
+        <CurrentUser />
+      </div>
+    </AddCommunityDialogProvider>
   )
 }
 
