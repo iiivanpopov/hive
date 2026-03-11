@@ -11,15 +11,29 @@ export function CurrentUser() {
   const { state, functions } = useCurrentUser()
 
   return (
-    <div className="bg-popover border rounded-md border-border w-64 absolute bottom-2 left-2 p-1 flex justify-between items-center gap-2">
+    <div className="
+      absolute bottom-2 left-2 flex w-64 items-center justify-between gap-2
+      rounded-md border border-border bg-popover p-1
+    "
+    >
       <DropdownMenu>
-        <DropdownMenuTrigger className="hover:bg-muted dark:hover:bg-muted/50 flex w-full gap-3 py-1 px-1.5 rounded-sm items-center transition-colors cursor-pointer">
-          <div className="size-10 rounded-full dark:bg-zinc-700 bg-zinc-200" />
+        <DropdownMenuTrigger className="
+          flex w-full cursor-pointer items-center gap-3 rounded-sm px-1.5 py-1
+          transition-colors
+          hover:bg-muted
+          dark:hover:bg-muted/50
+        "
+        >
+          <div className="
+            size-10 rounded-full bg-zinc-200
+            dark:bg-zinc-700
+          "
+          />
           <div className="h-10 w-32">
-            <div className="text-left font-semibold truncate">
+            <div className="truncate text-left font-semibold">
               {state.user?.name ?? state.user?.username}
             </div>
-            <div className="text-xs text-left text-muted-foreground">
+            <div className="text-left text-xs text-muted-foreground">
               <I18nText id="status.online" />
             </div>
           </div>

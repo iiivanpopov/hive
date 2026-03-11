@@ -10,7 +10,7 @@ export function ChannelsList() {
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div className="flex justify-between items-center p-3">
+      <div className="flex items-center justify-between p-3">
         <span className="text-sm text-muted-foreground select-none">
           <I18nText id="channels.text.title" />
         </span>

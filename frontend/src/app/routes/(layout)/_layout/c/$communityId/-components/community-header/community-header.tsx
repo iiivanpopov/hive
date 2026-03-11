@@ -18,14 +18,20 @@ export function CommunityHeader() {
             <Button
               {...props}
               variant="ghost"
-              className="gap-2 w-full py-1 px-1.5 rounded-md font-semibold cursor-pointer transition-colors flex justify-between items-center text-base"
+              className="
+                flex w-full cursor-pointer items-center justify-between gap-2
+                rounded-md px-1.5 py-1 text-base font-semibold transition-colors
+              "
             >
               <span className="truncate">
                 {queries.community.data.community.name}
               </span>
               <ChevronDownIcon
                 data-open={features.dropdownMenu.opened}
-                className="shrink-0 size-5 data-[open=true]:rotate-180 transition-transform"
+                className="
+                  size-5 shrink-0 transition-transform
+                  data-[open=true]:rotate-180
+                "
               />
             </Button>
           )}
@@ -33,7 +39,7 @@ export function CommunityHeader() {
         <DropdownMenuContent className="w-48">
           <DropdownMenuGroup>
             <DropdownMenuLabel>
-              <div className="wrap-break-word line-clamp-2">
+              <div className="line-clamp-2 wrap-break-word">
                 {queries.community.data.community.name}
               </div>
             </DropdownMenuLabel>
@@ -42,15 +48,20 @@ export function CommunityHeader() {
 
             <DropdownMenuItem
               onClick={() => features.createInvitation.dialog.open()}
-              className="cursor-pointer justify-between items-center transition-colors"
+              className="
+                cursor-pointer items-center justify-between transition-colors
+              "
             >
               <I18nText id="dropdown.create-invitation.title" />
               <LinkIcon className="size-4" />
             </DropdownMenuItem>
 
-            <DropdownMenuSeparator className="w-4/5! mx-auto" />
+            <DropdownMenuSeparator className="mx-auto w-4/5!" />
 
-            <DropdownMenuItem className="cursor-pointer justify-between items-center text-destructive">
+            <DropdownMenuItem className="
+              cursor-pointer items-center justify-between text-destructive
+            "
+            >
               <I18nText id="dropdown.leave-community.title" />
               <DoorOpenIcon className="size-4" />
             </DropdownMenuItem>

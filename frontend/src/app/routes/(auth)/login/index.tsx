@@ -32,7 +32,10 @@ function LoginPage() {
   const { form, mutations, features } = useLoginPage()
 
   return (
-    <Card className="absolute left-1/2 top-1/2 w-xs -translate-x-1/2 -translate-y-1/2">
+    <Card className="
+      absolute top-1/2 left-1/2 w-xs -translate-x-1/2 -translate-y-1/2
+    "
+    >
       <CardHeader>
         <CardTitle>
           <I18nText id="auth.login.title" />
@@ -84,7 +87,7 @@ function LoginPage() {
         {mutations.login.isError && (
           <Typography
             variant="caption"
-            className="text-center mb-4"
+            className="mb-4 text-center"
           >
             <I18nText id="auth.forgot-password" />
             {' '}
@@ -121,7 +124,7 @@ function LoginPage() {
           <I18nText id="button.submit" />
         </Button>
 
-        <span className="text-muted-foreground my-1">
+        <span className="my-1 text-muted-foreground">
           <I18nText id="auth.continue-with" />
         </span>
 

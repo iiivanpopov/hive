@@ -22,8 +22,8 @@ export const Route = createFileRoute('/(layout)/_layout')({
 function Layout() {
   return (
     <AddCommunityDialogProvider>
-      <div className="flex h-screen w-screen p-4 pl-0 relative">
-        <div className="flex-col h-full w-20 flex items-center">
+      <div className="relative flex h-screen w-screen p-4 pl-0">
+        <div className="flex h-full w-20 flex-col items-center">
           <Link
             to="/"
             className={buttonVariants({ size: 'icon-lg', variant: 'secondary' })}
@@ -31,7 +31,7 @@ function Layout() {
             <HomeIcon />
           </Link>
 
-          <Separator className="w-8! mt-4" />
+          <Separator className="mt-4 w-8!" />
 
           <CommunityList />
 
@@ -40,7 +40,7 @@ function Layout() {
           </div>
         </div>
 
-        <div className="border border-border size-full rounded-xl">
+        <div className="size-full rounded-xl border border-border">
           <Outlet />
         </div>
 
@@ -52,8 +52,8 @@ function Layout() {
 
 function LayoutLoading() {
   return (
-    <div className="flex h-screen w-screen p-4 pl-0 relative">
-      <div className="flex-col h-full w-20 flex items-center gap-4">
+    <div className="relative flex h-screen w-screen p-4 pl-0">
+      <div className="flex h-full w-20 flex-col items-center gap-4">
         <Link
           to="/"
           className={buttonVariants({ size: 'icon-lg', variant: 'secondary' })}
@@ -66,7 +66,7 @@ function LayoutLoading() {
         <CommunityListLoading />
       </div>
 
-      <div className="border border-border size-full rounded-xl">
+      <div className="size-full rounded-xl border border-border">
         <Outlet />
       </div>
 

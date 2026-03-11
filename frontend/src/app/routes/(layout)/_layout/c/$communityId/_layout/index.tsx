@@ -6,7 +6,7 @@ export const Route = createFileRoute('/(layout)/_layout/c/$communityId/_layout/'
 
 function CommunityPage() {
   return (
-    <div className="h-full flex gap-4">
+    <div className="flex h-full gap-4">
       asdasd
     </div>
   )

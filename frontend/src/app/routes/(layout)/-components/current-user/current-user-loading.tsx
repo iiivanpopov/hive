@@ -4,7 +4,11 @@ import { buttonVariants } from '@/components/ui/button'
 
 export function CurrentUserLoading() {
   return (
-    <div className="bg-popover border rounded-md border-border w-48 absolute bottom-3 left-4 p-1.5 flex justify-between items-center">
+    <div className="
+      absolute bottom-3 left-4 flex w-48 items-center justify-between rounded-md
+      border border-border bg-popover p-1.5
+    "
+    >
       <div
         className={buttonVariants({
           variant: 'ghost',

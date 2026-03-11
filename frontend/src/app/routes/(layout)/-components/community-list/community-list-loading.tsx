@@ -2,12 +2,15 @@ import { buttonVariants } from '@/components/ui/button'
 
 export function CommunityListLoading() {
   return (
-    <div className="relative w-full h-4/5 overflow-hidden">
-      <div className="no-scrollbar overflow-y-auto h-full flex flex-col items-center gap-4">
+    <div className="relative h-4/5 w-full overflow-hidden">
+      <div className="
+        no-scrollbar flex h-full flex-col items-center gap-4 overflow-y-auto
+      "
+      >
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
-            className="relative w-20 flex justify-center items-center"
+            className="relative flex w-20 items-center justify-center"
           >
             <div
               className={buttonVariants({

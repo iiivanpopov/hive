@@ -31,8 +31,8 @@ export const Route = createFileRoute('/(layout)/_layout/c/$communityId/_layout')
 function Layout() {
   return (
     <CreateInvitationProvider>
-      <div className="flex gap-4 h-full">
-        <div className="w-48 border-border h-full border-r">
+      <div className="flex h-full gap-4">
+        <div className="h-full w-48 border-r border-border">
           <CommunityHeader />
 
           <Separator />

@@ -40,7 +40,7 @@ function RootLoading() {
   return (
     <>
       <HeadContent />
-      <div className="flex h-screen justify-center items-center">
+      <div className="flex h-screen items-center justify-center">
         <Loader className="animate-spin" />
       </div>
     </>

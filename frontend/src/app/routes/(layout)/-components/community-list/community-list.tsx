@@ -14,14 +14,17 @@ export function CommunityList() {
   return (
     <div
       ref={refs.container}
-      className="relative w-full max-h-[78%] flex flex-col gap-4 mt-4"
+      className="relative mt-4 flex max-h-[78%] w-full flex-col gap-4"
     >
-      <div className="no-scrollbar overflow-y-auto h-full flex flex-col items-center gap-4">
+      <div className="
+        no-scrollbar flex h-full flex-col items-center gap-4 overflow-y-auto
+      "
+      >
         {queries.communities.data.communities.map((community, i) => (
           <div
             key={community.id}
             ref={i === 0 ? refs.firstItem : i === queries.communities.data.communities.length - 1 ? refs.lastItem : null}
-            className="relative w-20 flex justify-center items-center"
+            className="relative flex w-20 items-center justify-center"
           >
             <Link
               to="/c/$communityId"
@@ -32,7 +35,11 @@ export function CommunityList() {
             </Link>
             <div
               data-active={Number(state.params.communityId) === community.id}
-              className="scale-0 opacity-0 data-[active=true]:scale-100 data-[active=true]:opacity-100 transition-all absolute left-0 top-1/2 -translate-y-1/2 h-7 w-1.25 rounded-tr-3xl rounded-br-3xl bg-primary"
+              className="
+                absolute top-1/2 left-0 h-7 w-1.25 -translate-y-1/2 scale-0
+                rounded-r-3xl bg-primary opacity-0 transition-all
+                data-[active=true]:scale-100 data-[active=true]:opacity-100
+              "
             />
           </div>
         ))}
@@ -42,13 +49,23 @@ export function CommunityList() {
 
       <div
         data-open={features.scrollTopBadge.opened}
-        className="scale-0 opacity-0 data-[open=true]:opacity-100 data-[open=true]:scale-100 transition-all duration-200 ease-in-out absolute top-0 left-0 right-0 text-center mx-2 py-0.75 bg-popover border-border border rounded-sm pointer-events-none text-sm"
+        className="
+          pointer-events-none absolute top-0 right-0 left-0 mx-2 scale-0
+          rounded-sm border border-border bg-popover py-0.75 text-center text-sm
+          opacity-0 transition-all duration-200 ease-in-out
+          data-[open=true]:scale-100 data-[open=true]:opacity-100
+        "
       >
         more...
       </div>
       <div
         data-open={features.scrollBottomBadge.opened ? 'true' : undefined}
-        className="scale-0 opacity-0 data-open:opacity-100 data-open:scale-100 transition-all duration-200 ease-in-out absolute bottom-0 left-0 right-0 text-center mx-2 py-0.75 bg-popover border-border border rounded-sm pointer-events-none text-sm"
+        className="
+          pointer-events-none absolute right-0 bottom-0 left-0 mx-2 scale-0
+          rounded-sm border border-border bg-popover py-0.75 text-center text-sm
+          opacity-0 transition-all duration-200 ease-in-out
+          data-open:scale-100 data-open:opacity-100
+        "
       >
         more...
       </div>

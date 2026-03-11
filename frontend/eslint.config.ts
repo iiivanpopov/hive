@@ -1,4 +1,5 @@
 import antfu from '@antfu/eslint-config'
+import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss'
 import path from 'node:path'
 
 import { globalESLintConfig } from '../eslint.config.ts'
@@ -16,4 +17,16 @@ export default antfu({
     'react-hooks/refs': 'off',
   },
   basePath: path.resolve(__dirname),
-})
+}).append(
+  eslintPluginBetterTailwindcss.configs.recommended,
+  {
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'src/styles/global.css',
+      },
+    },
+    rules: {
+      'better-tailwindcss/no-unknown-classes': 'off',
+    },
+  },
+)
