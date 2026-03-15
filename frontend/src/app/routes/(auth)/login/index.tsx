@@ -32,10 +32,7 @@ function LoginPage() {
   const { form, mutations, features } = useLoginPage()
 
   return (
-    <Card className="
-      absolute top-1/2 left-1/2 w-xs -translate-x-1/2 -translate-y-1/2
-    "
-    >
+    <Card className="absolute top-1/2 left-1/2 w-xs -translate-1/2">
       <CardHeader>
         <CardTitle>
           <I18nText id="auth.login.title" />

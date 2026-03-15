@@ -48,7 +48,7 @@ export function createRefState<Value>(initialValue: Value | undefined, setState:
 export function useRefState<Value>(initialValue?: Value) {
   const [state, setState] = useState<Value | undefined>(initialValue)
   const [ref] = useState(() => createRefState<Value>(initialValue, setState))
-  // eslint-disable-next-line react-hooks/immutability
+
   ref.state = state
   return ref
 }

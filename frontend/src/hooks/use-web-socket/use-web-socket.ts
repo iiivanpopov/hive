@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks-extra/no-direct-set-state-in-use-effect */
-/* eslint-disable react-hooks/immutability */
+
 import { useEffect, useRef, useState } from 'react'
 
 import { getRetry } from '@/utils'
