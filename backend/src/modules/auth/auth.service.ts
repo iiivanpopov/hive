@@ -71,7 +71,7 @@ export class AuthService {
     const confirmationToken = await this.confirmationTokens.create({ userId: user.id })
     pino.debug(`Created confirm token ${confirmationToken}`)
 
-    if (Bun.env.SMTP_ENABLE === 'true') {
+    if (Bun.env.SMTP_ENABLE === 'true' || Bun.env.NODE_ENV === 'test') {
       await this.sendConfirmEmail(user, confirmationToken)
       pino.debug(`Sent email to ${user.email}`)
     }
@@ -186,7 +186,7 @@ export class AuthService {
       throw ApiException.TooManyRequests('Too many password reset attempts. Please try again later.', 'TOO_MANY_PASSWORD_RESET_ATTEMPTS')
 
     const resetToken = await this.resetPasswordTokens.create({ userId: user.id })
-    if (Bun.env.SMTP_ENABLE === 'true') {
+    if (Bun.env.SMTP_ENABLE === 'true' || Bun.env.NODE_ENV === 'test') {
       await this.sendPasswordResetEmail(user, resetToken)
       pino.debug(`Sent password reset email to ${user.email}`)
     }
@@ -247,7 +247,7 @@ export class AuthService {
     const confirmationToken = await this.confirmationTokens.create({ userId: user.id })
     pino.debug(`Created confirm token ${confirmationToken} for email resend`)
 
-    if (Bun.env.SMTP_ENABLE === 'true') {
+    if (Bun.env.SMTP_ENABLE === 'true' || Bun.env.NODE_ENV === 'test') {
       await this.sendConfirmEmail(user, confirmationToken)
       pino.debug(`Resent confirmation email to ${user.email}`)
     }
