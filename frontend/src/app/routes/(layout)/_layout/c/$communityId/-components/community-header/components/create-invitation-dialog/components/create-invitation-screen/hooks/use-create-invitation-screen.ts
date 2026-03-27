@@ -2,16 +2,19 @@ import { useMutation } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import z from 'zod'
 
-import { postCommunitiesCommunityIdInvitationsMutation } from '@/api/@tanstack/react-query.gen'
+import { getCommunitiesCommunityIdInvitationsOptions, postCommunitiesCommunityIdInvitationsMutation } from '@/api/@tanstack/react-query.gen'
 import { useCreateInvitation } from '@/app/routes/(layout)/_layout/c/$communityId/-providers/create-invitation-provider'
 import { useForm } from '@/components/form/hooks'
+import { queryClient } from '@/lib/query-client'
 import { useI18n } from '@/providers/i18n-provider'
 
 const CreateInvitationSchema = z.object({
-  expiresAt: z.date().min(Date.now(), 'validation.expires-at.future'),
+  expiresAt: z.optional(z.date().min(Date.now(), 'validation.expires-at.future')),
 })
 
-const formDefaultValues = {
+type CreateInvitationFormData = z.infer<typeof CreateInvitationSchema>
+
+const formDefaultValues: CreateInvitationFormData = {
   expiresAt: (() => {
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
@@ -38,9 +41,15 @@ export function useCreateInvitationScreen() {
       const mutation = await createInvitationMutation.mutateAsync({
         path: { communityId },
         body: {
-          expiresAt: value.expiresAt.toISOString(),
+          expiresAt: value.expiresAt?.toISOString(),
         },
       })
+
+      await queryClient.invalidateQueries(
+        getCommunitiesCommunityIdInvitationsOptions({
+          path: { communityId },
+        }),
+      )
 
       setInvitation(mutation.invitation.token)
       setScreen('view')

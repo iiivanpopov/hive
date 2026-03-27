@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'bun:test'
 
+import { invitations } from '@/db/tables/invitations'
 import { clientMock } from '@/tests/mocks/client.mock'
 import { databaseMock } from '@/tests/mocks/database.mock'
 import { extractSessionTokenCookie } from '@/tests/utils'
@@ -44,6 +45,65 @@ describe('/communities/:communityId/invitations', () => {
     const invitations = await databaseMock.query.invitations.findMany()
 
     expect(invitations).toHaveLength(1)
+  })
+
+  it('should get only active invitations for owner', async () => {
+    const createInvitationResponse = await clientMock.communities[':communityId'].invitations.$post({
+      param: { communityId: '1' },
+      json: {},
+    }, { headers: { Cookie: authCookie } })
+
+    const { invitation } = await createInvitationResponse.json()
+
+    await databaseMock.insert(invitations).values({
+      communityId: 1,
+      token: 'expiredinvite000',
+      expiresAt: new Date(Date.now() - 60_000),
+    })
+
+    const getInvitationsResponse = await clientMock.communities[':communityId'].invitations.$get({
+      param: { communityId: '1' },
+    }, { headers: { Cookie: authCookie } })
+
+    expect(getInvitationsResponse.status).toBe(200)
+
+    const body = await getInvitationsResponse.json()
+
+    expect(body.invitations).toHaveLength(1)
+    expect(body.invitations[0]).toMatchObject({
+      communityId: 1,
+      token: invitation.token,
+    })
+  })
+
+  it('should forbid members from getting community invitations', async () => {
+    const createInvitationResponse = await clientMock.communities[':communityId'].invitations.$post({
+      param: { communityId: '1' },
+      json: {},
+    }, { headers: { Cookie: authCookie } })
+
+    const { invitation } = await createInvitationResponse.json()
+
+    const registerResponse = await clientMock.auth.register.$post({
+      json: {
+        email: 'testuser2@gmail.com',
+        username: 'testuser2',
+        password: 'password123',
+      },
+    })
+    const memberCookie = extractSessionTokenCookie(registerResponse.headers)
+
+    const joinInvitationResponse = await clientMock.communities.join[':token'].$post({
+      param: { token: invitation.token },
+    }, { headers: { Cookie: memberCookie } })
+
+    expect(joinInvitationResponse.status).toBe(200)
+
+    const getInvitationsResponse = await clientMock.communities[':communityId'].invitations.$get({
+      param: { communityId: '1' },
+    }, { headers: { Cookie: memberCookie } })
+
+    expect(getInvitationsResponse.status).toBe(403)
   })
 })
 

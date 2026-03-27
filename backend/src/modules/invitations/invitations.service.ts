@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { and, desc, eq, gt, isNull, or } from 'drizzle-orm'
 
 import type { User } from '@/db/tables/users'
 import type { DrizzleDatabase } from '@/db/utils'
@@ -10,12 +10,29 @@ import { generateInvitationId } from '@/lib/utils'
 
 import type { CreateInvitationBody, CreateInvitationParam } from './schema/create-invitation.schema'
 import type { DeleteInvitationParam } from './schema/delete-invitation.schema'
+import type { GetCommunityInvitationsParam } from './schema/get-community-invitations.schema'
 import type { JoinInvitationParam } from './schema/join-invitation.schema'
 
 export class InvitationsService {
   constructor(
     private readonly db: DrizzleDatabase,
   ) { }
+
+  async getActiveCommunityInvitations(params: GetCommunityInvitationsParam) {
+    return this.db
+      .select()
+      .from(invitations)
+      .where(
+        and(
+          eq(invitations.communityId, params.communityId),
+          or(
+            gt(invitations.expiresAt, new Date()),
+            isNull(invitations.expiresAt),
+          ),
+        ),
+      )
+      .orderBy(desc(invitations.createdAt))
+  }
 
   async joinCommunityViaInvitation(params: JoinInvitationParam, user: User) {
     const invitation = await this.db.query.invitations.findFirst({

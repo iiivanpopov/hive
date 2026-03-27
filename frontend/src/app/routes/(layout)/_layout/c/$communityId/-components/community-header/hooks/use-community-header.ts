@@ -1,8 +1,9 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 
-import { getCommunitiesCommunityIdOptions } from '@/api/@tanstack/react-query.gen'
+import { getCommunitiesCommunityIdInvitationsOptions, getCommunitiesCommunityIdOptions } from '@/api/@tanstack/react-query.gen'
 import { useDisclosure } from '@/hooks/use-disclosure'
+import { queryClient } from '@/lib/query-client'
 
 import { useCreateInvitation } from '../../../-providers/create-invitation-provider'
 
@@ -17,15 +18,29 @@ export function useCommunityHeader() {
   }))
 
   const dropdownMenu = useDisclosure()
+  const viewInvitations = useDisclosure()
   const createInvitation = useCreateInvitation()
+
+  const prefetchInvitations = () => {
+    queryClient.prefetchQuery({
+      ...getCommunitiesCommunityIdInvitationsOptions({
+        path: { communityId },
+      }),
+      staleTime: 60_000,
+    })
+  }
 
   return {
     queries: {
       community: communityQuery,
     },
+    functions: {
+      prefetchInvitations,
+    },
     features: {
       dropdownMenu,
       createInvitation,
+      viewInvitations,
     },
   }
 }

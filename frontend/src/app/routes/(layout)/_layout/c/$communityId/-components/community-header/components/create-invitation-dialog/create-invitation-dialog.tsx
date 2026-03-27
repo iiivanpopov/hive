@@ -16,7 +16,7 @@ export function CreateInvitationDialog() {
   const { dialog, screen } = useCreateInvitation()
 
   return (
-    <Dialog open onOpenChange={dialog.toggle}>
+    <Dialog open={dialog.opened} onOpenChange={dialog.toggle}>
       <DialogContent>
         {screens[screen]}
       </DialogContent>

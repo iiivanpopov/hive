@@ -12,6 +12,7 @@ import { role } from '@/middleware/role.middleware'
 import { InvitationsService } from './invitations.service'
 import { CreateInvitationBodySchema, CreateInvitationParamsSchema, CreateInvitationResponseSchema } from './schema/create-invitation.schema'
 import { DeleteInvitationParamsSchema, DeleteInvitationResponseSchema } from './schema/delete-invitation.schema'
+import { GetCommunityInvitationsParamsSchema, GetCommunityInvitationsResponseSchema } from './schema/get-community-invitations.schema'
 import { JoinInvitationParamsSchema, JoinInvitationResponseSchema } from './schema/join-invitation.schema'
 
 export class InvitationsRouter implements BaseRouter {
@@ -29,6 +30,35 @@ export class InvitationsRouter implements BaseRouter {
     const app = factory
       .createApp()
       .basePath(this.basePath)
+      .get(
+        '/communities/:communityId/invitations',
+        describeRoute({
+          tags: ['Invitations'],
+          summary: 'Get active community invitations',
+          description: 'Retrieve all active invitations for a community.',
+          responses: {
+            200: {
+              description: 'Active invitations retrieved successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(GetCommunityInvitationsResponseSchema),
+                },
+              },
+            },
+          },
+        }),
+        session(this.db, this.sessionTokens),
+        onlyMember(this.db)({ param: 'communityId' }),
+        role(['owner']),
+        validator('param', GetCommunityInvitationsParamsSchema),
+        async (c) => {
+          const params = c.req.valid('param')
+
+          const invitations = await this.invitationsService.getActiveCommunityInvitations(params)
+
+          return c.json({ invitations })
+        },
+      )
       .post(
         '/communities/:communityId/invitations',
         describeRoute({

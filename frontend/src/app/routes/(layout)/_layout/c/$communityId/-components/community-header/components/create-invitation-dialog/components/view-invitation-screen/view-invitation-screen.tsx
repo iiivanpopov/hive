@@ -20,7 +20,7 @@ export function ViewInvitationScreen() {
       <div className="space-y-4">
         <div className="flex gap-2">
           <Input
-            value={state.invitation ?? ''}
+            value={state.invitation!}
             readOnly
             className="flex-1"
           />

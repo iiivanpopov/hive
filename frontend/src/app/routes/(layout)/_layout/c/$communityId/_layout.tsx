@@ -32,7 +32,7 @@ function Layout() {
   return (
     <CreateInvitationProvider>
       <div className="flex h-full gap-4">
-        <div className="h-full w-48 border-r border-border">
+        <div className="h-full w-48 shrink-0 border-r border-border">
           <CommunityHeader />
 
           <Separator />

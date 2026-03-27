@@ -44,17 +44,17 @@ export function CurrentUser() {
               <I18nText id="dropdown.account.label" />
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
               <UserIcon className="size-4" />
               <I18nText id="dropdown.account.profile" />
             </DropdownMenuItem>
-            <DropdownMenuItem render={props => <Link to="/settings" {...props} />}>
+            <DropdownMenuItem className="cursor-pointer" render={props => <Link to="/settings" {...props} />}>
               <SettingsIcon className="size-4" />
               <I18nText id="dropdown.account.settings" />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="text-destructive"
+              className="cursor-pointer text-destructive"
               onClick={functions.onLogout}
             >
               <LogOutIcon className="size-4" />

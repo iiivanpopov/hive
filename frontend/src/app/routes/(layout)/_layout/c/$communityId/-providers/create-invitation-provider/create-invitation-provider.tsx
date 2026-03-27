@@ -16,7 +16,12 @@ export function CreateInvitationProvider({ children }: CreateInvitationProviderP
   const [screen, setScreen] = useState<CreateInvitationDialogScreen>('create')
   const [invitation, setInvitation] = useState<string | null>(null)
 
-  const dialog = useDisclosure()
+  const dialog = useDisclosure(false, {
+    onOpen: () => {
+      setScreen('create')
+      setInvitation(null)
+    },
+  })
 
   const contextValue = useMemo(() => ({
     dialog,

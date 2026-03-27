@@ -6,6 +6,7 @@
   "button.create-community": "Create community",
   "button.join-community": "Join community",
   "button.create-invitation": "Create invitation",
+  "button.revoke": "Revoke",
 
   "auth.login.title": "Sign in to your account",
   "auth.register.title": "Create your account",
@@ -23,6 +24,7 @@
   "input.invite-token.label": "Invitation token",
   "input.expires-at.label": "Expires at",
   "input.expires-at.description": "Expires at {day} {time}",
+  "input.expires-at.never-expires": "Never expires",
 
   "auth.no-account": "Don't have an account?",
   "auth.have-account": "Already have an account?",
@@ -56,6 +58,8 @@
   "dialog.join-community.title": "Join a community",
   "dialog.create-community.title": "Create a community",
   "dialog.create-invitation.title": "Create invitation",
+  "dialog.invitations.title": "Invitations",
+  "dialog.invitations.description": "Active invitations: {count}",
   "dialog.view-invitation.title": "Invitation created",
 
   "dropdown.account.label": "Account",
@@ -65,12 +69,18 @@
 
   "channels.text.title": "Text Channels",
 
+  "dropdown.view-invitations.title": "View invitations",
   "dropdown.create-invitation.title": "Create invitation",
   "dropdown.leave-community.title": "Leave community",
+  "dropdown.invitations.title": "Invitations",
 
   "toast.create-invitation.success": "Invitation created successfully",
 
   "invitation.ready": "Here is your invitation token",
+  "invitation.empty": "There are no active invitations yet.",
+  "invitation.expires-at": "Available until {date}",
+  "invitation.never-expires": "Available without expiration",
+  "invitation.created-at": "Created {date}",
 
   "button.close": "Close"
 }

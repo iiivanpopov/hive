@@ -1,17 +1,18 @@
-import { ChevronDownIcon, DoorOpenIcon, LinkIcon } from 'lucide-react'
+import { ChevronDownIcon, DoorOpenIcon, LinkIcon, ListIcon } from 'lucide-react'
 
 import { I18nText } from '@/components/i18n'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 import { CreateInvitationDialog } from './components/create-invitation-dialog'
+import { InvitationsDialog } from './components/invitations-dialog/invitations-dialog'
 import { useCommunityHeader } from './hooks/use-community-header'
 
 export function CommunityHeader() {
-  const { queries, features } = useCommunityHeader()
+  const { queries, functions, features } = useCommunityHeader()
 
   return (
-    <div className="p-3">
+    <div className="p-2">
       <DropdownMenu open={features.dropdownMenu.opened} onOpenChange={features.dropdownMenu.toggle}>
         <DropdownMenuTrigger
           render={props => (
@@ -39,12 +40,19 @@ export function CommunityHeader() {
         <DropdownMenuContent className="w-48">
           <DropdownMenuGroup>
             <DropdownMenuLabel>
-              <div className="line-clamp-2 wrap-break-word">
-                {queries.community.data.community.name}
-              </div>
+              <I18nText id="dropdown.invitations.title" />
             </DropdownMenuLabel>
 
-            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => features.viewInvitations.open()}
+              onMouseOver={functions.prefetchInvitations}
+              className="
+                cursor-pointer items-center justify-between transition-colors
+              "
+            >
+              <I18nText id="dropdown.view-invitations.title" />
+              <ListIcon className="size-4" />
+            </DropdownMenuItem>
 
             <DropdownMenuItem
               onClick={() => features.createInvitation.dialog.open()}
@@ -56,7 +64,7 @@ export function CommunityHeader() {
               <LinkIcon className="size-4" />
             </DropdownMenuItem>
 
-            <DropdownMenuSeparator className="mx-auto w-4/5!" />
+            <DropdownMenuSeparator />
 
             <DropdownMenuItem className="
               cursor-pointer items-center justify-between text-destructive
@@ -69,9 +77,11 @@ export function CommunityHeader() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {features.createInvitation.dialog.opened && (
-        <CreateInvitationDialog />
-      )}
+      <InvitationsDialog
+        open={features.viewInvitations.opened}
+        onOpenChange={features.viewInvitations.toggle}
+      />
+      <CreateInvitationDialog />
     </div>
   )
 }
