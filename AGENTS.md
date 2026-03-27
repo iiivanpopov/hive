@@ -1,220 +1,158 @@
 # AGENTS.md
+Guide for coding agents working in `/home/yelai/architect/hive`.
 
-Guidance for coding agents working in this repository.
-
-## Project Overview
-
-- Monorepo managed with Bun workspaces.
-- Workspace packages:
-  - `backend` (`hive-backend`): Hono + Drizzle + Bun runtime.
-  - `frontend` (`hive-frontend`): React + Vite + TanStack Router.
-- Top-level shared lint config lives in `eslint.config.ts`.
+## Repo Snapshot
+- Bun workspace monorepo with `backend/` and `frontend/`.
+- Backend: Bun, Hono, Drizzle ORM, SQLite, Redis, Zod, Pino.
+- Frontend: React 19, Vite, TanStack Router, TanStack Query, TanStack Form, Tailwind CSS v4.
 - TypeScript is strict in both packages.
-
-## Repository Rules Discovery
-
-- Checked for Cursor rules:
-  - `.cursorrules`: not present.
-  - `.cursor/rules/`: not present.
-- Checked for Copilot rules:
-  - `.github/copilot-instructions.md`: not present.
-- If these files are added later, treat them as highest-priority agent instructions.
-
-## Install And Setup
-
-- Install dependencies from repo root:
-  - `bun install`
-- Husky hooks are configured via `prepare` script.
-- Pre-commit runs build, tests, and lint-staged (see "Git Hooks").
-
-## Build / Dev / Lint / Test Commands
-
-Run commands from repository root unless noted.
-
-### Root Commands
-
-- Dev (all workspaces):
-  - `bun dev`
-- Production run (all workspaces):
-  - `bun prod`
-- Build all in development mode:
-  - `bun build:dev`
-- Build all in production mode:
-  - `bun build:prod`
-- Lint all workspaces:
-  - `bun lint`
-- Lint frontend CSS:
-  - `bun lint:css`
-- Run backend unit tests:
-  - `bun test:unit`
-- Run backend integration tests:
-  - `bun test:it`
-- Run all tests:
-  - `bun test`
-
-### Backend Commands
-
-- Start backend dev server:
-  - `bun --filter hive-backend dev`
-- Run backend production entry:
-  - `bun --filter hive-backend prod`
-- Build backend (dev/prod):
-  - `bun --filter hive-backend build:dev`
-  - `bun --filter hive-backend build:prod`
-- Lint backend:
-  - `bun --filter hive-backend lint`
-- DB operations:
-  - `bun --filter hive-backend db:generate`
-  - `bun --filter hive-backend db:push`
-  - `bun --filter hive-backend db:studio`
-
-### Frontend Commands
-
-- Start frontend dev server:
-  - `bun --filter hive-frontend dev`
-- Run frontend preview/prod mode:
-  - `bun --filter hive-frontend prod`
-- Build frontend (dev/prod):
-  - `bun --filter hive-frontend build:dev`
-  - `bun --filter hive-frontend build:prod`
-- Lint frontend TS/JS:
-  - `bun --filter hive-frontend lint`
-- Lint frontend CSS:
-  - `bun --filter hive-frontend lint:css`
-- Generate API client:
-  - `bun --filter hive-frontend api:generate`
-- Frontend test script currently prints a placeholder message.
-
-## Running A Single Test (Important)
-
-Backend uses Bun test with preload setup files.
-
-- Single backend unit test file:
-  - `bun test ./backend/tests/unit/lib/utils.test.ts --preload ./backend/tests/global.setup.ts`
-- Single backend integration test file:
-  - `bun test ./backend/tests/it/auth/auth.router.test.ts --preload ./backend/tests/global.setup.ts --preload ./backend/tests/it/setup.it.ts`
-- Single test case by name pattern:
-  - `bun test ./backend/tests/unit --preload ./backend/tests/global.setup.ts -t "should return a string of length 16"`
-- Combine file + name filter:
-  - `bun test ./backend/tests/it/messages/messages.router.test.ts --preload ./backend/tests/global.setup.ts --preload ./backend/tests/it/setup.it.ts -t "creates message"`
-
-Notes:
-
-- Prefer direct `bun test ...` commands for one-off targeting.
-- `bun test:unit` and `bun test:it` are broad suite scripts, not single-test scripts.
-
-## Git Hooks
-
-- `.husky/pre-commit` runs:
-  - `bun build:dev`
-  - `bun run test`
-  - `bun lint-staged`
-- `.husky/prepare-commit-msg` prepends a random emoji to commit messages.
-- Expect commit to fail if build/tests/lint fail.
-
-## Code Style Guidelines
-
+- Prefer Bun-native commands over npm, pnpm, or yarn.
+- Useful layout:
+  - `backend/src/app`: app bootstrap and router composition.
+  - `backend/src/modules/*`: feature routers, services, and schemas.
+  - `backend/src/db/tables/*`: Drizzle tables and DTO schemas.
+  - `backend/tests/{it,unit}`: integration and unit tests.
+  - `frontend/src/app/routes`: file-based TanStack Router routes.
+  - `frontend/src/components`: shared UI and form building blocks.
+  - `frontend/src/providers`: theme and i18n providers.
+## Editor Rules
+- No `.cursor/rules/` directory was present when this file was generated.
+- No `.cursorrules` file was present.
+- No `.github/copilot-instructions.md` file was present.
+- If any of those appear later, treat them as higher-priority repo guidance.
+## Environment
+- Backend template: `backend/.env.example`.
+- Frontend template: `frontend/.env.example`.
+- Backend expects `DB_URL`, `REDIS_URL`, `FRONTEND_URL`, SMTP config, and OAuth secrets.
+- Frontend currently needs `VITE_API_BASE_URL`.
+- Never commit real `.env` files or secrets.
+## Install
+Run from repo root:
+```bash
+bun install
+```
+## Commands
+Root commands (run from repo root):
+```bash
+bun dev
+bun build:dev
+bun build:prod
+bun lint
+bun lint:css
+bun test:unit
+bun test:it
+bun test
+```
+- Root also exposes backend DB helpers: `bun db:generate`, `bun db:push`, `bun db:studio`.
+- `bun test:frontend` exists but is currently only a placeholder script.
+Backend commands (run in `backend/`):
+```bash
+bun run dev
+bun run build:dev
+bun run build:prod
+bun run lint
+bun run db:generate
+bun run test:it
+bun run test:unit
+bun run test
+```
+Frontend commands (run in `frontend/`):
+```bash
+bun run dev
+bun run build:dev
+bun run build:prod
+bun run lint
+bun run lint:css
+bun run api:generate
+bun run test
+```
+- `bun run api:generate` rebuilds the generated client from the backend OpenAPI endpoint.
+- `bun run test` in `frontend/` is still a placeholder echo.
+## Single Test Recipes
+Run these in `backend/`:
+```bash
+# one integration test file
+bun test ./tests/it/auth/auth.router.test.ts --preload ./tests/global.setup.ts --preload ./tests/it/setup.it.ts
+# one unit test file
+bun test ./tests/unit/lib/utils.test.ts --preload ./tests/global.setup.ts
+# one named integration test
+bun test ./tests/it/auth/auth.router.test.ts --preload ./tests/global.setup.ts --preload ./tests/it/setup.it.ts -t "changes password with valid current password"
+# one named unit test
+bun test ./tests/unit/lib/utils.test.ts --preload ./tests/global.setup.ts -t "normalize"
+```
+- Bun supports `-t` / `--test-name-pattern` for name filtering.
+- Bun accepts file paths directly to scope execution.
+- Use `--coverage` only when you explicitly need coverage output.
+## Single-File Lint Recipes
+```bash
+# run in backend/ or frontend/
+bun --bun eslint src/path/to/file.ts
+bun --bun eslint src/path/to/file.tsx
+# run in frontend/
+bun --bun stylelint "src/styles/global.css"
+```
+## Generated Files
+- Do not hand-edit `frontend/api/**`; regenerate with `bun run api:generate` in `frontend/`.
+- Do not hand-edit `frontend/src/routeTree.gen.ts`; it is generated by the TanStack Router Vite plugin.
+- Treat `backend/drizzle/**` as generated migration output once created.
+- Backend schema source of truth lives in `backend/src/db/tables/**/*.table.ts`.
+## Code Style
+### Imports
+- ESLint enforces import sorting via `perfectionist/sort-imports`.
+- Prefer `import type` for type-only imports.
+- Keep import groups separated by blank lines.
+- Usual grouping is external packages, internal aliases (`@/...`), then relative imports.
+- Use `@/*` in both packages; frontend also uses `@/api/*`.
+- Respect the surrounding file's extension style; this repo mixes extensionless imports with explicit `.ts` paths.
 ### Formatting
-
-- Use TypeScript everywhere (`.ts`/`.tsx`).
+- Use 2-space indentation.
 - Use single quotes.
 - Omit semicolons.
-- Keep trailing commas in multiline literals/params.
-- Prefer concise arrow functions when readable.
-- Follow existing wrapping/line-break style from nearby files.
-
-### Imports
-
-- Import ordering is enforced by ESLint (`perfectionist/sort-imports`).
-- Use `import type` for type-only imports.
-- Prefer alias imports (`@/...`) over long relative paths.
-- Keep side-effect imports explicit (example: `import '@/styles/global.css'`).
-- Keep grouped import blocks separated by blank lines as in existing code.
-
-### Types And Safety
-
-- TypeScript strict mode is enabled; keep code type-safe.
-- Avoid `any`; use specific types, generics, or `unknown` with narrowing.
-- Reuse shared types/schemas rather than re-declaring inline types.
-- Prefer schema-driven validation (Zod + validator middleware) for request data.
-- Preserve existing tsconfig constraints (`verbatimModuleSyntax`, strict checks).
-
-### Naming Conventions
-
-- Classes: `PascalCase` (e.g. `AuthService`, `AuthRouter`).
-- Functions/variables: `camelCase`.
-- Constants: `UPPER_SNAKE_CASE` for true constants (e.g. local storage keys).
-- File names: `kebab-case` with domain suffixes (`*.service.ts`, `*.router.ts`, `*.schema.ts`).
-- Route files in frontend follow TanStack Router conventions; do not rename generated route artifacts manually.
-
-### Backend Patterns
-
-- Keep route handlers thin; move business logic into `*.service.ts`.
-- Use `ApiException` for domain/application errors.
-- Return structured JSON errors through `errorMiddleware`.
-- Reuse middleware (`session`, `validator`, role checks) instead of ad-hoc checks.
-- Use Drizzle query APIs consistently with existing table modules.
-- Prefer repository abstractions for token/session workflows.
-
-### Frontend Patterns
-
-- Use functional React components.
-- Keep reusable UI in `src/components/ui`.
-- Keep hooks in `src/hooks` and route-specific hooks near route components.
-- Use shared providers in `src/providers` for cross-cutting concerns (theme/i18n).
-- Use `cn` helper and variant utilities for class composition.
-- Preserve generated files such as `src/routeTree.gen.ts` (lint ignore exists for this file).
-
+- Keep trailing commas in multiline objects, arrays, params, and JSX props.
+- Expand into multiline formatting when JSX, objects, or call chains get dense.
+- Comments are sparse; add them only when logic is not obvious.
+### Types and Schemas
+- Preserve strict typing; avoid `any` unless a boundary truly forces it.
+- Prefer exported `interface` for public object-shaped contracts and props.
+- Prefer `type` aliases for unions, tuples, helper compositions, and `z.infer` outputs.
+- Reuse schema-derived types instead of duplicating DTO shapes.
+- Backend classes commonly use constructor parameter properties like `private readonly db: DrizzleDatabase`.
+- Shared Zod primitives live in `backend/src/shared/zod.ts` and `frontend/src/lib/zod.ts`.
+### Naming
+- File names are kebab-case.
+- Hooks use `use-...` naming and usually live in matching folders.
+- Components, classes, and providers use PascalCase.
+- Constants use `UPPER_SNAKE_CASE` only when they are true constants.
+- Zod schemas use a `...Schema` suffix.
+- Backend classes follow `...Router` and `...Service`; Drizzle tables use lower-case plural names like `users`.
+### Backend Conventions
+- Keep routers thin: middleware, validation, auth, service call, response.
+- Put business logic in services, not route handlers.
+- Use the shared Hono `factory` from `backend/src/lib/factory.ts`.
+- Reuse middleware like `session`, `validator`, `onlyMember`, and `role`.
+- Validate params and bodies with Zod before touching service logic.
+- Return JSON payloads that match the existing schema and response-wrapper pattern.
 ### Error Handling
-
-- Backend:
-  - Throw `ApiException.*` variants for expected failures.
-  - Include stable error codes where available.
-  - Let unexpected errors bubble to middleware logger/500 response.
-- Frontend:
-  - Respect existing API interceptor behavior for toast errors.
-  - Do not swallow errors silently; either surface UI feedback or rethrow.
-
-### Testing Conventions
-
-- Use Bun test APIs (`describe`, `it`, `expect`, `expectTypeOf`).
-- Place backend tests under:
-  - `backend/tests/unit/**`
-  - `backend/tests/it/**`
-- Keep test names explicit and behavior-focused.
-- Reuse preload setup files for environment/bootstrap consistency.
-
-## Lint Configuration Notes
-
-- Base config: `@antfu/eslint-config` with TypeScript + stylistic + imports enabled.
-- Repo-level rule customizations include:
-  - `antfu/no-top-level-await`: off
-  - `node/prefer-global/buffer`: off
-  - `ts/ban-ts-comment`: off
-  - `ts/no-redeclare`: off
-- Backend additional overrides:
-  - `unicorn/throw-new-error`: off
-  - `no-new`: off
-- Frontend additional setup:
-  - React + formatters enabled
-  - Better Tailwind CSS plugin enabled
-  - `routeTree.gen.ts` ignored by ESLint
-
-## Agent Execution Checklist
-
-- Before finishing a change:
-  - Run targeted tests for touched areas.
-  - Run lint in affected package(s).
-  - For significant changes, run `bun build:dev`.
-- Before committing:
-  - Ensure pre-commit commands are likely to pass.
-- When editing:
-  - Match local file conventions first.
-  - Prefer minimal, focused diffs.
-
-## Practical Defaults For Agents
-
-- Default package manager/runtime: Bun.
-- Default import alias: `@/`.
-- Default backend test mode for logic changes: unit test first, then integration if API behavior changed.
-- Default frontend validation: lint + type/build checks (tests are not implemented yet).
+- Throw `ApiException.*(...)` for expected backend API failures.
+- Include stable error codes like `USER_EXISTS`, `INVALID_INPUT`, or `FORBIDDEN`.
+- Let `errorMiddleware()` format HTTP error responses.
+- Use `HTTPException` only when that is already the local pattern; `ApiException` is the norm.
+- Preserve field-level validation details via `mapValidationErrors`.
+- Only swallow errors when the code is intentionally best-effort, such as test DB cleanup.
+### Frontend Conventions
+- Use file-based routes with `createFileRoute` or `createRootRouteWithContext`.
+- Route params are often validated with local Zod schemas.
+- Use generated TanStack Query helpers from `frontend/api/@tanstack/react-query.gen.ts`.
+- Use `queryClient.ensureQueryData(...)` inside route loaders for prefetching.
+- After mutations, invalidate the relevant query options instead of manually patching unrelated cache entries.
+- Forms are built with the shared helpers in `frontend/src/components/form/hooks.ts`.
+- UI primitives commonly wrap Base UI components and compose classes with `cva` plus `cn(...)`.
+- Prefer shared tokens from `frontend/src/styles/global.css` over ad hoc color values.
+- Custom page hooks often return grouped objects like `form`, `mutations`, `features`, `state`, and `functions`; follow the local shape.
+## Testing and Git Hooks
+- Backend tests use `bun:test`.
+- Integration tests live in `backend/tests/it`; unit tests live in `backend/tests/unit`.
+- Integration tests preload both `tests/global.setup.ts` and `tests/it/setup.it.ts`; unit tests preload `tests/global.setup.ts`.
+- Integration tests often use Hono `testClient(createApp(...))` from `backend/tests/mocks/client.mock.ts`.
+- Pre-commit runs root `bun build:dev`, root `bun run test`, and `bun lint-staged`.
+- `prepare-commit-msg` prepends a random emoji to commit messages.
