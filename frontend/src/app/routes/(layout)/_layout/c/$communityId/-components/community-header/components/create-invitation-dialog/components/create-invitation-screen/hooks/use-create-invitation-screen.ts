@@ -25,7 +25,7 @@ const formDefaultValues: CreateInvitationFormData = {
 
 export function useCreateInvitationScreen() {
   const i18n = useI18n()
-  const communityId = +useParams({
+  const communityId = useParams({
     from: '/(layout)/_layout/c/$communityId/_layout/',
     select: params => params.communityId,
   })

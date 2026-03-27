@@ -10,13 +10,13 @@ import { queryClient } from '@/lib/query-client.ts'
 import { I18nProvider } from '@/providers/i18n-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 
-export interface ProvidersProps {
+export interface ProviderProps {
   theme: Omit<ThemeProviderProps, 'children'>
   i18n: Omit<I18nProviderProps, 'children'>
   children: ReactNode
 }
 
-export function Providers({ theme, i18n, children }: ProvidersProps) {
+export function Provider({ theme, i18n, children }: ProviderProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider {...theme}>

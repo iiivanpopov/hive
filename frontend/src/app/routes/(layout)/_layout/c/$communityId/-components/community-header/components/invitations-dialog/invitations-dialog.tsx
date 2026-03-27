@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Spinner } from '@/components/ui/spinner'
 
-import { useInvitationsDialog } from './hooks'
+import { useInvitationsDialog } from './hooks/use-invitations-dialog'
 
 interface InvitationsDialogProps {
   open: boolean

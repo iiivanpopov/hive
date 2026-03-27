@@ -8,11 +8,12 @@ import type { Locale } from '@/providers/i18n-provider'
 import type { Theme } from '@/providers/theme-provider'
 
 import { client } from '@/api/client.gen'
-import { Providers } from '@/app/providers'
 import { env } from '@/config/env'
 import { LOCAL_STORAGE } from '@/constants/local-storage'
 import { routeTree } from '@/routeTree.gen'
 import { loadLocale } from '@/utils/load-locale'
+
+import { Provider } from './provider'
 
 client.setConfig({
   baseUrl: env.apiUrl,
@@ -34,6 +35,7 @@ const router = createRouter({
     user: null,
   },
   defaultPreload: 'intent',
+  defaultPendingMs: 500,
 })
 
 declare module '@tanstack/react-router' {
@@ -48,7 +50,7 @@ document.documentElement.classList.add(initialTheme)
 const initialLocale = localStorage.getItem(LOCAL_STORAGE.locale) as Locale ?? 'en-US'
 const initialMessages = await loadLocale(initialLocale)
 
-const providers = {
+const provider = {
   theme: {
     initialTheme,
   },
@@ -59,7 +61,7 @@ const providers = {
 }
 
 createRoot(document.getElementById('root')!).render(
-  <Providers {...providers}>
+  <Provider {...provider}>
     <RouterProvider router={router} />
-  </Providers>,
+  </Provider>,
 )

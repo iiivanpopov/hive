@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 import { CreateInvitationDialog } from './components/create-invitation-dialog'
-import { InvitationsDialog } from './components/invitations-dialog/invitations-dialog'
+import { InvitationsDialog } from './components/invitations-dialog'
 import { useCommunityHeader } from './hooks/use-community-header'
 
 export function CommunityHeader() {

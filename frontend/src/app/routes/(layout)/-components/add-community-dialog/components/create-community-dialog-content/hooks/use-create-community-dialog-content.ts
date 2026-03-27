@@ -41,7 +41,7 @@ export function useCreateCommunityDialogContent() {
       router.navigate({
         to: '/c/$communityId',
         params: {
-          communityId: String(community.id),
+          communityId: community.id,
         },
       })
 

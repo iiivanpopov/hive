@@ -42,7 +42,7 @@ export function useJoinCommunityDialogContent() {
       router.navigate({
         to: '/c/$communityId',
         params: {
-          communityId: String(mutation.community.id),
+          communityId: mutation.community.id,
         },
       })
     },

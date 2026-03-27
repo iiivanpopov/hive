@@ -1,14 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 
-import {
-  deleteInvitationsInvitationIdMutation,
-  getCommunitiesCommunityIdInvitationsOptions,
-} from '@/api/@tanstack/react-query.gen'
+import { deleteInvitationsInvitationIdMutation, getCommunitiesCommunityIdInvitationsOptions } from '@/api/@tanstack/react-query.gen'
 import { queryClient } from '@/lib/query-client'
 
 export function useInvitationsDialog() {
-  const communityId = +useParams({
+  const communityId = useParams({
     from: '/(layout)/_layout/c/$communityId/_layout/',
     select: params => params.communityId,
   })

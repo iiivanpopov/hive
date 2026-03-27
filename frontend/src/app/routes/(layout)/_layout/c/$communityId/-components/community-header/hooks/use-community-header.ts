@@ -8,7 +8,7 @@ import { queryClient } from '@/lib/query-client'
 import { useCreateInvitation } from '../../../-providers/create-invitation-provider'
 
 export function useCommunityHeader() {
-  const communityId = +useParams({
+  const communityId = useParams({
     from: '/(layout)/_layout/c/$communityId/_layout/',
     select: params => params.communityId,
   })

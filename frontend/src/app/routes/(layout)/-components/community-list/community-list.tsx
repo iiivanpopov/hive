@@ -28,7 +28,7 @@ export function CommunityList() {
           >
             <Link
               to="/c/$communityId"
-              params={{ communityId: String(community.id) }}
+              params={{ communityId: community.id }}
               className={buttonVariants({ size: 'icon-lg', variant: 'secondary', class: 'text-2xl!' })}
             >
               {community.name.at(0)!.toUpperCase()}
