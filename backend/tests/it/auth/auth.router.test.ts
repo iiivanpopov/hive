@@ -348,3 +348,115 @@ describe('/change-password', () => {
     })
   })
 })
+
+describe('/me', () => {
+  it('returns current authenticated user', async () => {
+    const registerResponse = await clientMock.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+
+    const cookie = extractSessionTokenCookie(registerResponse.headers)
+    expect(cookie).toBeTruthy()
+
+    const response = await clientMock.auth.me.$get({}, {
+      headers: { Cookie: cookie },
+    })
+
+    expect(response.status as unknown).toBe(200)
+    expect(await response.json()).toMatchObject({
+      user: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        name: null,
+      },
+    })
+  })
+
+  it('updates current authenticated user profile', async () => {
+    const registerResponse = await clientMock.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+
+    const cookie = extractSessionTokenCookie(registerResponse.headers)
+    expect(cookie).toBeTruthy()
+
+    const response = await clientMock.auth.me.$patch({
+      json: {
+        name: 'Test User',
+        username: 'updateduser',
+      },
+    }, {
+      headers: { Cookie: cookie },
+    })
+
+    expect(response.status as unknown).toBe(200)
+    expect(await response.json()).toMatchObject({
+      user: {
+        email: 'testuser@gmail.com',
+        username: 'updateduser',
+        name: 'Test User',
+      },
+    })
+
+    const user = await databaseMock.query.users.findFirst({
+      where: { email: 'testuser@gmail.com' },
+    })
+
+    expect(user?.username).toBe('updateduser')
+    expect(user?.name).toBe('Test User')
+  })
+
+  it('rejects username already used by another account', async () => {
+    await clientMock.auth.register.$post({
+      json: {
+        email: 'existing@gmail.com',
+        username: 'existinguser',
+        password: 'password123',
+      },
+    })
+
+    const registerResponse = await clientMock.auth.register.$post({
+      json: {
+        email: 'testuser@gmail.com',
+        username: 'testuser',
+        password: 'password123',
+      },
+    })
+
+    const cookie = extractSessionTokenCookie(registerResponse.headers)
+    expect(cookie).toBeTruthy()
+
+    const response = await clientMock.auth.me.$patch({
+      json: {
+        name: 'Test User',
+        username: 'existinguser',
+      },
+    }, {
+      headers: { Cookie: cookie },
+    })
+
+    expect(response.status as unknown).toBe(400)
+    expect(await response.json()).toMatchObject({
+      error: { code: 'USERNAME_EXISTS' },
+    })
+  })
+
+  it('rejects unauthenticated profile updates', async () => {
+    const response = await clientMock.auth.me.$patch({
+      json: {
+        name: 'Test User',
+        username: 'updateduser',
+      },
+    })
+
+    expect(response.status as unknown).toBe(401)
+  })
+})

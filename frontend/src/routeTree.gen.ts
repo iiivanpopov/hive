@@ -15,6 +15,7 @@ import { Route as authRegisterIndexRouteImport } from './app/routes/(auth)/regis
 import { Route as authRecoveryIndexRouteImport } from './app/routes/(auth)/recovery/index'
 import { Route as authLoginIndexRouteImport } from './app/routes/(auth)/login/index'
 import { Route as layoutLayoutSettingsIndexRouteImport } from './app/routes/(layout)/_layout/settings/index'
+import { Route as layoutLayoutProfileIndexRouteImport } from './app/routes/(layout)/_layout/profile/index'
 import { Route as layoutLayoutCCommunityIdLayoutRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout'
 import { Route as layoutLayoutCCommunityIdLayoutIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout/index'
 import { Route as layoutLayoutCCommunityIdLayoutChannelIdIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout/$channelId/index'
@@ -49,6 +50,12 @@ const layoutLayoutSettingsIndexRoute =
     path: '/settings/',
     getParentRoute: () => layoutLayoutRoute,
   } as any)
+const layoutLayoutProfileIndexRoute =
+  layoutLayoutProfileIndexRouteImport.update({
+    id: '/profile/',
+    path: '/profile/',
+    getParentRoute: () => layoutLayoutRoute,
+  } as any)
 const layoutLayoutCCommunityIdLayoutRoute =
   layoutLayoutCCommunityIdLayoutRouteImport.update({
     id: '/c/$communityId/_layout',
@@ -73,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/recovery/': typeof authRecoveryIndexRoute
   '/register/': typeof authRegisterIndexRoute
   '/': typeof layoutLayoutIndexRoute
+  '/profile/': typeof layoutLayoutProfileIndexRoute
   '/settings/': typeof layoutLayoutSettingsIndexRoute
   '/c/$communityId': typeof layoutLayoutCCommunityIdLayoutRouteWithChildren
   '/c/$communityId/': typeof layoutLayoutCCommunityIdLayoutIndexRoute
@@ -83,6 +91,7 @@ export interface FileRoutesByTo {
   '/recovery': typeof authRecoveryIndexRoute
   '/register': typeof authRegisterIndexRoute
   '/': typeof layoutLayoutIndexRoute
+  '/profile': typeof layoutLayoutProfileIndexRoute
   '/settings': typeof layoutLayoutSettingsIndexRoute
   '/c/$communityId': typeof layoutLayoutCCommunityIdLayoutIndexRoute
   '/c/$communityId/$channelId': typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
@@ -94,6 +103,7 @@ export interface FileRoutesById {
   '/(auth)/recovery/': typeof authRecoveryIndexRoute
   '/(auth)/register/': typeof authRegisterIndexRoute
   '/(layout)/_layout/': typeof layoutLayoutIndexRoute
+  '/(layout)/_layout/profile/': typeof layoutLayoutProfileIndexRoute
   '/(layout)/_layout/settings/': typeof layoutLayoutSettingsIndexRoute
   '/(layout)/_layout/c/$communityId/_layout': typeof layoutLayoutCCommunityIdLayoutRouteWithChildren
   '/(layout)/_layout/c/$communityId/_layout/': typeof layoutLayoutCCommunityIdLayoutIndexRoute
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/recovery/'
     | '/register/'
     | '/'
+    | '/profile/'
     | '/settings/'
     | '/c/$communityId'
     | '/c/$communityId/'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/recovery'
     | '/register'
     | '/'
+    | '/profile'
     | '/settings'
     | '/c/$communityId'
     | '/c/$communityId/$channelId'
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
     | '/(auth)/recovery/'
     | '/(auth)/register/'
     | '/(layout)/_layout/'
+    | '/(layout)/_layout/profile/'
     | '/(layout)/_layout/settings/'
     | '/(layout)/_layout/c/$communityId/_layout'
     | '/(layout)/_layout/c/$communityId/_layout/'
@@ -183,6 +196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof layoutLayoutSettingsIndexRouteImport
       parentRoute: typeof layoutLayoutRoute
     }
+    '/(layout)/_layout/profile/': {
+      id: '/(layout)/_layout/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof layoutLayoutProfileIndexRouteImport
+      parentRoute: typeof layoutLayoutRoute
+    }
     '/(layout)/_layout/c/$communityId/_layout': {
       id: '/(layout)/_layout/c/$communityId/_layout'
       path: '/c/$communityId'
@@ -227,12 +247,14 @@ const layoutLayoutCCommunityIdLayoutRouteWithChildren =
 
 interface layoutLayoutRouteChildren {
   layoutLayoutIndexRoute: typeof layoutLayoutIndexRoute
+  layoutLayoutProfileIndexRoute: typeof layoutLayoutProfileIndexRoute
   layoutLayoutSettingsIndexRoute: typeof layoutLayoutSettingsIndexRoute
   layoutLayoutCCommunityIdLayoutRoute: typeof layoutLayoutCCommunityIdLayoutRouteWithChildren
 }
 
 const layoutLayoutRouteChildren: layoutLayoutRouteChildren = {
   layoutLayoutIndexRoute: layoutLayoutIndexRoute,
+  layoutLayoutProfileIndexRoute: layoutLayoutProfileIndexRoute,
   layoutLayoutSettingsIndexRoute: layoutLayoutSettingsIndexRoute,
   layoutLayoutCCommunityIdLayoutRoute:
     layoutLayoutCCommunityIdLayoutRouteWithChildren,

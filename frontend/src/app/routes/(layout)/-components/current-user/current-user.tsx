@@ -44,7 +44,7 @@ export function CurrentUser() {
               <I18nText id="dropdown.account.label" />
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer" render={props => <Link to="/profile" {...props} />}>
               <UserIcon className="size-4" />
               <I18nText id="dropdown.account.profile" />
             </DropdownMenuItem>

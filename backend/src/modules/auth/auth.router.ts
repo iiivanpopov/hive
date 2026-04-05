@@ -24,6 +24,7 @@ import { MeResponseSchema } from './schema/me.schema'
 import { RegisterBodySchema } from './schema/register.schema'
 import { RequestResetSchema } from './schema/request-reset.schema'
 import { ResetPasswordBodySchema, ResetPasswordParamsSchema } from './schema/reset-password.schema'
+import { UpdateProfileBodySchema, UpdateProfileResponseSchema } from './schema/update-profile.schema'
 
 export class AuthRouter {
   basePath = '/auth'
@@ -247,6 +248,34 @@ export class AuthRouter {
           })
 
           return c.body(null, 204)
+        },
+      )
+      .patch(
+        '/me',
+        session(this.db, this.sessionTokens),
+        describeRoute({
+          tags: ['Authentication'],
+          summary: 'Update current authenticated user',
+          description: 'Update profile details of the currently authenticated user.',
+          responses: {
+            200: {
+              description: 'Current user updated successfully',
+              content: {
+                'application/json': {
+                  schema: resolver(UpdateProfileResponseSchema),
+                },
+              },
+            },
+          },
+        }),
+        validator('json', UpdateProfileBodySchema),
+        async (c) => {
+          const body = c.req.valid('json')
+          const user = c.get('user')
+
+          const updatedUser = await this.authService.updateProfile(user.id, body)
+
+          return c.json({ user: toUserDto(updatedUser) }, 200)
         },
       )
       .get(

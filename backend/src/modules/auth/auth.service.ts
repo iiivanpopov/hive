@@ -18,6 +18,7 @@ import { normalizeUserAgent } from '@/lib/utils'
 import type { ChangePasswordBody } from './schema/change-password.schema'
 import type { LoginBody } from './schema/login.schema'
 import type { RegisterBody } from './schema/register.schema'
+import type { UpdateProfileBody } from './schema/update-profile.schema'
 
 export class AuthService {
   constructor(
@@ -125,6 +126,27 @@ export class AuthService {
 
     await this.sessionTokens.revoke(sessionToken)
     pino.debug(`Deleted session ${sessionToken}`)
+  }
+
+  async updateProfile(userId: number, body: UpdateProfileBody) {
+    const userWithUsername = await this.db.query.users.findFirst({
+      where: { username: body.username },
+    })
+
+    if (userWithUsername && userWithUsername.id !== userId)
+      throw ApiException.BadRequest('User with given username already exists', 'USERNAME_EXISTS')
+
+    const [updatedUser] = await this.db
+      .update(users)
+      .set({
+        name: body.name,
+        username: body.username,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning()
+
+    return updatedUser
   }
 
   async authenticateGoogleUser(googleUser: GoogleUser, userAgent?: string) {
