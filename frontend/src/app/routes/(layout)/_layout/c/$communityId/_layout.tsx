@@ -1,11 +1,11 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import z from 'zod'
 
-import { getCommunitiesCommunityIdChannelsOptions, getCommunitiesCommunityIdOptions } from '@/api/@tanstack/react-query.gen'
+import { getCommunitiesCommunityIdChannelsOptions, getCommunitiesCommunityIdMembersOptions, getCommunitiesCommunityIdOptions } from '@/api/@tanstack/react-query.gen'
 import { Separator } from '@/components/ui/separator'
 import { queryClient } from '@/lib/query-client'
 
-import { ChannelsList, CommunityHeader } from './-components'
+import { ChannelsList, CommunityHeader, MembersList } from './-components'
 import { CreateInvitationProvider } from './-providers/create-invitation-provider'
 
 const RouteParamsSchema = z.object({
@@ -22,6 +22,9 @@ export const Route = createFileRoute('/(layout)/_layout/c/$communityId/_layout')
         path: { communityId },
       })),
       queryClient.ensureQueryData(getCommunitiesCommunityIdChannelsOptions({
+        path: { communityId },
+      })),
+      queryClient.ensureQueryData(getCommunitiesCommunityIdMembersOptions({
         path: { communityId },
       })),
     ])
@@ -42,7 +45,12 @@ function Layout() {
 
           <ChannelsList />
         </div>
-        <Outlet />
+
+        <div className="min-w-0 flex-1">
+          <Outlet />
+        </div>
+
+        <MembersList />
       </div>
     </CreateInvitationProvider>
   )
@@ -70,6 +78,26 @@ function LayoutPending() {
               style={{ animationDelay: `${index * 0.08}s` }}
             >
               <div className="h-8 w-full animate-pulse rounded-sm bg-muted/55" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex-1" />
+
+      <div className="h-full w-64 shrink-0 border-l border-border p-2">
+        <div className="flex flex-col gap-1.5">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-3 rounded-sm px-2 py-1.5"
+              style={{ animationDelay: `${index * 0.08}s` }}
+            >
+              <div className="size-8 animate-pulse rounded-full bg-muted/55" />
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <div className="h-4 w-24 animate-pulse rounded-sm bg-muted/55" />
+                <div className="h-3 w-16 animate-pulse rounded-sm bg-muted/45" />
+              </div>
             </div>
           ))}
         </div>
