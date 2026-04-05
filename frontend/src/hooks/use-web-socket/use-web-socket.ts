@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks-extra/no-direct-set-state-in-use-effect */
-
 import { useEffect, useRef, useState } from 'react'
 
 import { getRetry } from '@/utils'
@@ -48,7 +46,7 @@ export function useWebSocket(url: UseWebSocketUrl, options?: UseWebSocketOptions
 
   const [status, setStatus] = useState<UseWebSocketStatus>('connecting')
 
-  const send = (data: string | ArrayBufferLike | ArrayBufferView | Blob) =>
+  const send = (data: Parameters<WebSocket['send']>[0]) =>
     webSocketRef.current?.send(data)
 
   const close = () => {

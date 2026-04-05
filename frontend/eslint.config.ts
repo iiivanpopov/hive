@@ -1,4 +1,5 @@
 import antfu from '@antfu/eslint-config'
+import eslintReact from '@eslint-react/eslint-plugin'
 import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss'
 import path from 'node:path'
 
@@ -6,18 +7,22 @@ import { globalESLintConfig } from '../eslint.config.ts'
 
 export default antfu({
   ...globalESLintConfig,
-  react: true,
   formatters: true,
   ignores: ['**/routeTree.gen.ts'],
   rules: {
     ...globalESLintConfig.rules,
-    'react-refresh/only-export-components': 'off',
-    'react-hooks/exhaustive-deps': 'off',
-    'react/no-array-index-key': 'off',
-    'react-hooks/refs': 'off',
   },
   basePath: path.resolve(__dirname),
 }).append(
+  eslintReact.configs['recommended-typescript'],
+  {
+    rules: {
+      '@eslint-react/component-hook-factories': 'off',
+      '@eslint-react/exhaustive-deps': 'off',
+      '@eslint-react/no-array-index-key': 'off',
+      '@eslint-react/refs': 'off',
+    },
+  },
   eslintPluginBetterTailwindcss.configs.recommended,
   {
     settings: {

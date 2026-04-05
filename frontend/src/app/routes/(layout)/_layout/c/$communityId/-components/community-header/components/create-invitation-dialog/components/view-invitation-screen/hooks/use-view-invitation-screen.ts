@@ -12,7 +12,7 @@ export function useViewInvitationScreen() {
     await navigator.clipboard.writeText(invitation ?? '')
     setCopied(true)
 
-    timeoutRef.current = setTimeout(() => setCopied(false), 1000)
+    timeoutRef.current = setTimeout(setCopied, 1000, false)
   }
 
   useEffect(() => () => clearTimeout(timeoutRef.current ?? undefined), [])

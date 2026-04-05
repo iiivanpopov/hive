@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks-extra/no-direct-set-state-in-use-effect */
 import { useEffect, useRef, useState } from 'react'
 
 import type { StateRef } from '@/hooks/use-ref-state'

@@ -1,5 +1,7 @@
+const TOKEN_QUERY_PARAM_REGEX = /[?&]token=([^"&]+)/
+
 export function extractTokenFromMail({ html }: { html: string }): string | null {
-  const match = html.match(/[?&]token=([^"&]+)/)
+  const match = html.match(TOKEN_QUERY_PARAM_REGEX)
   return match ? match[1] : null
 }
 
