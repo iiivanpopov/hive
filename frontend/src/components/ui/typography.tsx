@@ -6,7 +6,7 @@ import { cva } from 'class-variance-authority'
 import { cn } from '@/utils'
 
 const typographyVariants = cva(
-  'font-outfit text-foreground',
+  'font-sans text-foreground',
   {
     variants: {
       variant: {
