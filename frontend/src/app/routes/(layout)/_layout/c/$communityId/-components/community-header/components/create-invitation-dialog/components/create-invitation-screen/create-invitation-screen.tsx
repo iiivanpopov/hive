@@ -62,15 +62,19 @@ export function CreateInvitationScreen() {
             </>
           )}
         </form.Subscribe>
-        <Button
-          form="create-invitation-form"
-          type="submit"
-          disabled={form.state.isSubmitting}
-          className="w-full"
-        >
-          {form.state.isSubmitting && <Spinner />}
-          <I18nText id="button.create-invitation" />
-        </Button>
+        <form.Subscribe selector={state => state.isSubmitting}>
+          {isSubmitting => (
+            <Button
+              form="create-invitation-form"
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full"
+            >
+              {isSubmitting && <Spinner />}
+              <I18nText id="button.create-invitation" />
+            </Button>
+          )}
+        </form.Subscribe>
       </DialogFooter>
     </div>
   )
