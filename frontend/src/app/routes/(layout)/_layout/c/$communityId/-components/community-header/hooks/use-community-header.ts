@@ -9,7 +9,7 @@ import { useCreateInvitation } from '../../../-providers/create-invitation-provi
 
 export function useCommunityHeader() {
   const communityId = useParams({
-    from: '/(layout)/_layout/c/$communityId/_layout/',
+    from: '/(layout)/_layout/c/$communityId/_layout',
     select: params => params.communityId,
   })
   const { user } = useRouteContext({ from: '__root__' })

@@ -12,7 +12,10 @@ export function CommunityHeader() {
   const { state, queries, functions, features } = useCommunityHeader()
 
   return (
-    <div className="p-2">
+    <div className="
+      flex h-14 items-center justify-between border-b border-b-border px-2
+    "
+    >
       <DropdownMenu open={features.dropdownMenu.opened} onOpenChange={features.dropdownMenu.toggle}>
         <DropdownMenuTrigger
           render={props => (

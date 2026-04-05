@@ -36,11 +36,9 @@ export const Route = createFileRoute('/(layout)/_layout/c/$communityId/_layout')
 function Layout() {
   return (
     <CreateInvitationProvider>
-      <div className="flex h-full gap-4">
+      <div className="flex h-full">
         <div className="h-full w-48 shrink-0 border-r border-border">
           <CommunityHeader />
-
-          <Separator />
 
           <ChannelsList />
         </div>

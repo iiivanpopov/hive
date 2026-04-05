@@ -6,7 +6,7 @@ import { queryClient } from '@/lib/query-client'
 
 export function useInvitationsDialog() {
   const communityId = useParams({
-    from: '/(layout)/_layout/c/$communityId/_layout/',
+    from: '/(layout)/_layout/c/$communityId/_layout',
     select: params => params.communityId,
   })
 

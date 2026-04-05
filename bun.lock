@@ -39,7 +39,7 @@
       "name": "hive-frontend",
       "dependencies": {
         "@base-ui/react": "^1.1.0",
-        "@fontsource/geist": "^5.2.8",
+        "@fontsource/roboto": "^5.2.10",
         "@tanstack/react-form": "^1.28.0",
         "@tanstack/react-query": "^5.90.20",
         "@tanstack/react-router": "^1.157.16",
@@ -408,7 +408,7 @@
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.10", "", {}, "sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ=="],
 
-    "@fontsource/geist": ["@fontsource/geist@5.2.8", "", {}, "sha512-pI54klK6vz8fVpAVyV+iODGLEzw73cs1XJqV9PIXgW8MYMmBcwK6lKKaWqJrNHwEx8ppz9cuhussb6arXQ/PVQ=="],
+    "@fontsource/roboto": ["@fontsource/roboto@5.2.10", "", {}, "sha512-8HlA5FtSfz//oFSr2eL7GFXAiE7eIkcGOtx7tjsLKq+as702x9+GU7K95iDeWFapHC4M2hv9RrpXKRTGGBI8Zg=="],
 
     "@formatjs/ecma402-abstract": ["@formatjs/ecma402-abstract@3.1.0", "", { "dependencies": { "@formatjs/fast-memoize": "3.1.0", "@formatjs/intl-localematcher": "0.8.0", "decimal.js": "^10.6.0", "tslib": "^2.8.1" } }, "sha512-CjP1sUzM7XiQW6YluDreN+dMvcKZysO/J4ikvuDjDyd6nSOoSqAK9gvD1s75ZFaJVXtYOsz+y3CUXPZ1sKxcxw=="],
 

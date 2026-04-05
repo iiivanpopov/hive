@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { and, eq, ne } from 'drizzle-orm'
 
 import type { DrizzleDatabase } from '@/db/utils'
 
@@ -53,11 +53,28 @@ export class ChannelsService {
     if (!channel)
       throw ApiException.NotFound('Channel not found', 'CHANNEL_NOT_FOUND')
 
+    if (data.name && data.name !== channel.name) {
+      const [existingChannel] = await this.db
+        .select()
+        .from(channels)
+        .where(
+          and(
+            eq(channels.communityId, channel.communityId),
+            eq(channels.name, data.name),
+            ne(channels.id, params.channelId),
+          ),
+        )
+        .limit(1)
+
+      if (existingChannel)
+        throw ApiException.BadRequest('Channel with this name already exists', 'CHANNEL_ALREADY_EXISTS')
+    }
+
     const [updatedChannel] = await this.db
       .update(channels)
       .set({
-        name: data.name,
-        description: data.description,
+        name: data.name ?? channel.name,
+        description: data.description ?? channel.description,
       })
       .where(eq(channels.id, params.channelId))
       .returning()
@@ -86,11 +103,17 @@ export class ChannelsService {
   }
 
   async createChannel(params: CreateChannelParams, data: CreateChannelBody) {
-    const channel = await this.db.query.channels.findFirst({
-      where: {
-        communityId: params.communityId,
-      },
-    })
+    const [channel] = await this.db
+      .select()
+      .from(channels)
+      .where(
+        and(
+          eq(channels.communityId, params.communityId),
+          eq(channels.name, data.name),
+        ),
+      )
+      .limit(1)
+
     if (channel)
       throw ApiException.BadRequest('Channel with this name already exists', 'CHANNEL_ALREADY_EXISTS')
 
