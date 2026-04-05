@@ -111,15 +111,19 @@ function LoginPage() {
           </Link>
         </Typography>
 
-        <Button
-          type="submit"
-          className="w-full"
-          form="login-form"
-          disabled={mutations.login.isPending}
-        >
-          {mutations.login.isPending && <Spinner />}
-          <I18nText id="button.submit" />
-        </Button>
+        <form.Subscribe selector={state => state.isSubmitting}>
+          {isSubmitting => (
+            <Button
+              type="submit"
+              className="w-full"
+              form="login-form"
+              disabled={isSubmitting}
+            >
+              {isSubmitting && <Spinner />}
+              <I18nText id="button.submit" />
+            </Button>
+          )}
+        </form.Subscribe>
 
         <span className="my-1 text-muted-foreground">
           <I18nText id="auth.continue-with" />

@@ -30,7 +30,7 @@ export const Route = createFileRoute('/(auth)/register/')({
 })
 
 function RegisterPage() {
-  const { form, mutations, features } = useRegisterPage()
+  const { form, features } = useRegisterPage()
 
   return (
     <Card className="absolute top-1/2 left-1/2 w-xs -translate-1/2">
@@ -118,15 +118,19 @@ function RegisterPage() {
           </Link>
         </Typography>
 
-        <Button
-          type="submit"
-          className="w-full"
-          form="login-form"
-          disabled={mutations.register.isPending}
-        >
-          {mutations.register.isPending && <Spinner />}
-          <I18nText id="button.submit" />
-        </Button>
+        <form.Subscribe selector={state => state.isSubmitting}>
+          {isSubmitting => (
+            <Button
+              type="submit"
+              className="w-full"
+              form="login-form"
+              disabled={isSubmitting}
+            >
+              {isSubmitting && <Spinner />}
+              <I18nText id="button.submit" />
+            </Button>
+          )}
+        </form.Subscribe>
 
         <FieldSeparator className="my-1">
           <I18nText id="auth.continue-with" />

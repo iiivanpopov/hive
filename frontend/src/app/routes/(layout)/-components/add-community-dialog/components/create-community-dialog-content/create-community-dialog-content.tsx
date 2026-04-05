@@ -38,14 +38,18 @@ export function CreateCommunityDialogContent() {
         >
           <I18nText id="button.back" />
         </Button>
-        <Button
-          form="create-community-form"
-          type="submit"
-          disabled={form.state.isSubmitting}
-        >
-          {form.state.isSubmitting && <Spinner />}
-          <I18nText id="button.create-community" />
-        </Button>
+        <form.Subscribe selector={state => state.isSubmitting}>
+          {isSubmitting => (
+            <Button
+              form="create-community-form"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting && <Spinner />}
+              <I18nText id="button.create-community" />
+            </Button>
+          )}
+        </form.Subscribe>
       </DialogFooter>
     </>
   )

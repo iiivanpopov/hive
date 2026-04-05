@@ -38,14 +38,18 @@ export function JoinCommunityDialog() {
         >
           <I18nText id="button.back" />
         </Button>
-        <Button
-          form="join-community-form"
-          type="submit"
-          disabled={form.state.isSubmitting}
-        >
-          {form.state.isSubmitting && <Spinner />}
-          <I18nText id="button.join-community" />
-        </Button>
+        <form.Subscribe selector={state => state.isSubmitting}>
+          {isSubmitting => (
+            <Button
+              form="join-community-form"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting && <Spinner />}
+              <I18nText id="button.join-community" />
+            </Button>
+          )}
+        </form.Subscribe>
       </DialogFooter>
     </>
   )
