@@ -13,7 +13,7 @@ export function CurrentUser() {
   return (
     <div className="
       absolute bottom-2 left-2 flex w-64 items-center justify-between gap-2
-      rounded-md border border-border bg-popover p-1
+      rounded-md border border-border bg-popover p-2
     "
     >
       <DropdownMenu>

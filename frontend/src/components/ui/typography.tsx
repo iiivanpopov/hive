@@ -16,11 +16,11 @@ const typographyVariants = cva(
         `,
         subheading: `
           text-xl font-medium
-          lg:text-2xl
+          lg:text-2xl/10
         `,
-        body: 'text-base font-normal',
+        body: 'text-base/6 font-normal',
         caption: `
-          text-xs/tight
+          text-xs/tight text-muted-foreground
           lg:text-sm
         `,
       },

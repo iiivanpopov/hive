@@ -36,8 +36,10 @@
 
   "status.online": "Online",
 
-  "settings.appearance.title": "Appearance",
+  "settings.theme.title": "Theme",
+  "settings.theme.caption": "Adjust your theme settings here",
   "settings.language.title": "Language",
+  "settings.language.caption": "Choose the language you want Hive to display",
 
   "link.sign-up": "Sign up",
   "link.sign-in": "Sign in",

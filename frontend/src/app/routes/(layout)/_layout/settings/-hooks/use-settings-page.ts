@@ -1,6 +1,7 @@
 import type { MouseEvent } from 'react'
 
 import type { Locale } from '@/providers/i18n-provider'
+import type { Theme } from '@/providers/theme-provider'
 
 import { useI18n } from '@/providers/i18n-provider'
 import { useTheme } from '@/providers/theme-provider'
@@ -9,8 +10,8 @@ export function useSettingsPage() {
   const i18n = useI18n()
   const theme = useTheme()
 
-  const onThemeChange = (event: MouseEvent) => {
-    document.startViewTransition(() => theme.toggle())
+  const onThemeChange = (newTheme: Theme, event: MouseEvent) => {
+    document.startViewTransition(() => theme.set(newTheme))
 
     const x = event.clientX
     const y = event.clientY

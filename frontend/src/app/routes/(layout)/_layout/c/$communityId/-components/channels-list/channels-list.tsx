@@ -14,7 +14,11 @@ export function ChannelsList() {
         <span className="text-sm text-muted-foreground select-none">
           <I18nText id="channels.text.title" />
         </span>
-        <Button size="icon-xs" variant="ghost" className="text-muted-foreground">
+        <Button
+          size="icon-xs"
+          variant="ghost"
+          className="text-muted-foreground"
+        >
           <PlusIcon className="size-4" />
         </Button>
       </div>
