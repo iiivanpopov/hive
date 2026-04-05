@@ -17,12 +17,16 @@ export function useCommunityHeader() {
   const communityQuery = useSuspenseQuery(getCommunitiesCommunityIdOptions({
     path: { communityId },
   }))
+  const isOwner = communityQuery.data.community.ownerId === user!.id
 
   const dropdownMenu = useDisclosure()
   const viewInvitations = useDisclosure()
   const createInvitation = useCreateInvitation()
 
   const prefetchInvitations = () => {
+    if (!isOwner)
+      return
+
     queryClient.prefetchQuery({
       ...getCommunitiesCommunityIdInvitationsOptions({
         path: { communityId },
@@ -33,6 +37,7 @@ export function useCommunityHeader() {
 
   return {
     state: {
+      isOwner,
       user,
     },
     queries: {

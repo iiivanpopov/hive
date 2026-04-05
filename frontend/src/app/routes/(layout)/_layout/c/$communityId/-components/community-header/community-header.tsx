@@ -42,30 +42,36 @@ export function CommunityHeader() {
         />
         <DropdownMenuContent className="w-48">
           <DropdownMenuGroup>
-            <DropdownMenuLabel>
-              <I18nText id="dropdown.invitations.title" />
-            </DropdownMenuLabel>
+            {state.isOwner && (
+              <>
+                <DropdownMenuLabel>
+                  <I18nText id="dropdown.invitations.title" />
+                </DropdownMenuLabel>
 
-            <DropdownMenuItem
-              onClick={() => features.viewInvitations.open()}
-              onMouseOver={functions.prefetchInvitations}
-              className="
-                cursor-pointer items-center justify-between transition-colors
-              "
-            >
-              <I18nText id="dropdown.view-invitations.title" />
-              <ListIcon className="size-4" />
-            </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => features.viewInvitations.open()}
+                  onMouseOver={functions.prefetchInvitations}
+                  className="
+                    cursor-pointer items-center justify-between
+                    transition-colors
+                  "
+                >
+                  <I18nText id="dropdown.view-invitations.title" />
+                  <ListIcon className="size-4" />
+                </DropdownMenuItem>
 
-            <DropdownMenuItem
-              onClick={() => features.createInvitation.dialog.open()}
-              className="
-                cursor-pointer items-center justify-between transition-colors
-              "
-            >
-              <I18nText id="dropdown.create-invitation.title" />
-              <LinkIcon className="size-4" />
-            </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => features.createInvitation.dialog.open()}
+                  className="
+                    cursor-pointer items-center justify-between
+                    transition-colors
+                  "
+                >
+                  <I18nText id="dropdown.create-invitation.title" />
+                  <LinkIcon className="size-4" />
+                </DropdownMenuItem>
+              </>
+            )}
 
             {queries.community.data.community.ownerId !== state.user!.id && (
               <>
@@ -83,11 +89,11 @@ export function CommunityHeader() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <InvitationsDialog
-        open={features.viewInvitations.opened}
-        onOpenChange={features.viewInvitations.toggle}
-      />
-      <CreateInvitationDialog />
+      {state.isOwner && <CreateInvitationDialog />}
+
+      {state.isOwner && features.viewInvitations.opened && (
+        <InvitationsDialog onOpenChange={features.viewInvitations.toggle} />
+      )}
     </div>
   )
 }

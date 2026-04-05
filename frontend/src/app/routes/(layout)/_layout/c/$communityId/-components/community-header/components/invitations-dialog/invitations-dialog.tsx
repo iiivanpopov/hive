@@ -8,15 +8,14 @@ import { Spinner } from '@/components/ui/spinner'
 import { useInvitationsDialog } from './hooks/use-invitations-dialog'
 
 interface InvitationsDialogProps {
-  open: boolean
   onOpenChange: (value: boolean) => void
 }
 
-export function InvitationsDialog({ open, onOpenChange }: InvitationsDialogProps) {
+export function InvitationsDialog({ onOpenChange }: InvitationsDialogProps) {
   const { state, queries, mutations, functions } = useInvitationsDialog()
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>
