@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useParams } from '@tanstack/react-router'
+import { useParams, useRouteContext } from '@tanstack/react-router'
 
 import { getCommunitiesCommunityIdInvitationsOptions, getCommunitiesCommunityIdOptions } from '@/api/@tanstack/react-query.gen'
 import { useDisclosure } from '@/hooks/use-disclosure'
@@ -12,6 +12,7 @@ export function useCommunityHeader() {
     from: '/(layout)/_layout/c/$communityId/_layout/',
     select: params => params.communityId,
   })
+  const { user } = useRouteContext({ from: '__root__' })
 
   const communityQuery = useSuspenseQuery(getCommunitiesCommunityIdOptions({
     path: { communityId },
@@ -31,6 +32,9 @@ export function useCommunityHeader() {
   }
 
   return {
+    state: {
+      user,
+    },
     queries: {
       community: communityQuery,
     },

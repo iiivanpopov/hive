@@ -59,12 +59,12 @@ export function CommunityList() {
         more...
       </div>
       <div
-        data-open={features.scrollBottomBadge.opened ? 'true' : undefined}
+        data-open={features.scrollBottomBadge.opened}
         className="
           pointer-events-none absolute right-0 bottom-0 left-0 mx-2 scale-0
           rounded-sm border border-border bg-popover py-0.75 text-center text-sm
           opacity-0 transition-all duration-200 ease-in-out
-          data-open:scale-100 data-open:opacity-100
+          data-[open=true]:scale-100 data-[open=true]:opacity-100
         "
       >
         more...

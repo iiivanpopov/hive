@@ -9,7 +9,7 @@ import { InvitationsDialog } from './components/invitations-dialog'
 import { useCommunityHeader } from './hooks/use-community-header'
 
 export function CommunityHeader() {
-  const { queries, functions, features } = useCommunityHeader()
+  const { state, queries, functions, features } = useCommunityHeader()
 
   return (
     <div className="p-2">
@@ -64,15 +64,18 @@ export function CommunityHeader() {
               <LinkIcon className="size-4" />
             </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem className="
-              cursor-pointer items-center justify-between text-destructive
-            "
-            >
-              <I18nText id="dropdown.leave-community.title" />
-              <DoorOpenIcon className="size-4" />
-            </DropdownMenuItem>
+            {queries.community.data.community.ownerId !== state.user!.id && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="
+                  cursor-pointer items-center justify-between text-destructive
+                "
+                >
+                  <I18nText id="dropdown.leave-community.title" />
+                  <DoorOpenIcon className="size-4" />
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

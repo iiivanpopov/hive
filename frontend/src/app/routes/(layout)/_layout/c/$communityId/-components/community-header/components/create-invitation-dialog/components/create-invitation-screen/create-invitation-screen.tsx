@@ -2,8 +2,9 @@ import { I18nText } from '@/components/i18n'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Field, FieldContent, FieldDescription, FieldError } from '@/components/ui/field'
+import { Field, FieldError } from '@/components/ui/field'
 import { Spinner } from '@/components/ui/spinner'
+import { Typography } from '@/components/ui/typography'
 
 import { useCreateInvitationScreen } from './hooks/use-create-invitation-screen'
 
@@ -33,26 +34,34 @@ export function CreateInvitationScreen() {
                 selected={field.state.value}
                 onSelect={date => field.setValue(date!)}
               />
-              <FieldContent>
-                <FieldDescription>
-                  {field.state.value && (
-                    <I18nText
-                      id="input.expires-at.description"
-                      values={{
-                        day: field.state.value.toLocaleDateString(),
-                        time: field.state.value.toLocaleTimeString(),
-                      }}
-                    />
-                  )}
-                  {!field.state.value && <I18nText id="input.expires-at.never-expires" />}
-                </FieldDescription>
-                <FieldError errors={[features.i18n.t(field.state.meta.errors)]} />
-              </FieldContent>
+              <FieldError errors={[features.i18n.t(field.state.meta.errors)]} />
             </Field>
           )}
         </form.AppField>
       </form>
-      <DialogFooter className="flex justify-between!">
+      <DialogFooter className="flex flex-col!">
+        <form.Subscribe selector={state => state.values.expiresAt}>
+          {expiresAt => (
+            <>
+              {expiresAt && (
+                <Typography variant="caption">
+                  <I18nText
+                    id="input.expires-at.description"
+                    values={{
+                      day: expiresAt.toLocaleDateString(),
+                      time: expiresAt.toLocaleTimeString(),
+                    }}
+                  />
+                </Typography>
+              )}
+              {!expiresAt && (
+                <Typography variant="caption">
+                  <I18nText id="input.expires-at.never-expires" />
+                </Typography>
+              )}
+            </>
+          )}
+        </form.Subscribe>
         <Button
           form="create-invitation-form"
           type="submit"

@@ -52,7 +52,7 @@ function SettingsPage() {
               data-[active=true]:border-primary
             `}
             onClick={e => functions.onThemeChange('light', e)}
-            data-active={features.theme.value === 'light' ? 'true' : undefined}
+            data-active={features.theme.value === 'light'}
             aria-label="Light theme"
           >
             {features.theme.value === 'light' && (
@@ -76,7 +76,7 @@ function SettingsPage() {
               data-[active=true]:border-primary
             `}
             onClick={e => functions.onThemeChange('dark', e)}
-            data-active={features.theme.value === 'dark' ? 'true' : undefined}
+            data-active={features.theme.value === 'dark'}
             aria-label="Dark theme"
           >
             {features.theme.value === 'dark' && (
