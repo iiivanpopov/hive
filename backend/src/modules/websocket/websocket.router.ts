@@ -9,6 +9,7 @@ import { factory } from '@/lib/factory'
 import { session } from '@/middleware'
 import { MessagesService } from '@/modules/messages'
 
+import { ensureChannelMember } from './middleware/ensure-channel-member.middleware'
 import { WebsocketService } from './websocket.service'
 
 export class WebsocketRouter implements BaseRouter {
@@ -35,7 +36,8 @@ export class WebsocketRouter implements BaseRouter {
           description: 'Establish a WebSocket connection for real-time communication.',
         }),
         session(this.db, this.sessionTokens),
-        upgradeWebSocket(this.websocketService.handle),
+        ensureChannelMember(this.db),
+        upgradeWebSocket(c => this.websocketService.handle(c)),
       )
 
     return app

@@ -35,9 +35,14 @@ export class WsResponse<T = any> implements WsMessage<T> {
   }
 }
 
-export class CreatedMessageResponse extends WsResponse<Message> {
-  constructor(message: Message) {
-    super(WsEventType.CREATE_MESSAGE, message)
+export interface CreatedMessagePayload {
+  clientId?: string
+  message: Message
+}
+
+export class CreatedMessageResponse extends WsResponse<CreatedMessagePayload> {
+  constructor(message: Message, clientId?: string) {
+    super(WsEventType.CREATE_MESSAGE, { clientId, message })
   }
 }
 
@@ -59,9 +64,10 @@ export class DeletedMessageResponse extends WsResponse<{
 export class ErrorResponse extends WsResponse<{
   message: string
   code: number
+  clientId?: string
 }> {
-  constructor(message: string, code: number) {
-    super(WsEventType.ERROR, { message, code })
+  constructor(message: string, code: number, clientId?: string) {
+    super(WsEventType.ERROR, { message, code, clientId })
   }
 }
 
@@ -71,8 +77,11 @@ export class InvalidMessageResponse extends WsResponse<string> {
   }
 }
 
-export class InvalidPayloadResponse extends WsResponse<unknown> {
-  constructor(details: unknown) {
-    super(WsEventType.INVALID_PAYLOAD, details)
+export class InvalidPayloadResponse extends WsResponse<{
+  details: unknown
+  clientId?: string
+}> {
+  constructor(details: unknown, clientId?: string) {
+    super(WsEventType.INVALID_PAYLOAD, { details, clientId })
   }
 }

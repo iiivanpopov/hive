@@ -51,9 +51,27 @@ export class WebsocketService {
           WsEventType.CREATE_MESSAGE,
           CreateMessageSchema,
           async (data) => {
-            const message = await this.messagesService.createMessage({ channelId: query.channelId }, data, user)
+            const membership = await this.db.query.communityMembers.findFirst({
+              where: {
+                community: {
+                  channels: {
+                    id: query.channelId,
+                  },
+                },
+                userId: user.id,
+              },
+            })
+
+            if (!membership)
+              throw ApiException.NotFound('Not a community member', 'NOT_A_MEMBER')
+
+            const message = await this.messagesService.createMessage(
+              { channelId: query.channelId },
+              { content: data.content },
+              user,
+            )
             pino.info(`Message created: ${message.id}`)
-            this.notify(query.channelId, new CreatedMessageResponse(message))
+            this.notify(query.channelId, new CreatedMessageResponse(message, data.clientId))
           },
         )
         .onMessageEvent(event, ws)

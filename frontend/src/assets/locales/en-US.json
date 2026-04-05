@@ -9,6 +9,7 @@
   "button.create-invitation": "Create invitation",
   "button.save": "Save",
   "button.cancel": "Cancel",
+  "button.send": "Send",
   "button.delete-channel": "Delete channel",
   "button.revoke": "Revoke",
 
@@ -98,6 +99,13 @@
 
   "channels.text.title": "Text Channels",
   "channels.text.empty": "No text channels yet.",
+  "channel-chat.empty.title": "Welcome to #{channelName}",
+  "channel-chat.empty.description": "This is the start of the #{channelName} channel. Send the first message to get the conversation going.",
+  "channel-chat.input.placeholder": "Message #{channelName}",
+  "channel-chat.input.connected": "Connected",
+  "channel-chat.input.connecting": "Connecting...",
+  "channel-chat.message.sending": "Sending...",
+  "channel-chat.message.failed": "Failed to send",
 
   "dropdown.edit-channel.title": "Edit channel",
   "dropdown.delete-channel.title": "Delete channel",

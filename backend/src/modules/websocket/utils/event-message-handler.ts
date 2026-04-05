@@ -38,6 +38,13 @@ function mapHttpToWsStatusCode(httpStatus: number): number {
   }
 }
 
+function extractClientId(payload: unknown) {
+  if (!payload || typeof payload !== 'object' || !('clientId' in payload))
+    return undefined
+
+  return typeof payload.clientId === 'string' ? payload.clientId : undefined
+}
+
 export class EventMessageHandler {
   handlers: Map<
     string,
@@ -105,7 +112,7 @@ export class EventMessageHandler {
 
     if (!parsed.success) {
       return ws.send(this.serialize(
-        new InvalidPayloadResponse(mapValidationErrors(parsed.error.issues)),
+        new InvalidPayloadResponse(mapValidationErrors(parsed.error.issues), extractClientId(message.payload)),
       ))
     }
 
@@ -122,6 +129,7 @@ export class EventMessageHandler {
           new ErrorResponse(
             error.message,
             mapHttpToWsStatusCode(error.status),
+            extractClientId(message.payload),
           ),
         ))
       }
@@ -130,6 +138,7 @@ export class EventMessageHandler {
         new ErrorResponse(
           (error as any).message || 'Internal Server Error',
           1011,
+          extractClientId(message.payload),
         ),
       ))
     }
