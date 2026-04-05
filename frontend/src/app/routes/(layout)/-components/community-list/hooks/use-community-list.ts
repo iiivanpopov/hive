@@ -1,10 +1,10 @@
+import { useIntersectionObserver } from '@siberiacancode/reactuse'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { useRef } from 'react'
 
 import { getCommunitiesJoinedOptions } from '@/api/@tanstack/react-query.gen.ts'
 import { useDisclosure } from '@/hooks/use-disclosure'
-import { useIntersectionObserver } from '@/hooks/use-intersection-observer'
 
 export function useCommunityList() {
   const params = useParams({ strict: false })
