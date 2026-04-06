@@ -1,13 +1,12 @@
 import { useWebSocket } from '@siberiacancode/reactuse'
 import z from 'zod'
 
-import { env } from '@/config/env'
-
 import { clearPendingMessageTimeout } from '../../pendingMessageTimeouts'
 import {
   markChannelChatMessageFailed,
   receiveChannelChatMessage,
 } from '../../store/session.store'
+import { getChannelChatWebSocketUrl } from './utils/get-channel-chat-web-socket-url'
 
 interface WebSocketMessage {
   type: string
@@ -32,14 +31,6 @@ const CreateMessagePayloadSchema = z.object({
 const FailedMessagePayloadSchema = z.object({
   clientId: z.string().optional(),
 })
-
-function getChannelChatWebSocketUrl(channelId: number) {
-  const url = new URL('/ws', env.apiUrl)
-  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
-  url.searchParams.set('channelId', String(channelId))
-
-  return url.toString()
-}
 
 export function useChannelChatWebsocket(channelId: number) {
   const websocket = useWebSocket(getChannelChatWebSocketUrl(channelId), {
