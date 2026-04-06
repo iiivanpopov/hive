@@ -73,7 +73,9 @@ export function markChannelChatMessageFailed(channelId: number, clientId: string
     if (state.channelId !== channelId)
       return state
 
-    const messageIndex = state.messages.findIndex(existingMessage => existingMessage.clientId === clientId)
+    const messageIndex = state.messages.findIndex(
+      existingMessage => existingMessage.clientId === clientId,
+    )
 
     if (messageIndex === -1)
       return state

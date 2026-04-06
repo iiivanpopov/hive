@@ -2,12 +2,11 @@ import { useEvent, useTextareaAutosize, useWebSocket } from '@siberiacancode/rea
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useLoaderData, useRouteContext } from '@tanstack/react-router'
 import { useEffect, useMemo, useRef } from 'react'
+import z from 'zod'
 
 import { getCommunitiesCommunityIdMembersOptions } from '@/api/@tanstack/react-query.gen'
 import { env } from '@/config/env'
 import { useI18n } from '@/providers/i18n-provider'
-
-import type { ChannelChatMessage, ServerMessage } from '../store'
 
 import {
   appendChannelChatMessage,
@@ -21,20 +20,29 @@ import {
 const MAX_MESSAGE_LENGTH = 1000
 const MESSAGE_ACK_TIMEOUT = 10_000
 
-interface CreateMessagePayload {
-  clientId?: string
-  message: ServerMessage
-}
-
-interface WebSocketMessage<Payload = unknown> {
+interface WebSocketMessage {
   type: string
-  payload: Payload
+  payload: unknown
   timestamp: number
 }
 
-interface FailedMessagePayload {
-  clientId?: string
-}
+const ServerMessageSchema = z.object({
+  id: z.number(),
+  channelId: z.number(),
+  userId: z.number(),
+  content: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+
+const CreateMessagePayloadSchema = z.object({
+  clientId: z.string().optional(),
+  message: ServerMessageSchema,
+})
+
+const FailedMessagePayloadSchema = z.object({
+  clientId: z.string().optional(),
+})
 
 export interface ChannelChatViewMessage {
   id: number | string
@@ -69,42 +77,38 @@ export function useChannelChat() {
     path: { communityId: channel.communityId },
   }))
 
-  const membersById = useMemo(
-    () => new Map(membersQuery.data.members.map(member => [member.id, member])),
-    [membersQuery.data.members],
-  )
+  const membersById = useMemo(() => new Map(
+    membersQuery.data.members.map(member => [member.id, member]),
+  ), [membersQuery.data.members])
 
-  const mappedMessages = useMemo<Array<ChannelChatViewMessage>>(
-    () => messages.map((message) => {
-      const member = membersById.get(message.userId)
-      const author = member?.name ?? member?.username ?? 'Unknown user'
+  const mappedMessages = useMemo<Array<ChannelChatViewMessage>>(() => messages.map((message) => {
+    const member = membersById.get(message.userId)
+    const author = member?.name ?? member?.username ?? 'Unknown user'
 
-      return {
-        id: message.id,
-        author,
-        avatarFallback: author.at(0)?.toUpperCase() ?? '?',
-        content: message.content,
-        messageTime: new Date(message.createdAt).toLocaleTimeString(i18n.locale, {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        optimistic: message.optimistic,
-        failed: message.failed,
-      }
-    }),
-    [i18n.locale, membersById, messages],
-  )
+    return {
+      id: message.id,
+      author,
+      avatarFallback: author.at(0)?.toUpperCase() ?? '?',
+      content: message.content,
+      messageTime: new Date(message.createdAt).toLocaleTimeString(i18n.locale, {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      optimistic: message.optimistic,
+      failed: message.failed,
+    }
+  }), [i18n.locale, membersById, messages])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ block: 'end' })
   }, [mappedMessages.at(-1)?.id])
 
   const resetChannelState = useEvent((nextChannelId: number | null) => {
-    for (const timeoutId of messageTimeoutsRef.current.values())
-      window.clearTimeout(timeoutId)
-
+    messageTimeoutsRef.current.forEach(clearTimeout)
     messageTimeoutsRef.current.clear()
+
     resetChannelChatState(nextChannelId)
+
     textarea.set('')
   })
 
@@ -113,11 +117,11 @@ export function useChannelChat() {
       return
 
     const timeoutId = messageTimeoutsRef.current.get(clientId)
+    if (!timeoutId)
+      return
 
-    if (timeoutId != null) {
-      window.clearTimeout(timeoutId)
-      messageTimeoutsRef.current.delete(clientId)
-    }
+    clearTimeout(timeoutId)
+    messageTimeoutsRef.current.delete(clientId)
   })
 
   useEffect(() => {
@@ -135,37 +139,43 @@ export function useChannelChat() {
   const websocket = useWebSocket(getChannelChatWebSocketUrl(channel.id), {
     retry: true,
     onMessage: (event) => {
-      if (typeof event.data !== 'string')
-        return
-
-      let rawMessage: WebSocketMessage<CreateMessagePayload | FailedMessagePayload>
-
+      let rawMessage: WebSocketMessage
       try {
-        rawMessage = JSON.parse(event.data) as WebSocketMessage<CreateMessagePayload>
+        rawMessage = JSON.parse(event.data)
       }
       catch {
         return
       }
 
-      if (rawMessage.type === 'CREATE_MESSAGE' && rawMessage.payload && typeof rawMessage.payload === 'object' && 'message' in rawMessage.payload) {
-        clearMessageTimeout(rawMessage.payload.clientId)
+      switch (rawMessage.type) {
+        case 'CREATE_MESSAGE': {
+          const { success, data } = CreateMessagePayloadSchema.safeParse(rawMessage.payload)
+          if (!success)
+            return
 
-        const nextMessage: ChannelChatMessage = {
-          ...rawMessage.payload.message,
-          clientId: rawMessage.payload.clientId,
-          optimistic: false,
-          failed: false,
+          clearMessageTimeout(data.clientId)
+
+          appendServerChannelChatMessage({
+            ...data.message,
+            clientId: data.clientId,
+            optimistic: false,
+            failed: false,
+          }, data.clientId)
+
+          return
         }
 
-        appendServerChannelChatMessage(nextMessage, rawMessage.payload.clientId)
-        return
-      }
+        case 'ERROR':
+        case 'INVALID_PAYLOAD': {
+          const { success, data } = FailedMessagePayloadSchema.safeParse(rawMessage.payload)
+          if (!success)
+            return
 
-      if (rawMessage.type === 'ERROR' || rawMessage.type === 'INVALID_PAYLOAD') {
-        clearMessageTimeout(rawMessage.payload?.clientId)
+          clearMessageTimeout(data.clientId)
 
-        if (rawMessage.payload?.clientId)
-          markChannelChatMessageFailed(channel.id, rawMessage.payload.clientId)
+          if (data.clientId)
+            markChannelChatMessageFailed(channel.id, data.clientId)
+        }
       }
     },
   })
@@ -195,7 +205,6 @@ export function useChannelChat() {
       messageTimeoutsRef.current.delete(clientId)
       markChannelChatMessageFailed(channel.id, clientId)
     }, MESSAGE_ACK_TIMEOUT)
-
     messageTimeoutsRef.current.set(clientId, timeoutId)
 
     textarea.set('')

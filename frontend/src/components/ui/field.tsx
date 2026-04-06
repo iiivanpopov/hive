@@ -240,7 +240,7 @@ function FieldError({
     ]
 
     if (uniqueErrors?.length === 1) {
-      return uniqueErrors[0]?.message
+      return uniqueErrors.at(0)?.message
     }
 
     return (

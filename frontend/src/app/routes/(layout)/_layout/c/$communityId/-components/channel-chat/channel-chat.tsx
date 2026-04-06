@@ -49,11 +49,10 @@ export function ChannelChat() {
                     (message.optimistic || message.failed) && 'opacity-70',
                   )}
                 >
-                  <div
-                    className="
-                      flex size-10 shrink-0 items-center justify-center
-                      rounded-full bg-muted text-sm font-medium text-foreground
-                    "
+                  <div className="
+                    flex size-10 shrink-0 items-center justify-center
+                    rounded-full bg-muted text-sm font-medium text-foreground
+                  "
                   >
                     {message.avatarFallback}
                   </div>
@@ -78,8 +77,9 @@ export function ChannelChat() {
                       )}
                     </div>
 
-                    <Typography
-                      className="text-sm/6 wrap-break-word whitespace-pre-wrap"
+                    <Typography className="
+                      text-sm/6 wrap-break-word whitespace-pre-wrap
+                    "
                     >
                       {message.content}
                     </Typography>
@@ -94,11 +94,10 @@ export function ChannelChat() {
         {!state.messages.length && (
           <div className="flex h-full items-end px-6 pb-28">
             <div className="max-w-2xl space-y-3">
-              <div
-                className="
-                  flex size-20 items-center justify-center rounded-2xl border
-                  border-border bg-muted/50
-                "
+              <div className="
+                flex size-20 items-center justify-center rounded-2xl border
+                border-border bg-muted/50
+              "
               >
                 <HashIcon className="size-10" />
               </div>

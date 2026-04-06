@@ -167,7 +167,7 @@ export class AuthService {
       .insert(users)
       .values({
         email: googleUser.email,
-        username: googleUser.email.split('@')[0],
+        username: googleUser.email.split('@').at(0)!,
         emailConfirmed: true,
         passwordHash,
       })
