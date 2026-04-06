@@ -1,8 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import z from 'zod'
 
-import { getChannelsChannelIdMessagesOptions, getChannelsChannelIdOptions } from '@/api/@tanstack/react-query.gen'
-import { queryClient } from '@/lib/query-client'
+import type { GetChannelsChannelIdMessagesResponse, GetChannelsChannelIdResponse } from '@/api/types.gen'
+
+import { getChannelsChannelId, getChannelsChannelIdMessages } from '@/api/sdk.gen'
 
 import { ChannelChat } from '../../-components'
 
@@ -15,19 +16,23 @@ export const Route = createFileRoute('/(layout)/_layout/c/$communityId/_layout/$
   component: ChannelChat,
   params: RouteParamsSchema,
   loader: async ({ params: { channelId } }) => {
-    const [channelResponse, messagesResponse] = await Promise.all([
-      queryClient.ensureQueryData(getChannelsChannelIdOptions({
+    const [{ channel }, initialPage] = await Promise.all([
+      getChannelsChannelId({
         path: { channelId },
-      })),
-      queryClient.ensureQueryData(getChannelsChannelIdMessagesOptions({
+        responseStyle: 'data',
+        throwOnError: true,
+      }) as unknown as Promise<GetChannelsChannelIdResponse>,
+      getChannelsChannelIdMessages({
         path: { channelId },
         query: { limit: 50 },
-      })),
+        responseStyle: 'data',
+        throwOnError: true,
+      }) as unknown as Promise<GetChannelsChannelIdMessagesResponse>,
     ])
 
     return {
-      channel: channelResponse.channel,
-      initialMessages: messagesResponse.messages,
+      channel,
+      initialPage,
     }
   },
   head: ({ loaderData }) => ({ meta: [{ title: `#${loaderData?.channel?.name}` }] }),

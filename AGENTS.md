@@ -54,7 +54,7 @@
 ## Validation Workflow
 
 - Start with the smallest package-level command that covers the change; finish with repo-root commands when changes cross package boundaries, generated artifacts, or shared config.
-- After TypeScript or TSX changes, run `bun run lint`; add `bun run lint:css` for frontend CSS changes.
+- After TypeScript or TSX changes, run `bun run lint --fix`; add `bun run lint:css` for frontend CSS changes.
 - Backend logic, middleware, schema, route, or DB changes should run the relevant backend tests: use `bun run test:unit` for isolated logic and `bun run test:it` for app-level flows.
 - Frontend `bun run test` is currently a placeholder; rely on lint and build validation for frontend-only changes.
 - Backend OpenAPI changes require regenerating `frontend/api/` with `bun run api:generate` from `frontend/`; that command reads the running backend `/openapi` endpoint via `VITE_API_PORT`.
