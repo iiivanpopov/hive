@@ -5,7 +5,7 @@ import type { GetChannelsChannelIdMessagesResponse, GetChannelsChannelIdResponse
 
 import { getChannelsChannelId, getChannelsChannelIdMessages } from '@/api/sdk.gen'
 
-import { ChannelChat } from '../../-components'
+import { ChannelChat } from './-components'
 
 const RouteParamsSchema = z.object({
   communityId: z.coerce.number().int().positive(),

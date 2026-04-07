@@ -9,6 +9,7 @@ import { useCurrentUser } from './hooks/use-current-user'
 
 export function CurrentUser() {
   const { state, functions } = useCurrentUser()
+  const avatarLabel = state.user?.name ?? state.user?.username ?? '?'
 
   return (
     <div className="
@@ -24,11 +25,14 @@ export function CurrentUser() {
           dark:hover:bg-muted/50
         "
         >
-          <div className="
-            size-10 rounded-full bg-zinc-200
-            dark:bg-zinc-700
-          "
-          />
+          <div
+            className="
+              flex size-10 shrink-0 items-center justify-center rounded-full
+              bg-muted text-sm font-medium text-foreground
+            "
+          >
+            {avatarLabel.at(0)?.toUpperCase() ?? '?'}
+          </div>
           <div className="h-10 w-32">
             <div className="truncate text-left font-semibold">
               {state.user?.name ?? state.user?.username}
