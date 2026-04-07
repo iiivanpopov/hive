@@ -36,6 +36,8 @@ describe('/register', () => {
       from: expect.any(String),
     })
 
+    expect(mail.html).toContain(`${Bun.env.FRONTEND_URL}/confirm-email?token=`)
+
     const token = extractTokenFromMail(mail)
 
     expect(token).toMatch(
@@ -214,6 +216,9 @@ describe('/request-reset', () => {
     expect(sendMailMock).toHaveBeenCalled()
 
     const mail = sendMailMock.mock.calls.at(-1)![0]
+
+    expect(mail.html).toContain(`${Bun.env.FRONTEND_URL}/reset-password?token=`)
+
     const token = extractTokenFromMail(mail)
 
     expect(token).toMatch(

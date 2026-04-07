@@ -26,7 +26,7 @@ export const Route = createFileRoute('/(layout)/_layout/profile/')({
 })
 
 function ProfilePage() {
-  const { features, forms, state } = useProfilePage()
+  const { features, forms, functions, mutations, state } = useProfilePage()
 
   return (
     <div className="flex h-full flex-col gap-6 overflow-y-scroll p-8 pb-128">
@@ -81,6 +81,32 @@ function ProfilePage() {
                 </FieldContent>
               </Field>
 
+              {!state.user?.emailConfirmed && (
+                <Field>
+                  <FieldContent>
+                    <FieldDescription>
+                      <I18nText id="profile.info.email-unconfirmed.description" />
+                    </FieldDescription>
+
+                    {mutations.resendConfirmation.isSuccess && (
+                      <FieldDescription>
+                        <I18nText id="profile.info.email-unconfirmed.success" />
+                      </FieldDescription>
+                    )}
+                  </FieldContent>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={functions.onResendConfirmation}
+                    disabled={mutations.resendConfirmation.isPending}
+                  >
+                    {mutations.resendConfirmation.isPending && <Spinner />}
+                    <I18nText id="profile.info.email-unconfirmed.action" />
+                  </Button>
+                </Field>
+              )}
+
               <forms.profile.AppField name="name">
                 {field => (
                   <field.Input
@@ -129,6 +155,32 @@ function ProfilePage() {
         <Typography variant="caption">
           <I18nText id="profile.security.caption" />
         </Typography>
+
+        <div className="mt-4 max-w-md">
+          <Field>
+            <FieldContent>
+              <FieldDescription>
+                <I18nText id="profile.security.password-setup.description" />
+              </FieldDescription>
+
+              {mutations.requestReset.isSuccess && (
+                <FieldDescription>
+                  <I18nText id="profile.security.password-setup.success" />
+                </FieldDescription>
+              )}
+            </FieldContent>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={functions.onSendPasswordSetupLink}
+              disabled={mutations.requestReset.isPending}
+            >
+              {mutations.requestReset.isPending && <Spinner />}
+              <I18nText id="profile.security.password-setup.action" />
+            </Button>
+          </Field>
+        </div>
 
         <form
           id="change-password-form"

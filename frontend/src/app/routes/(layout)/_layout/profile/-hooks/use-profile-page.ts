@@ -2,7 +2,13 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouteContext, useRouter } from '@tanstack/react-router'
 import z from 'zod'
 
-import { getAuthMeOptions, patchAuthChangePasswordMutation, patchAuthMeMutation } from '@/api/@tanstack/react-query.gen.ts'
+import {
+  getAuthMeQueryKey,
+  patchAuthChangePasswordMutation,
+  patchAuthMeMutation,
+  postAuthConfirmEmailResendMutation,
+  postAuthRequestResetMutation,
+} from '@/api/@tanstack/react-query.gen.ts'
 import { useForm } from '@/components/form/hooks.ts'
 import { queryClient } from '@/lib/query-client.ts'
 import { useI18n } from '@/providers/i18n-provider'
@@ -39,6 +45,8 @@ export function useProfilePage() {
 
   const updateProfileMutation = useMutation(patchAuthMeMutation())
   const changePasswordMutation = useMutation(patchAuthChangePasswordMutation())
+  const resendConfirmationMutation = useMutation(postAuthConfirmEmailResendMutation())
+  const requestResetMutation = useMutation(postAuthRequestResetMutation())
 
   const profileForm = useForm({
     defaultValues: {
@@ -51,7 +59,7 @@ export function useProfilePage() {
         body: value,
       })
 
-      queryClient.setQueryData(getAuthMeOptions().queryKey, {
+      queryClient.setQueryData(getAuthMeQueryKey(), {
         user: result.user,
       })
 
@@ -74,6 +82,22 @@ export function useProfilePage() {
     },
   })
 
+  const onResendConfirmation = async () => {
+    await resendConfirmationMutation.mutateAsync({
+      body: {
+        email: user!.email,
+      },
+    })
+  }
+
+  const onSendPasswordSetupLink = async () => {
+    await requestResetMutation.mutateAsync({
+      body: {
+        email: user!.email,
+      },
+    })
+  }
+
   return {
     forms: {
       profile: profileForm,
@@ -82,9 +106,15 @@ export function useProfilePage() {
     mutations: {
       updateProfile: updateProfileMutation,
       changePassword: changePasswordMutation,
+      resendConfirmation: resendConfirmationMutation,
+      requestReset: requestResetMutation,
     },
     state: {
       user,
+    },
+    functions: {
+      onResendConfirmation,
+      onSendPasswordSetupLink,
     },
     features: {
       i18n,

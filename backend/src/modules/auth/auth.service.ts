@@ -38,7 +38,7 @@ export class AuthService {
       <h1>Welcome to Hive, ${user.username}!</h1>
       <p>Thank you for registering.</p>
       <p>
-        Please confirm your account by clicking <a href="${Bun.env.FRONTEND_URL}/auth/confirm?token=${token}">here</a>.
+        Please confirm your account by clicking <a href="${Bun.env.FRONTEND_URL}/confirm-email?token=${token}">here</a>.
       </p>`,
     })
   }
@@ -189,7 +189,7 @@ export class AuthService {
         <h1>Password Reset Request</h1>
         <p>We received a request to reset your password.</p>
         <p>
-          Please reset your password by clicking <a href="${Bun.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}">here</a>.
+          Please reset your password by clicking <a href="${Bun.env.FRONTEND_URL}/reset-password?token=${resetToken}">here</a>.
         </p>
         <p>If you did not request a password reset, please ignore this email.</p>`,
     })
@@ -200,14 +200,18 @@ export class AuthService {
       where: { email },
     })
 
-    if (!user)
-      return pino.debug(`Password reset requested for non-existent email: ${email}`)
+    if (!user) {
+      pino.debug({ email }, 'Password reset requested for non-existent email')
+      return
+    }
 
     const attempts = await this.resetPasswordTokens.incrementAttempt(email)
+
     if (attempts > authConfig.resetPasswordRateLimitCount)
       throw ApiException.TooManyRequests('Too many password reset attempts. Please try again later.', 'TOO_MANY_PASSWORD_RESET_ATTEMPTS')
 
     const resetToken = await this.resetPasswordTokens.create({ userId: user.id })
+
     if (Bun.env.SMTP_ENABLE === 'true' || Bun.env.NODE_ENV === 'test') {
       await this.sendPasswordResetEmail(user, resetToken)
       pino.debug(`Sent password reset email to ${user.email}`)

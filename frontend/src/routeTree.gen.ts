@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './app/routes/__root'
 import { Route as layoutLayoutRouteImport } from './app/routes/(layout)/_layout'
 import { Route as layoutLayoutIndexRouteImport } from './app/routes/(layout)/_layout/index'
+import { Route as authResetPasswordIndexRouteImport } from './app/routes/(auth)/reset-password/index'
 import { Route as authRegisterIndexRouteImport } from './app/routes/(auth)/register/index'
 import { Route as authRecoveryIndexRouteImport } from './app/routes/(auth)/recovery/index'
 import { Route as authLoginIndexRouteImport } from './app/routes/(auth)/login/index'
+import { Route as authConfirmEmailIndexRouteImport } from './app/routes/(auth)/confirm-email/index'
 import { Route as layoutLayoutSettingsIndexRouteImport } from './app/routes/(layout)/_layout/settings/index'
 import { Route as layoutLayoutProfileIndexRouteImport } from './app/routes/(layout)/_layout/profile/index'
 import { Route as layoutLayoutCCommunityIdLayoutRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout'
@@ -29,6 +31,11 @@ const layoutLayoutIndexRoute = layoutLayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => layoutLayoutRoute,
 } as any)
+const authResetPasswordIndexRoute = authResetPasswordIndexRouteImport.update({
+  id: '/(auth)/reset-password/',
+  path: '/reset-password/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const authRegisterIndexRoute = authRegisterIndexRouteImport.update({
   id: '/(auth)/register/',
   path: '/register/',
@@ -42,6 +49,11 @@ const authRecoveryIndexRoute = authRecoveryIndexRouteImport.update({
 const authLoginIndexRoute = authLoginIndexRouteImport.update({
   id: '/(auth)/login/',
   path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authConfirmEmailIndexRoute = authConfirmEmailIndexRouteImport.update({
+  id: '/(auth)/confirm-email/',
+  path: '/confirm-email/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const layoutLayoutSettingsIndexRoute =
@@ -76,9 +88,11 @@ const layoutLayoutCCommunityIdLayoutChannelIdIndexRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/confirm-email/': typeof authConfirmEmailIndexRoute
   '/login/': typeof authLoginIndexRoute
   '/recovery/': typeof authRecoveryIndexRoute
   '/register/': typeof authRegisterIndexRoute
+  '/reset-password/': typeof authResetPasswordIndexRoute
   '/': typeof layoutLayoutIndexRoute
   '/profile/': typeof layoutLayoutProfileIndexRoute
   '/settings/': typeof layoutLayoutSettingsIndexRoute
@@ -87,9 +101,11 @@ export interface FileRoutesByFullPath {
   '/c/$communityId/$channelId/': typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
 }
 export interface FileRoutesByTo {
+  '/confirm-email': typeof authConfirmEmailIndexRoute
   '/login': typeof authLoginIndexRoute
   '/recovery': typeof authRecoveryIndexRoute
   '/register': typeof authRegisterIndexRoute
+  '/reset-password': typeof authResetPasswordIndexRoute
   '/': typeof layoutLayoutIndexRoute
   '/profile': typeof layoutLayoutProfileIndexRoute
   '/settings': typeof layoutLayoutSettingsIndexRoute
@@ -99,9 +115,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(layout)/_layout': typeof layoutLayoutRouteWithChildren
+  '/(auth)/confirm-email/': typeof authConfirmEmailIndexRoute
   '/(auth)/login/': typeof authLoginIndexRoute
   '/(auth)/recovery/': typeof authRecoveryIndexRoute
   '/(auth)/register/': typeof authRegisterIndexRoute
+  '/(auth)/reset-password/': typeof authResetPasswordIndexRoute
   '/(layout)/_layout/': typeof layoutLayoutIndexRoute
   '/(layout)/_layout/profile/': typeof layoutLayoutProfileIndexRoute
   '/(layout)/_layout/settings/': typeof layoutLayoutSettingsIndexRoute
@@ -112,9 +130,11 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/confirm-email/'
     | '/login/'
     | '/recovery/'
     | '/register/'
+    | '/reset-password/'
     | '/'
     | '/profile/'
     | '/settings/'
@@ -123,9 +143,11 @@ export interface FileRouteTypes {
     | '/c/$communityId/$channelId/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/confirm-email'
     | '/login'
     | '/recovery'
     | '/register'
+    | '/reset-password'
     | '/'
     | '/profile'
     | '/settings'
@@ -134,9 +156,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/(layout)/_layout'
+    | '/(auth)/confirm-email/'
     | '/(auth)/login/'
     | '/(auth)/recovery/'
     | '/(auth)/register/'
+    | '/(auth)/reset-password/'
     | '/(layout)/_layout/'
     | '/(layout)/_layout/profile/'
     | '/(layout)/_layout/settings/'
@@ -147,9 +171,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   layoutLayoutRoute: typeof layoutLayoutRouteWithChildren
+  authConfirmEmailIndexRoute: typeof authConfirmEmailIndexRoute
   authLoginIndexRoute: typeof authLoginIndexRoute
   authRecoveryIndexRoute: typeof authRecoveryIndexRoute
   authRegisterIndexRoute: typeof authRegisterIndexRoute
+  authResetPasswordIndexRoute: typeof authResetPasswordIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -167,6 +193,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof layoutLayoutIndexRouteImport
       parentRoute: typeof layoutLayoutRoute
+    }
+    '/(auth)/reset-password/': {
+      id: '/(auth)/reset-password/'
+      path: '/reset-password'
+      fullPath: '/reset-password/'
+      preLoaderRoute: typeof authResetPasswordIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(auth)/register/': {
       id: '/(auth)/register/'
@@ -187,6 +220,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login/'
       preLoaderRoute: typeof authLoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/confirm-email/': {
+      id: '/(auth)/confirm-email/'
+      path: '/confirm-email'
+      fullPath: '/confirm-email/'
+      preLoaderRoute: typeof authConfirmEmailIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(layout)/_layout/settings/': {
@@ -266,9 +306,11 @@ const layoutLayoutRouteWithChildren = layoutLayoutRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   layoutLayoutRoute: layoutLayoutRouteWithChildren,
+  authConfirmEmailIndexRoute: authConfirmEmailIndexRoute,
   authLoginIndexRoute: authLoginIndexRoute,
   authRecoveryIndexRoute: authRecoveryIndexRoute,
   authRegisterIndexRoute: authRegisterIndexRoute,
+  authResetPasswordIndexRoute: authResetPasswordIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

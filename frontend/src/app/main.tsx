@@ -20,8 +20,12 @@ client.setConfig({
   credentials: 'include',
 })
 
-client.interceptors.response.use(async (response, _, options) => {
-  const body = await response.clone().json().catch()
+client.interceptors.response.use(async (response, request, options) => {
+  const contentType = response.headers.get('Content-Type') ?? ''
+  const canParseJson = response.status !== 204 && contentType.includes('json')
+  const body = canParseJson
+    ? await response.clone().json().catch(() => undefined)
+    : undefined
 
   if (!response.ok && options.meta?.toast !== false)
     toast.error(body?.error?.message ?? 'Something went wrong')
