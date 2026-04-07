@@ -46,5 +46,6 @@ export function useI18n() {
     t,
     locale,
     setLocale,
+    formatDate: intl.formatDate,
   }
 }

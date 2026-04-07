@@ -171,7 +171,7 @@ export function ChannelChat() {
                   features.input.submitMessage()
                 }}
                 className="
-                  min-h-9 flex-1 resize-none border-none bg-transparent px-2
+                  min-h-9 flex-1 resize-none border-none bg-transparent! px-2
                   py-1.5 shadow-none
                   focus-visible:ring-0
                 "
