@@ -1,4 +1,5 @@
 import { createFileRoute, Link, redirect } from '@tanstack/react-router'
+import z from 'zod'
 
 import { I18nText } from '@/components/i18n'
 import { Button } from '@/components/ui/button'
@@ -21,16 +22,26 @@ import { Typography } from '@/components/ui/typography.tsx'
 import { GoogleOauth } from '../-components'
 import { useRegisterPage } from './-hooks'
 
+const RegisterSearchSchema = z.object({
+  redirectTo: z.preprocess(
+    value => typeof value === 'string' && value.startsWith('/') && !value.startsWith('//')
+      ? value
+      : undefined,
+    z.string().optional(),
+  ),
+})
+
 export const Route = createFileRoute('/(auth)/register/')({
+  validateSearch: RegisterSearchSchema,
   component: RegisterPage,
-  beforeLoad: ({ context }) => {
+  beforeLoad: ({ context, search }) => {
     if (context.user)
-      throw redirect({ to: '/' })
+      throw redirect({ href: search.redirectTo ?? '/' })
   },
 })
 
 function RegisterPage() {
-  const { form, features } = useRegisterPage()
+  const { form, features, state } = useRegisterPage()
 
   return (
     <Card className="absolute top-1/2 left-1/2 w-xs -translate-1/2">
@@ -112,6 +123,7 @@ function RegisterPage() {
           {' '}
           <Link
             to="/login"
+            search={() => ({ redirectTo: state.redirectTo })}
             className="text-primary underline"
           >
             <I18nText id="link.sign-in" />

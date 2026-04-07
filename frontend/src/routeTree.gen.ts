@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/routes/__root'
+import { Route as InviteTokenRouteImport } from './app/routes/invite/$token'
 import { Route as layoutLayoutRouteImport } from './app/routes/(layout)/_layout'
 import { Route as layoutLayoutIndexRouteImport } from './app/routes/(layout)/_layout/index'
 import { Route as authResetPasswordIndexRouteImport } from './app/routes/(auth)/reset-password/index'
@@ -22,6 +23,11 @@ import { Route as layoutLayoutCCommunityIdLayoutRouteImport } from './app/routes
 import { Route as layoutLayoutCCommunityIdLayoutIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout/index'
 import { Route as layoutLayoutCCommunityIdLayoutChannelIdIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout/$channelId/index'
 
+const InviteTokenRoute = InviteTokenRouteImport.update({
+  id: '/invite/$token',
+  path: '/invite/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const layoutLayoutRoute = layoutLayoutRouteImport.update({
   id: '/(layout)/_layout',
   getParentRoute: () => rootRouteImport,
@@ -88,6 +94,7 @@ const layoutLayoutCCommunityIdLayoutChannelIdIndexRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/invite/$token': typeof InviteTokenRoute
   '/confirm-email/': typeof authConfirmEmailIndexRoute
   '/login/': typeof authLoginIndexRoute
   '/recovery/': typeof authRecoveryIndexRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/c/$communityId/$channelId/': typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
 }
 export interface FileRoutesByTo {
+  '/invite/$token': typeof InviteTokenRoute
   '/confirm-email': typeof authConfirmEmailIndexRoute
   '/login': typeof authLoginIndexRoute
   '/recovery': typeof authRecoveryIndexRoute
@@ -115,6 +123,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(layout)/_layout': typeof layoutLayoutRouteWithChildren
+  '/invite/$token': typeof InviteTokenRoute
   '/(auth)/confirm-email/': typeof authConfirmEmailIndexRoute
   '/(auth)/login/': typeof authLoginIndexRoute
   '/(auth)/recovery/': typeof authRecoveryIndexRoute
@@ -130,6 +139,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/invite/$token'
     | '/confirm-email/'
     | '/login/'
     | '/recovery/'
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/c/$communityId/$channelId/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/invite/$token'
     | '/confirm-email'
     | '/login'
     | '/recovery'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/(layout)/_layout'
+    | '/invite/$token'
     | '/(auth)/confirm-email/'
     | '/(auth)/login/'
     | '/(auth)/recovery/'
@@ -171,6 +183,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   layoutLayoutRoute: typeof layoutLayoutRouteWithChildren
+  InviteTokenRoute: typeof InviteTokenRoute
   authConfirmEmailIndexRoute: typeof authConfirmEmailIndexRoute
   authLoginIndexRoute: typeof authLoginIndexRoute
   authRecoveryIndexRoute: typeof authRecoveryIndexRoute
@@ -180,6 +193,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/invite/$token': {
+      id: '/invite/$token'
+      path: '/invite/$token'
+      fullPath: '/invite/$token'
+      preLoaderRoute: typeof InviteTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(layout)/_layout': {
       id: '/(layout)/_layout'
       path: ''
@@ -306,6 +326,7 @@ const layoutLayoutRouteWithChildren = layoutLayoutRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   layoutLayoutRoute: layoutLayoutRouteWithChildren,
+  InviteTokenRoute: InviteTokenRoute,
   authConfirmEmailIndexRoute: authConfirmEmailIndexRoute,
   authLoginIndexRoute: authLoginIndexRoute,
   authRecoveryIndexRoute: authRecoveryIndexRoute,

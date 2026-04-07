@@ -12,6 +12,7 @@
   "button.send": "Send",
   "button.delete-channel": "Delete channel",
   "button.revoke": "Revoke",
+  "button.copy-link": "Copy link",
 
   "auth.login.title": "Sign in to your account",
   "auth.register.title": "Create your account",
@@ -150,11 +151,27 @@
 
   "toast.create-invitation.success": "Invitation created successfully",
 
-  "invitation.ready": "Here is your invitation token",
+  "invitation.ready": "Here is your shareable invitation link",
+  "invitation.token.label": "Raw token",
   "invitation.empty": "There are no active invitations yet.",
   "invitation.expires-at": "Available until {date}",
   "invitation.never-expires": "Available without expiration",
   "invitation.created-at": "Created {date}",
+
+  "invite.page.title": "Join this community",
+  "invite.page.description": "Sign in or create an account to accept this invitation and continue in Hive.",
+  "invite.page.login": "Sign in to join",
+  "invite.page.register": "Create account",
+  "invite.page.pending.title": "Joining community",
+  "invite.page.pending.description": "We're adding you to the community now.",
+  "invite.page.pending.action": "Joining",
+  "invite.page.success.title": "Invitation accepted",
+  "invite.page.success.description": "You're in. Opening the community now.",
+  "invite.page.success.action": "Opening community",
+  "invite.page.error.title": "Invitation unavailable",
+  "invite.page.error.description": "This invitation link is invalid or has expired.",
+  "invite.page.retry": "Try again",
+  "invite.page.go-home": "Go to app",
 
   "button.close": "Close"
 }

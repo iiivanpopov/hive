@@ -4,6 +4,8 @@
   "input.password-confirm.label": "Підтвердіть пароль",
   "input.password.hint": "Щонайменше 6 символів",
 
+  "button.copy-link": "Скопіювати посилання",
+
   "validation.email.invalid": "Введіть коректну адресу електронної пошти",
   "validation.password.min": "Пароль має містити щонайменше 6 символів",
   "validation.passwords.mismatch": "Паролі не збігаються",
@@ -42,5 +44,23 @@
   "profile.info.email-unconfirmed.success": "Якщо акаунт із цією адресою існує, ми надіслали новий лист для підтвердження.",
   "profile.security.password-setup.description": "Якщо ви увійшли через Google або не знаєте поточний пароль, надішліть собі лист із посиланням для створення пароля.",
   "profile.security.password-setup.action": "Надіслати посилання для пароля",
-  "profile.security.password-setup.success": "Перевірте пошту: ми надіслали посилання для створення пароля."
+  "profile.security.password-setup.success": "Перевірте пошту: ми надіслали посилання для створення пароля.",
+
+  "invitation.ready": "Ось ваше посилання-запрошення",
+  "invitation.token.label": "Токен запрошення",
+
+  "invite.page.title": "Приєднатися до спільноти",
+  "invite.page.description": "Увійдіть або створіть акаунт, щоб прийняти це запрошення й продовжити роботу в Hive.",
+  "invite.page.login": "Увійти й приєднатися",
+  "invite.page.register": "Створити акаунт",
+  "invite.page.pending.title": "Приєднуємо до спільноти",
+  "invite.page.pending.description": "Зараз ми додаємо вас до цієї спільноти.",
+  "invite.page.pending.action": "Приєднуємо",
+  "invite.page.success.title": "Запрошення прийнято",
+  "invite.page.success.description": "Готово. Відкриваємо спільноту.",
+  "invite.page.success.action": "Відкриваємо спільноту",
+  "invite.page.error.title": "Запрошення недоступне",
+  "invite.page.error.description": "Це посилання-запрошення недійсне або прострочене.",
+  "invite.page.retry": "Спробувати ще раз",
+  "invite.page.go-home": "Перейти в застосунок"
 }

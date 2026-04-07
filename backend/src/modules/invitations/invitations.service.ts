@@ -57,7 +57,7 @@ export class InvitationsService {
       },
     })
     if (membership)
-      throw ApiException.BadRequest('You are already a member of this community', 'ALREADY_A_MEMBER')
+      return invitation.community!
 
     await this.db
       .insert(communityMembers)

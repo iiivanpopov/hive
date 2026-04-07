@@ -1,26 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCopy } from '@siberiacancode/reactuse'
 
 import { useCreateInvitation } from '@/app/routes/(layout)/_layout/c/$communityId/-providers/create-invitation-provider'
+import { getInvitationUrl } from '@/lib/invitations'
 
 export function useViewInvitationScreen() {
-  const [copied, setCopied] = useState(false)
-  const timeoutRef = useRef<number>(null)
-
   const { invitation } = useCreateInvitation()
+  const { copied, copy } = useCopy(1000)
+  const invitationUrl = invitation ? getInvitationUrl(invitation) : ''
 
   const onCopy = async () => {
-    await navigator.clipboard.writeText(invitation ?? '')
-    setCopied(true)
-
-    timeoutRef.current = setTimeout(setCopied, 1000, false)
+    await copy(invitationUrl)
   }
-
-  useEffect(() => () => clearTimeout(timeoutRef.current ?? undefined), [])
 
   return {
     state: {
       copied,
-      invitation,
+      invitationToken: invitation,
+      invitationUrl,
     },
     functions: {
       onCopy,

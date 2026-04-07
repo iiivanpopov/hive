@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import { useSearch } from '@tanstack/react-router'
 import { useState } from 'react'
 import z from 'zod'
 
@@ -18,6 +19,7 @@ const recoveryFormDefaultValues = {
 export function useRecoveryPage() {
   const i18n = useI18n()
   const [hasRequestedReset, setHasRequestedReset] = useState(false)
+  const { redirectTo } = useSearch({ from: '/(auth)/recovery/' })
 
   const requestResetMutation = useMutation(postAuthRequestResetMutation())
 
@@ -39,6 +41,7 @@ export function useRecoveryPage() {
     },
     state: {
       hasRequestedReset,
+      redirectTo,
     },
     features: {
       i18n,

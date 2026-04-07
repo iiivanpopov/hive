@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import z from 'zod'
 
 import { I18nText } from '@/components/i18n'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -19,7 +20,17 @@ import { Spinner } from '@/components/ui/spinner.tsx'
 
 import { useRecoveryPage } from './-hooks'
 
+const RecoverySearchSchema = z.object({
+  redirectTo: z.preprocess(
+    value => typeof value === 'string' && value.startsWith('/') && !value.startsWith('//')
+      ? value
+      : undefined,
+    z.string().optional(),
+  ),
+})
+
 export const Route = createFileRoute('/(auth)/recovery/')({
+  validateSearch: RecoverySearchSchema,
   component: RecoveryPage,
 })
 
@@ -45,6 +56,7 @@ function RecoveryPage() {
         <CardFooter>
           <Link
             to="/login"
+            search={() => ({ redirectTo: state.redirectTo })}
             className={buttonVariants({ className: 'w-full' })}
           >
             <I18nText id="auth.recovery.back-to-login" />
@@ -115,6 +127,7 @@ function RecoveryPage() {
 
         <Link
           to="/login"
+          search={() => ({ redirectTo: state.redirectTo })}
           className={buttonVariants({ variant: 'outline', className: 'w-full' })}
         >
           <I18nText id="auth.recovery.back-to-login" />

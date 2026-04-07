@@ -196,6 +196,7 @@ function ConfirmEmailPage() {
 
         <Link
           to="/login"
+          search={() => ({ redirectTo: undefined })}
           className={buttonVariants({ variant: 'outline', className: 'w-full' })}
         >
           <I18nText id="auth.confirm-email.go-login" />

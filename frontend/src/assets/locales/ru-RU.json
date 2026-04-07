@@ -4,6 +4,8 @@
   "input.password-confirm.label": "Подтвердите пароль",
   "input.password.hint": "Минимум 6 символов",
 
+  "button.copy-link": "Скопировать ссылку",
+
   "validation.email.invalid": "Введите корректный адрес электронной почты",
   "validation.password.min": "Пароль должен содержать не менее 6 символов",
   "validation.passwords.mismatch": "Пароли не совпадают",
@@ -42,5 +44,23 @@
   "profile.info.email-unconfirmed.success": "Если аккаунт с этим адресом существует, мы отправили новое письмо для подтверждения.",
   "profile.security.password-setup.description": "Если вы вошли через Google или не знаете текущий пароль, отправьте себе письмо со ссылкой для создания пароля.",
   "profile.security.password-setup.action": "Отправить ссылку для пароля",
-  "profile.security.password-setup.success": "Проверьте почту: мы отправили ссылку для создания пароля."
+  "profile.security.password-setup.success": "Проверьте почту: мы отправили ссылку для создания пароля.",
+
+  "invitation.ready": "Вот ваша ссылка-приглашение",
+  "invitation.token.label": "Токен приглашения",
+
+  "invite.page.title": "Присоединиться к сообществу",
+  "invite.page.description": "Войдите или создайте аккаунт, чтобы принять это приглашение и продолжить работу в Hive.",
+  "invite.page.login": "Войти и присоединиться",
+  "invite.page.register": "Создать аккаунт",
+  "invite.page.pending.title": "Присоединяем к сообществу",
+  "invite.page.pending.description": "Сейчас мы добавляем вас в это сообщество.",
+  "invite.page.pending.action": "Присоединяем",
+  "invite.page.success.title": "Приглашение принято",
+  "invite.page.success.description": "Готово. Открываем сообщество.",
+  "invite.page.success.action": "Открываем сообщество",
+  "invite.page.error.title": "Приглашение недоступно",
+  "invite.page.error.description": "Эта ссылка-приглашение недействительна или истекла.",
+  "invite.page.retry": "Попробовать снова",
+  "invite.page.go-home": "Перейти в приложение"
 }

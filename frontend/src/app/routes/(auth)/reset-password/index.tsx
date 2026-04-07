@@ -26,6 +26,12 @@ const ResetPasswordSearchSchema = z.object({
     value => typeof value === 'string' && value.trim().length > 0 ? value : undefined,
     z.string().optional(),
   ),
+  redirectTo: z.preprocess(
+    value => typeof value === 'string' && value.startsWith('/') && !value.startsWith('//')
+      ? value
+      : undefined,
+    z.string().optional(),
+  ),
 })
 
 export const Route = createFileRoute('/(auth)/reset-password/')({
@@ -34,8 +40,7 @@ export const Route = createFileRoute('/(auth)/reset-password/')({
 })
 
 function ResetPasswordPage() {
-  const { token } = Route.useSearch()
-  const { features, form, mutations, state } = useResetPasswordPage(token)
+  const { features, form, mutations, state } = useResetPasswordPage()
 
   if (!state.token) {
     return (
@@ -56,6 +61,7 @@ function ResetPasswordPage() {
         <CardFooter>
           <Link
             to="/recovery"
+            search={() => ({ redirectTo: state.redirectTo })}
             className={buttonVariants({ className: 'w-full' })}
           >
             <I18nText id="auth.reset-password.request-new-link" />
@@ -147,6 +153,7 @@ function ResetPasswordPage() {
 
         <Link
           to="/recovery"
+          search={() => ({ redirectTo: state.redirectTo })}
           className={buttonVariants({ variant: 'outline', className: 'w-full' })}
         >
           <I18nText id="auth.reset-password.request-new-link" />

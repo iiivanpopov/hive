@@ -1,4 +1,5 @@
 import { createFileRoute, Link, redirect } from '@tanstack/react-router'
+import z from 'zod'
 
 import { I18nText } from '@/components/i18n'
 import { Button } from '@/components/ui/button'
@@ -20,16 +21,26 @@ import { Typography } from '@/components/ui/typography.tsx'
 import { GoogleOauth } from '../-components'
 import { useLoginPage } from './-hooks'
 
+const LoginSearchSchema = z.object({
+  redirectTo: z.preprocess(
+    value => typeof value === 'string' && value.startsWith('/') && !value.startsWith('//')
+      ? value
+      : undefined,
+    z.string().optional(),
+  ),
+})
+
 export const Route = createFileRoute('/(auth)/login/')({
+  validateSearch: LoginSearchSchema,
   component: LoginPage,
-  beforeLoad: ({ context }) => {
+  beforeLoad: ({ context, search }) => {
     if (context.user)
-      throw redirect({ to: '/' })
+      throw redirect({ href: search.redirectTo ?? '/' })
   },
 })
 
 function LoginPage() {
-  const { form, mutations, features } = useLoginPage()
+  const { form, mutations, features, state } = useLoginPage()
 
   return (
     <Card className="absolute top-1/2 left-1/2 w-xs -translate-1/2">
@@ -90,6 +101,7 @@ function LoginPage() {
             {' '}
             <Link
               to="/recovery"
+              search={() => ({ redirectTo: state.redirectTo })}
               className="text-primary underline"
             >
               <I18nText id="link.recover" />
@@ -105,6 +117,7 @@ function LoginPage() {
           {' '}
           <Link
             to="/register"
+            search={() => ({ redirectTo: state.redirectTo })}
             className="text-primary underline"
           >
             <I18nText id="link.sign-up" />

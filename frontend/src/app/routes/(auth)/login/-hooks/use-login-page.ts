@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { useRouter } from '@tanstack/react-router'
+import { useRouter, useSearch } from '@tanstack/react-router'
 import z from 'zod'
 
 import { getAuthMeOptions, postAuthLoginMutation } from '@/api/@tanstack/react-query.gen.ts'
@@ -21,6 +21,7 @@ const loginFormDefaultValues = {
 export function useLoginPage() {
   const router = useRouter()
   const i18n = useI18n()
+  const { redirectTo } = useSearch({ from: '/(auth)/login/' })
 
   const loginMutation = useMutation(postAuthLoginMutation())
 
@@ -39,6 +40,9 @@ export function useLoginPage() {
     form,
     mutations: {
       login: loginMutation,
+    },
+    state: {
+      redirectTo,
     },
     features: {
       i18n,

@@ -12,9 +12,15 @@ import { AddCommunityDialogProvider } from './-providers/add-community-dialog-pr
 export const Route = createFileRoute('/(layout)/_layout')({
   component: Layout,
   pendingComponent: LayoutLoading,
-  beforeLoad: ({ context }) => {
-    if (!context.user)
-      throw redirect({ to: '/login' })
+  beforeLoad: ({ context, location }) => {
+    if (!context.user) {
+      throw redirect({
+        to: '/login',
+        search: () => ({
+          redirectTo: location.pathname,
+        }),
+      })
+    }
   },
   loader: () => queryClient.ensureQueryData(getCommunitiesJoinedOptions()),
 })

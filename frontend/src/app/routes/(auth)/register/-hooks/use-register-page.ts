@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { useRouter } from '@tanstack/react-router'
+import { useRouter, useSearch } from '@tanstack/react-router'
 import z from 'zod'
 
 import { getAuthMeOptions, postAuthRegisterMutation } from '@/api/@tanstack/react-query.gen.ts'
@@ -45,6 +45,7 @@ const registerFormDefaultValues = {
 export function useRegisterPage() {
   const i18n = useI18n()
   const router = useRouter()
+  const { redirectTo } = useSearch({ from: '/(auth)/register/' })
 
   const registerMutation = useMutation(postAuthRegisterMutation())
 
@@ -63,6 +64,9 @@ export function useRegisterPage() {
     form,
     mutations: {
       register: registerMutation,
+    },
+    state: {
+      redirectTo,
     },
     features: {
       i18n,

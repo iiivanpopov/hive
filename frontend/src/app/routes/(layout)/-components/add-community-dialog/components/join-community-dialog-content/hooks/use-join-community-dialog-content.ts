@@ -5,13 +5,16 @@ import z from 'zod'
 import { getCommunitiesJoinedOptions, postCommunitiesJoinTokenMutation } from '@/api/@tanstack/react-query.gen.ts'
 import { useAddCommunityDialog } from '@/app/routes/(layout)/-providers/add-community-dialog-provider/use-add-community-dialog'
 import { useForm } from '@/components/form/hooks.ts'
+import { parseInvitationToken } from '@/lib/invitations'
 import { queryClient } from '@/lib/query-client'
 import { useI18n } from '@/providers/i18n-provider'
 
 const JoinCommunitySchema = z.object({
   token: z
     .string()
-    .length(16, 'validation.invite-token.invalid'),
+    .trim()
+    .transform(parseInvitationToken)
+    .pipe(z.string().length(16, 'validation.invite-token.invalid')),
 })
 
 const formDefaultValues = {

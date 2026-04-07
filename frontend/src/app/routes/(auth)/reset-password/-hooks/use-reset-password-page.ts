@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { useRouter } from '@tanstack/react-router'
+import { useRouter, useSearch } from '@tanstack/react-router'
 import z from 'zod'
 
 import { postAuthResetPasswordTokenMutation } from '@/api/@tanstack/react-query.gen.ts'
@@ -24,9 +24,10 @@ const resetPasswordFormDefaultValues = {
   confirmPassword: '',
 }
 
-export function useResetPasswordPage(token?: string) {
+export function useResetPasswordPage() {
   const i18n = useI18n()
   const router = useRouter()
+  const { redirectTo, token } = useSearch({ from: '/(auth)/reset-password/' })
 
   const resetPasswordMutation = useMutation(postAuthResetPasswordTokenMutation({
     meta: {
@@ -48,7 +49,10 @@ export function useResetPasswordPage(token?: string) {
         },
       })
 
-      await router.navigate({ to: '/login' })
+      await router.navigate({
+        to: '/login',
+        search: () => ({ redirectTo }),
+      })
     },
   })
 
@@ -58,6 +62,7 @@ export function useResetPasswordPage(token?: string) {
       resetPassword: resetPasswordMutation,
     },
     state: {
+      redirectTo,
       token,
     },
     features: {

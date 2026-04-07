@@ -1,14 +1,19 @@
+import { useCopy } from '@siberiacancode/reactuse'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 
 import { deleteInvitationsInvitationIdMutation, getCommunitiesCommunityIdInvitationsOptions } from '@/api/@tanstack/react-query.gen'
+import { getInvitationUrl } from '@/lib/invitations'
 import { queryClient } from '@/lib/query-client'
+import { useI18n } from '@/providers/i18n-provider'
 
 export function useInvitationsDialog() {
   const communityId = useParams({
     from: '/(layout)/_layout/c/$communityId/_layout',
     select: params => params.communityId,
   })
+  const i18n = useI18n()
+  const clipboard = useCopy(1000)
 
   const invitationsQueryOptions = getCommunitiesCommunityIdInvitationsOptions({
     path: { communityId },
@@ -18,7 +23,6 @@ export function useInvitationsDialog() {
     staleTime: 60_000,
   })
   const invitations = invitationsQuery.data?.invitations ?? []
-
   const deleteInvitationMutation = useMutation(deleteInvitationsInvitationIdMutation())
 
   const deleteInvitation = async (invitationId: number) => {
@@ -29,13 +33,8 @@ export function useInvitationsDialog() {
     await queryClient.invalidateQueries(invitationsQueryOptions)
   }
 
-  const formatDateTime = (value: string) => {
-    const date = new Date(value)
-
-    return new Intl.DateTimeFormat(undefined, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(date)
+  const copyInvitation = async (token: string) => {
+    await clipboard.copy(getInvitationUrl(token))
   }
 
   return {
@@ -49,8 +48,13 @@ export function useInvitationsDialog() {
       deleteInvitation: deleteInvitationMutation,
     },
     functions: {
+      copyInvitation,
+      getInvitationUrl,
       deleteInvitation,
-      formatDateTime,
+    },
+    features: {
+      clipboard,
+      i18n,
     },
   }
 }

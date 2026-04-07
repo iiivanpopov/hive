@@ -140,6 +140,52 @@ describe('/communities/join/:token', () => {
 
     expect(membership).toBeDefined()
   })
+
+  it('should return the community when the user is already a member', async () => {
+    const createInvitationResponse = await clientMock.communities[':communityId'].invitations.$post({
+      param: { communityId: '1' },
+      json: {},
+    }, { headers: { Cookie: authCookie } })
+
+    const { invitation } = await createInvitationResponse.json()
+
+    const registerResponse = await clientMock.auth.register.$post({
+      json: {
+        email: 'testuser2@gmail.com',
+        username: 'testuser2',
+        password: 'password123',
+      },
+    })
+    const memberCookie = extractSessionTokenCookie(registerResponse.headers)
+
+    const firstJoinResponse = await clientMock.communities.join[':token'].$post({
+      param: { token: invitation.token },
+    }, { headers: { Cookie: memberCookie } })
+
+    expect(firstJoinResponse.status).toBe(200)
+
+    const secondJoinResponse = await clientMock.communities.join[':token'].$post({
+      param: { token: invitation.token },
+    }, { headers: { Cookie: memberCookie } })
+
+    expect(secondJoinResponse.status).toBe(200)
+
+    const secondJoinBody = await secondJoinResponse.json()
+
+    expect(secondJoinBody.community).toMatchObject({
+      id: invitation.communityId,
+      name: 'Test Community',
+    })
+
+    const memberships = await databaseMock.query.communityMembers.findMany({
+      where: {
+        communityId: invitation.communityId,
+        userId: 2,
+      },
+    })
+
+    expect(memberships).toHaveLength(1)
+  })
 })
 
 describe('/invitations/:invitationId', () => {

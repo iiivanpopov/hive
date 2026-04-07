@@ -1,4 +1,4 @@
-import { Trash2Icon } from 'lucide-react'
+import { CheckIcon, CopyIcon, Trash2Icon } from 'lucide-react'
 
 import { I18nText } from '@/components/i18n'
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,7 @@ interface InvitationsDialogProps {
 }
 
 export function InvitationsDialog({ onOpenChange }: InvitationsDialogProps) {
-  const { state, queries, mutations, functions } = useInvitationsDialog()
+  const { state, queries, mutations, functions, features } = useInvitationsDialog()
 
   return (
     <Dialog open onOpenChange={onOpenChange}>
@@ -50,8 +50,11 @@ export function InvitationsDialog({ onOpenChange }: InvitationsDialogProps) {
         {!queries.invitations.isPending && state.invitations.length && (
           <div className="max-h-104 space-y-3 overflow-y-auto pr-1">
             {state.invitations.map((invitation) => {
+              const invitationUrl = functions.getInvitationUrl(invitation.token)
+
               const isDeleting = mutations.deleteInvitation.isPending
                 && mutations.deleteInvitation.variables?.path.invitationId === invitation.id
+              const isCopied = features.clipboard.value === invitationUrl
 
               return (
                 <div
@@ -62,14 +65,19 @@ export function InvitationsDialog({ onOpenChange }: InvitationsDialogProps) {
                   "
                 >
                   <div className="space-y-1.5">
-                    <p className="font-medium text-foreground">
-                      {invitation.token}
+                    <p className="font-mono text-sm break-all text-foreground">
+                      {invitationUrl}
+                    </p>
+                    <p className="text-sm break-all text-muted-foreground">
+                      <I18nText id="invitation.token.label" />
+                      {': '}
+                      <span className="font-mono">{invitation.token}</span>
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {invitation.expiresAt && (
                         <I18nText
                           id="invitation.expires-at"
-                          values={{ date: functions.formatDateTime(invitation.expiresAt) }}
+                          values={{ date: features.i18n.formatDate(invitation.expiresAt) }}
                         />
                       )}
                       {!invitation.expiresAt && <I18nText id="invitation.never-expires" />}
@@ -77,12 +85,23 @@ export function InvitationsDialog({ onOpenChange }: InvitationsDialogProps) {
                     <p className="text-sm text-muted-foreground">
                       <I18nText
                         id="invitation.created-at"
-                        values={{ date: functions.formatDateTime(invitation.createdAt) }}
+                        values={{ date: features.i18n.formatDate(invitation.createdAt) }}
                       />
                     </p>
                   </div>
 
-                  <div className="flex justify-end">
+                  <div className="flex flex-wrap justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => functions.copyInvitation(invitation.token)}
+                    >
+                      {isCopied && <CheckIcon className="size-4" />}
+                      {!isCopied && <CopyIcon className="size-4" />}
+                      <I18nText id="button.copy-link" />
+                    </Button>
+
                     <Button
                       type="button"
                       variant="destructive"
