@@ -1,15 +1,17 @@
-import { ChevronDownIcon, DoorOpenIcon, LinkIcon, ListIcon } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { ChevronDownIcon, DoorOpenIcon, LinkIcon, ListIcon, SettingsIcon } from 'lucide-react'
 
 import { I18nText } from '@/components/i18n'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Spinner } from '@/components/ui/spinner'
 
 import { CreateInvitationDialog } from './components/create-invitation-dialog'
 import { InvitationsDialog } from './components/invitations-dialog'
 import { useCommunityHeader } from './hooks/use-community-header'
 
 export function CommunityHeader() {
-  const { state, queries, functions, features } = useCommunityHeader()
+  const { state, queries, mutations, functions, features } = useCommunityHeader()
 
   return (
     <div className="
@@ -70,18 +72,41 @@ export function CommunityHeader() {
                   <I18nText id="dropdown.create-invitation.title" />
                   <LinkIcon className="size-4" />
                 </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  className="
+                    cursor-pointer items-center justify-between
+                    transition-colors
+                  "
+                  render={props => (
+                    <Link
+                      to="/c/$communityId/settings"
+                      params={{ communityId: queries.community.data.community.id }}
+                      {...props}
+                    />
+                  )}
+                >
+                  <I18nText id="dropdown.community-settings.title" />
+                  <SettingsIcon className="size-4" />
+                </DropdownMenuItem>
               </>
             )}
 
             {queries.community.data.community.ownerId !== state.user!.id && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="
-                  cursor-pointer items-center justify-between text-destructive
-                "
+                <DropdownMenuItem
+                  variant="destructive"
+                  disabled={mutations.leaveCommunity.isPending}
+                  onClick={functions.leaveCommunity}
+                  className="cursor-pointer items-center justify-between"
                 >
                   <I18nText id="dropdown.leave-community.title" />
-                  <DoorOpenIcon className="size-4" />
+                  {mutations.leaveCommunity.isPending
+                    ? <Spinner className="size-4" />
+                    : <DoorOpenIcon className="size-4" />}
                 </DropdownMenuItem>
               </>
             )}

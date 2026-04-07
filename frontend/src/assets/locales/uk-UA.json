@@ -5,6 +5,7 @@
   "input.password.hint": "Щонайменше 6 символів",
 
   "button.copy-link": "Скопіювати посилання",
+  "button.delete-community": "Видалити спільноту",
 
   "validation.email.invalid": "Введіть коректну адресу електронної пошти",
   "validation.password.min": "Пароль має містити щонайменше 6 символів",
@@ -45,6 +46,18 @@
   "profile.security.password-setup.description": "Якщо ви увійшли через Google або не знаєте поточний пароль, надішліть собі лист із посиланням для створення пароля.",
   "profile.security.password-setup.action": "Надіслати посилання для пароля",
   "profile.security.password-setup.success": "Перевірте пошту: ми надіслали посилання для створення пароля.",
+  "community-settings.page.title": "Налаштування спільноти",
+  "community-settings.page.caption": "Керуйте спільнотою {communityName} та небезпечними діями.",
+  "community-settings.info.title": "Основне",
+  "community-settings.info.caption": "Оновіть назву цієї спільноти в Hive",
+  "community-settings.info.submit": "Зберегти спільноту",
+  "community-settings.danger.title": "Небезпечна зона",
+  "community-settings.danger.caption": "Незворотні дії для цієї спільноти",
+  "community-settings.danger.description": "Видаліть цю спільноту назавжди. Перед цим ми попросимо підтвердити дію.",
+  "dialog.delete-community.title": "Видалити спільноту",
+  "dialog.delete-community.description": "Видалити {communityName}? Цю дію не можна скасувати.",
+  "dropdown.community-settings.title": "Налаштування",
+  "dropdown.leave-community.title": "Покинути спільноту",
 
   "invitation.ready": "Ось ваше посилання-запрошення",
   "invitation.token.label": "Токен запрошення",

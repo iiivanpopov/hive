@@ -5,6 +5,7 @@
   "input.password.hint": "Минимум 6 символов",
 
   "button.copy-link": "Скопировать ссылку",
+  "button.delete-community": "Удалить сообщество",
 
   "validation.email.invalid": "Введите корректный адрес электронной почты",
   "validation.password.min": "Пароль должен содержать не менее 6 символов",
@@ -45,6 +46,18 @@
   "profile.security.password-setup.description": "Если вы вошли через Google или не знаете текущий пароль, отправьте себе письмо со ссылкой для создания пароля.",
   "profile.security.password-setup.action": "Отправить ссылку для пароля",
   "profile.security.password-setup.success": "Проверьте почту: мы отправили ссылку для создания пароля.",
+  "community-settings.page.title": "Настройки сообщества",
+  "community-settings.page.caption": "Управляйте сообществом {communityName} и опасными действиями.",
+  "community-settings.info.title": "Основное",
+  "community-settings.info.caption": "Обновите название этого сообщества в Hive",
+  "community-settings.info.submit": "Сохранить сообщество",
+  "community-settings.danger.title": "Опасная зона",
+  "community-settings.danger.caption": "Необратимые действия для этого сообщества",
+  "community-settings.danger.description": "Удалите это сообщество навсегда. Перед этим мы попросим подтвердить действие.",
+  "dialog.delete-community.title": "Удалить сообщество",
+  "dialog.delete-community.description": "Удалить {communityName}? Это действие нельзя отменить.",
+  "dropdown.community-settings.title": "Настройки",
+  "dropdown.leave-community.title": "Покинуть сообщество",
 
   "invitation.ready": "Вот ваша ссылка-приглашение",
   "invitation.token.label": "Токен приглашения",

@@ -21,6 +21,7 @@ import { Route as layoutLayoutSettingsIndexRouteImport } from './app/routes/(lay
 import { Route as layoutLayoutProfileIndexRouteImport } from './app/routes/(layout)/_layout/profile/index'
 import { Route as layoutLayoutCCommunityIdLayoutRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout'
 import { Route as layoutLayoutCCommunityIdLayoutIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout/index'
+import { Route as layoutLayoutCCommunityIdLayoutSettingsIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout/settings/index'
 import { Route as layoutLayoutCCommunityIdLayoutChannelIdIndexRouteImport } from './app/routes/(layout)/_layout/c/$communityId/_layout/$channelId/index'
 
 const InviteTokenRoute = InviteTokenRouteImport.update({
@@ -86,6 +87,12 @@ const layoutLayoutCCommunityIdLayoutIndexRoute =
     path: '/',
     getParentRoute: () => layoutLayoutCCommunityIdLayoutRoute,
   } as any)
+const layoutLayoutCCommunityIdLayoutSettingsIndexRoute =
+  layoutLayoutCCommunityIdLayoutSettingsIndexRouteImport.update({
+    id: '/settings/',
+    path: '/settings/',
+    getParentRoute: () => layoutLayoutCCommunityIdLayoutRoute,
+  } as any)
 const layoutLayoutCCommunityIdLayoutChannelIdIndexRoute =
   layoutLayoutCCommunityIdLayoutChannelIdIndexRouteImport.update({
     id: '/$channelId/',
@@ -106,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/c/$communityId': typeof layoutLayoutCCommunityIdLayoutRouteWithChildren
   '/c/$communityId/': typeof layoutLayoutCCommunityIdLayoutIndexRoute
   '/c/$communityId/$channelId/': typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
+  '/c/$communityId/settings/': typeof layoutLayoutCCommunityIdLayoutSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/invite/$token': typeof InviteTokenRoute
@@ -119,6 +127,7 @@ export interface FileRoutesByTo {
   '/settings': typeof layoutLayoutSettingsIndexRoute
   '/c/$communityId': typeof layoutLayoutCCommunityIdLayoutIndexRoute
   '/c/$communityId/$channelId': typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
+  '/c/$communityId/settings': typeof layoutLayoutCCommunityIdLayoutSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -135,6 +144,7 @@ export interface FileRoutesById {
   '/(layout)/_layout/c/$communityId/_layout': typeof layoutLayoutCCommunityIdLayoutRouteWithChildren
   '/(layout)/_layout/c/$communityId/_layout/': typeof layoutLayoutCCommunityIdLayoutIndexRoute
   '/(layout)/_layout/c/$communityId/_layout/$channelId/': typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
+  '/(layout)/_layout/c/$communityId/_layout/settings/': typeof layoutLayoutCCommunityIdLayoutSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/c/$communityId'
     | '/c/$communityId/'
     | '/c/$communityId/$channelId/'
+    | '/c/$communityId/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/invite/$token'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/c/$communityId'
     | '/c/$communityId/$channelId'
+    | '/c/$communityId/settings'
   id:
     | '__root__'
     | '/(layout)/_layout'
@@ -179,6 +191,7 @@ export interface FileRouteTypes {
     | '/(layout)/_layout/c/$communityId/_layout'
     | '/(layout)/_layout/c/$communityId/_layout/'
     | '/(layout)/_layout/c/$communityId/_layout/$channelId/'
+    | '/(layout)/_layout/c/$communityId/_layout/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -277,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof layoutLayoutCCommunityIdLayoutIndexRouteImport
       parentRoute: typeof layoutLayoutCCommunityIdLayoutRoute
     }
+    '/(layout)/_layout/c/$communityId/_layout/settings/': {
+      id: '/(layout)/_layout/c/$communityId/_layout/settings/'
+      path: '/settings'
+      fullPath: '/c/$communityId/settings/'
+      preLoaderRoute: typeof layoutLayoutCCommunityIdLayoutSettingsIndexRouteImport
+      parentRoute: typeof layoutLayoutCCommunityIdLayoutRoute
+    }
     '/(layout)/_layout/c/$communityId/_layout/$channelId/': {
       id: '/(layout)/_layout/c/$communityId/_layout/$channelId/'
       path: '/$channelId'
@@ -290,6 +310,7 @@ declare module '@tanstack/react-router' {
 interface layoutLayoutCCommunityIdLayoutRouteChildren {
   layoutLayoutCCommunityIdLayoutIndexRoute: typeof layoutLayoutCCommunityIdLayoutIndexRoute
   layoutLayoutCCommunityIdLayoutChannelIdIndexRoute: typeof layoutLayoutCCommunityIdLayoutChannelIdIndexRoute
+  layoutLayoutCCommunityIdLayoutSettingsIndexRoute: typeof layoutLayoutCCommunityIdLayoutSettingsIndexRoute
 }
 
 const layoutLayoutCCommunityIdLayoutRouteChildren: layoutLayoutCCommunityIdLayoutRouteChildren =
@@ -298,6 +319,8 @@ const layoutLayoutCCommunityIdLayoutRouteChildren: layoutLayoutCCommunityIdLayou
       layoutLayoutCCommunityIdLayoutIndexRoute,
     layoutLayoutCCommunityIdLayoutChannelIdIndexRoute:
       layoutLayoutCCommunityIdLayoutChannelIdIndexRoute,
+    layoutLayoutCCommunityIdLayoutSettingsIndexRoute:
+      layoutLayoutCCommunityIdLayoutSettingsIndexRoute,
   }
 
 const layoutLayoutCCommunityIdLayoutRouteWithChildren =
