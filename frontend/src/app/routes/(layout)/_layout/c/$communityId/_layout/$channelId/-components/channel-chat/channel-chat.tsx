@@ -1,4 +1,4 @@
-import { ArrowUpIcon, DotIcon, HashIcon } from 'lucide-react'
+import { ArrowUpIcon, DotIcon, HashIcon, PencilIcon, Trash2Icon } from 'lucide-react'
 
 import { I18nText } from '@/components/i18n'
 import { Button } from '@/components/ui/button'
@@ -62,7 +62,7 @@ export function ChannelChat() {
                   <div
                     key={message.id}
                     className={cn(
-                      'flex gap-3',
+                      'group flex gap-3',
                       (message.sending || message.failed) && 'opacity-70',
                     )}
                   >
@@ -92,14 +92,153 @@ export function ChannelChat() {
                             <I18nText id="channel-chat.message.failed" />
                           </Typography>
                         )}
+                        {message.isEdited && !message.sending && !message.failed && (
+                          <Typography className="text-[11px]" variant="caption">
+                            <I18nText id="channel-chat.message.edited" />
+                          </Typography>
+                        )}
+
+                        {message.isOwnMessage
+                          && message.serverId != null
+                          && !message.sending
+                          && !message.failed
+                          && state.editingMessageId !== message.serverId
+                          && state.deletingMessageId !== message.serverId && (
+                          <div className="
+                            ml-auto flex items-center gap-1 opacity-0
+                            transition-opacity
+                            group-focus-within:opacity-100
+                            group-hover:opacity-100
+                          "
+                          >
+                            <Button
+                              size="xs"
+                              type="button"
+                              variant="ghost"
+                              className="
+                                h-auto px-1.5 py-1 text-muted-foreground
+                              "
+                              onClick={() => functions.openEditMessage(message.serverId!)}
+                            >
+                              <PencilIcon className="size-3.5" />
+                              <I18nText id="button.edit" />
+                            </Button>
+
+                            <Button
+                              size="xs"
+                              type="button"
+                              variant="ghost"
+                              className="
+                                h-auto px-1.5 py-1 text-destructive
+                                hover:text-destructive
+                              "
+                              onClick={() => functions.requestDeleteMessage(message.serverId!)}
+                            >
+                              <Trash2Icon className="size-3.5" />
+                              <I18nText id="button.delete" />
+                            </Button>
+                          </div>
+                        )}
                       </div>
 
-                      <Typography className="
-                        text-sm/6 wrap-break-word whitespace-pre-wrap
-                      "
-                      >
-                        {message.content}
-                      </Typography>
+                      {state.editingMessageId === message.serverId && (
+                        <div className="mt-2 space-y-2">
+                          <Textarea
+                            autoFocus
+                            value={state.editingMessageDraft}
+                            onChange={event => functions.setEditingMessageDraft(event.target.value)}
+                            onKeyDown={(event) => {
+                              if (event.key === 'Escape') {
+                                event.preventDefault()
+                                functions.cancelEditMessage()
+                              }
+
+                              if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+                                event.preventDefault()
+                                void functions.submitEditMessage()
+                              }
+                            }}
+                            rows={3}
+                            maxLength={1000}
+                            className="
+                              min-h-24 resize-y px-3 py-2 text-sm shadow-none
+                            "
+                          />
+
+                          <div className="
+                            flex items-center justify-between gap-2
+                          "
+                          >
+                            <Typography className="text-[11px]" variant="caption">
+                              {`${state.editingMessageDraft.trim().length}/1000`}
+                            </Typography>
+
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="xs"
+                                type="button"
+                                variant="ghost"
+                                disabled={state.isUpdatingMessage}
+                                onClick={functions.cancelEditMessage}
+                              >
+                                <I18nText id="button.cancel" />
+                              </Button>
+
+                              <Button
+                                size="xs"
+                                type="button"
+                                disabled={!state.canSubmitEditedMessage}
+                                onClick={() => void functions.submitEditMessage()}
+                              >
+                                <I18nText id="button.save" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {state.editingMessageId !== message.serverId && (
+                        <Typography className="
+                          text-sm/6 wrap-break-word whitespace-pre-wrap
+                        "
+                        >
+                          {message.content}
+                        </Typography>
+                      )}
+
+                      {state.deletingMessageId === message.serverId && (
+                        <div className="
+                          mt-2 flex flex-wrap items-center justify-between gap-2
+                          rounded-md border border-destructive/20
+                          bg-destructive/5 px-3 py-2
+                        "
+                        >
+                          <Typography className="text-xs text-muted-foreground">
+                            <I18nText id="channel-chat.message.delete-confirmation" />
+                          </Typography>
+
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="xs"
+                              type="button"
+                              variant="ghost"
+                              disabled={state.isDeletingMessage}
+                              onClick={functions.cancelDeleteMessage}
+                            >
+                              <I18nText id="button.cancel" />
+                            </Button>
+
+                            <Button
+                              size="xs"
+                              type="button"
+                              variant="destructive"
+                              disabled={state.isDeletingMessage}
+                              onClick={() => void functions.submitDeleteMessage(message.serverId!)}
+                            >
+                              <I18nText id="button.delete" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )

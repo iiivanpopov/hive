@@ -9,6 +9,8 @@
   "button.create-invitation": "Create invitation",
   "button.save": "Save",
   "button.cancel": "Cancel",
+  "button.edit": "Edit",
+  "button.delete": "Delete",
   "button.send": "Send",
   "button.delete-channel": "Delete channel",
   "button.delete-community": "Delete community",
@@ -62,7 +64,6 @@
   "input.channel-name.label": "Channel name",
   "input.channel-description.label": "Description",
   "input.invite-token.label": "Invitation token",
-  "input.expires-at.label": "Expires at",
   "input.expires-at.description": "Expires at {day} {time}",
   "input.expires-at.never-expires": "Never expires",
 
@@ -148,10 +149,10 @@
   "channel-chat.empty.title": "Welcome to #{channelName}",
   "channel-chat.empty.description": "This is the start of the #{channelName} channel. Send the first message to get the conversation going.",
   "channel-chat.input.placeholder": "Message #{channelName}",
-  "channel-chat.input.connected": "Connected",
-  "channel-chat.input.connecting": "Connecting...",
   "channel-chat.message.sending": "Sending...",
   "channel-chat.message.failed": "Failed to send",
+  "channel-chat.message.edited": "edited",
+  "channel-chat.message.delete-confirmation": "Delete this message? This action cannot be undone.",
 
   "dropdown.edit-channel.title": "Edit channel",
   "dropdown.delete-channel.title": "Delete channel",
@@ -160,8 +161,6 @@
   "dropdown.community-settings.title": "Settings",
   "dropdown.leave-community.title": "Leave community",
   "dropdown.invitations.title": "Invitations",
-
-  "toast.create-invitation.success": "Invitation created successfully",
 
   "invitation.ready": "Here is your shareable invitation link",
   "invitation.token.label": "Raw token",
@@ -177,13 +176,8 @@
   "invite.page.pending.title": "Joining community",
   "invite.page.pending.description": "We're adding you to the community now.",
   "invite.page.pending.action": "Joining",
-  "invite.page.success.title": "Invitation accepted",
-  "invite.page.success.description": "You're in. Opening the community now.",
-  "invite.page.success.action": "Opening community",
   "invite.page.error.title": "Invitation unavailable",
   "invite.page.error.description": "This invitation link is invalid or has expired.",
   "invite.page.retry": "Try again",
-  "invite.page.go-home": "Go to app",
-
-  "button.close": "Close"
+  "invite.page.go-home": "Go to app"
 }

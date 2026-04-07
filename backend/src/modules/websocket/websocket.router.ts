@@ -19,9 +19,10 @@ export class WebsocketRouter implements BaseRouter {
   constructor(
     private readonly db: DrizzleDatabase,
     private readonly sessionTokens: SessionTokenRepository,
+    channelBroadcastService: import('./channel-broadcast.service').ChannelBroadcastService,
   ) {
     const messagesService = new MessagesService(db)
-    this.websocketService = new WebsocketService(db, messagesService)
+    this.websocketService = new WebsocketService(db, messagesService, channelBroadcastService)
   }
 
   init() {

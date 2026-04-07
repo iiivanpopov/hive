@@ -5,6 +5,8 @@ import { clearPendingMessageTimeout } from '../../pendingMessageTimeouts'
 import {
   markChannelChatMessageFailed,
   receiveChannelChatMessage,
+  removeActiveChannelChatMessage,
+  updateActiveChannelChatMessage,
 } from '../../store/session.store'
 import { getChannelChatWebSocketUrl } from './utils/get-channel-chat-web-socket-url'
 
@@ -26,6 +28,11 @@ const ServerMessageSchema = z.object({
 const CreateMessagePayloadSchema = z.object({
   clientId: z.string().optional(),
   message: ServerMessageSchema,
+})
+
+const DeleteMessagePayloadSchema = z.object({
+  messageId: z.number(),
+  channelId: z.number(),
 })
 
 const FailedMessagePayloadSchema = z.object({
@@ -53,6 +60,26 @@ export function useChannelChatWebsocket(channelId: number) {
 
           clearPendingMessageTimeout(data.clientId)
           receiveChannelChatMessage(data.message, data.clientId)
+
+          return
+        }
+
+        case 'UPDATE_MESSAGE': {
+          const { success, data } = ServerMessageSchema.safeParse(rawMessage.payload)
+          if (!success)
+            return
+
+          updateActiveChannelChatMessage(data)
+
+          return
+        }
+
+        case 'DELETE_MESSAGE': {
+          const { success, data } = DeleteMessagePayloadSchema.safeParse(rawMessage.payload)
+          if (!success)
+            return
+
+          removeActiveChannelChatMessage(data.channelId, data.messageId)
 
           return
         }

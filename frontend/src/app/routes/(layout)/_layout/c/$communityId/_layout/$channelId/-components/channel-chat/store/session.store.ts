@@ -96,6 +96,10 @@ export function createSentChannelChatMessage(
   }
 }
 
+export function isActiveChannelChatMessageEdited(message: Pick<ActiveChannelChatSessionMessage, 'createdAt' | 'updatedAt'>) {
+  return message.createdAt !== message.updatedAt
+}
+
 export function createSendingChannelChatMessage({
   channelId,
   userId,
@@ -234,6 +238,43 @@ export function receiveChannelChatMessage(
     return {
       messages: [...state.messages, createSentChannelChatMessage(message)],
     }
+  })
+}
+
+export function updateActiveChannelChatMessage(message: ChannelChatServerMessage) {
+  activeChannelChatSessionStore.set((state) => {
+    if (state.channelId !== message.channelId)
+      return state
+
+    const messageIndex = state.messages.findIndex(existingMessage => existingMessage.serverId === message.id)
+    if (messageIndex === -1)
+      return state
+
+    const nextMessages = [...state.messages]
+    nextMessages[messageIndex] = {
+      ...nextMessages[messageIndex],
+      serverId: message.id,
+      userId: message.userId,
+      content: message.content,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
+      deliveryStatus: 'sent',
+    }
+
+    return { messages: nextMessages }
+  })
+}
+
+export function removeActiveChannelChatMessage(channelId: number, messageId: number) {
+  activeChannelChatSessionStore.set((state) => {
+    if (state.channelId !== channelId)
+      return state
+
+    const nextMessages = state.messages.filter(message => message.serverId !== messageId)
+    if (nextMessages.length === state.messages.length)
+      return state
+
+    return { messages: nextMessages }
   })
 }
 

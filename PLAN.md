@@ -25,7 +25,7 @@ Finish the full lost-password and confirm-email journey so users can recover acc
 2. Add a tokenized reset-password page.
 3. Add a tokenized confirm-email page.
 4. Add a resend-confirmation path for unconfirmed users.
-5. Add copy for all new states in `en-US`, `ru-RU`, and `uk-UA` locales.
+5. Add copy for all new states in `en-US` and `uk-UA` locales.
 
 ### Backend Work
 

@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import type { WSContext, WSEvents } from 'hono/ws'
+import type { WSEvents } from 'hono/ws'
 
 import type { User } from '@/db/tables/users'
 import type { DrizzleDatabase } from '@/db/utils'
@@ -9,38 +9,28 @@ import type { MessagesService } from '@/modules/messages/messages.service'
 import { ApiException } from '@/lib/api-exception'
 import { pino } from '@/lib/pino'
 
-import type { WsResponse } from './utils/websocket-message'
+import type { ChannelBroadcastService } from './channel-broadcast.service'
 
 import { CreateMessageSchema } from './schema/create-message.schema'
 import { EventMessageHandler } from './utils/event-message-handler'
 import { CreatedMessageResponse, WsEventType } from './utils/websocket-message'
 
 export class WebsocketService {
-  private connections = new Map<number, Set<WSContext>>()
-
   constructor(
     private readonly db: DrizzleDatabase,
     private readonly messagesService: MessagesService,
+    private readonly channelBroadcastService: ChannelBroadcastService,
   ) { }
-
-  private notify(channelId: number, message: WsResponse<any>) {
-    const connections = this.connections.get(channelId) ?? new Set()
-    for (const connection of connections)
-      connection.send(JSON.stringify(message))
-  }
 
   private onOpen(query: { channelId: number }): WSEvents<unknown>['onOpen'] {
     return (_event, ws) => {
-      const connections = this.connections.get(query.channelId) ?? new Set()
-      this.connections.set(query.channelId, new Set([...connections, ws]))
+      this.channelBroadcastService.addConnection(query.channelId, ws)
     }
   }
 
   private onClose(query: { channelId: number }): WSEvents<unknown>['onClose'] {
     return (_event, ws) => {
-      this.connections.get(query.channelId)?.delete(ws)
-      if (this.connections.get(query.channelId)?.size === 0)
-        this.connections.delete(query.channelId)
+      this.channelBroadcastService.removeConnection(query.channelId, ws)
     }
   }
 
@@ -71,7 +61,10 @@ export class WebsocketService {
               user,
             )
             pino.info(`Message created: ${message.id}`)
-            this.notify(query.channelId, new CreatedMessageResponse(message, data.clientId))
+            this.channelBroadcastService.broadcast(
+              query.channelId,
+              new CreatedMessageResponse(message, data.clientId),
+            )
           },
         )
         .onMessageEvent(event, ws)

@@ -14,6 +14,7 @@ import { CommunitiesRouter } from '@/modules/communities'
 import { CommunityMembersRouter } from '@/modules/community-members'
 import { InvitationsRouter } from '@/modules/invitations'
 import { MessagesRouter } from '@/modules/messages'
+import { ChannelBroadcastService } from '@/modules/websocket/channel-broadcast.service'
 import { WebsocketRouter } from '@/modules/websocket/websocket.router'
 
 import { Router } from './router'
@@ -25,6 +26,8 @@ export function createApp(
   resetPasswordTokensRepository: ResetPasswordTokenRepository,
   sessionTokensRepository: SessionTokenRepository,
 ) {
+  const channelBroadcastService = new ChannelBroadcastService()
+
   const router = new Router(
     new AuthRouter(
       db,
@@ -52,10 +55,12 @@ export function createApp(
     new MessagesRouter(
       db,
       sessionTokensRepository,
+      channelBroadcastService,
     ),
     new WebsocketRouter(
       db,
       sessionTokensRepository,
+      channelBroadcastService,
     ),
   ).init()
 

@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react'
 
 import { createContext } from 'react'
 
-export type Locale = 'en-US' | 'uk-UA' | 'ru-RU'
+export type Locale = 'en-US' | 'uk-UA'
 
 export interface I18nContextState {
   locale: Locale

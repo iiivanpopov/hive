@@ -26,9 +26,6 @@ const LOCALES: {
 }, {
   value: 'uk-UA',
   label: 'Українська',
-}, {
-  value: 'ru-RU',
-  label: 'Русский',
 }]
 
 function SettingsPage() {

@@ -1,6 +1,7 @@
 import { describeRoute, resolver } from 'hono-openapi'
 
 import type { DrizzleDatabase } from '@/db/utils'
+import type { ChannelBroadcastService } from '@/modules/websocket/channel-broadcast.service'
 import type { SessionTokenRepository } from '@/repositories/session-token.repository'
 import type { BaseRouter } from '@/types/interfaces'
 
@@ -8,6 +9,7 @@ import { factory } from '@/lib/factory'
 import { session, validator } from '@/middleware'
 import { onlyMember } from '@/middleware/only-member.middleware'
 import { role } from '@/middleware/role.middleware'
+import { DeletedMessageResponse, UpdatedMessageResponse } from '@/modules/websocket/utils/websocket-message'
 
 import { MessagesService } from './messages.service'
 import { CreateMessageBodySchema, CreateMessageParamsSchema, CreateMessageResponseSchema } from './schema/create-message.schema'
@@ -22,6 +24,7 @@ export class MessagesRouter implements BaseRouter {
   constructor(
     private readonly db: DrizzleDatabase,
     private readonly sessionTokens: SessionTokenRepository,
+    private readonly channelBroadcastService: ChannelBroadcastService,
   ) {
     this.messagesService = new MessagesService(db)
   }
@@ -122,6 +125,11 @@ export class MessagesRouter implements BaseRouter {
 
           const message = await this.messagesService.updateMessage(params, body, user)
 
+          this.channelBroadcastService.broadcast(
+            message.channelId,
+            new UpdatedMessageResponse(message),
+          )
+
           return c.json({ message })
         },
       )
@@ -151,6 +159,11 @@ export class MessagesRouter implements BaseRouter {
           const user = c.get('user')
 
           const message = await this.messagesService.deleteMessage(params, user)
+
+          this.channelBroadcastService.broadcast(
+            message.channelId,
+            new DeletedMessageResponse(message.id, message.channelId),
+          )
 
           return c.json({ message })
         },

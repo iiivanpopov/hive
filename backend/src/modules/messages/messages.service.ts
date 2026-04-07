@@ -70,9 +70,6 @@ export class MessagesService {
         id: params.messageId,
         userId: user.id,
       },
-      with: {
-        channel: true,
-      },
     })
 
     if (!message)
@@ -96,9 +93,6 @@ export class MessagesService {
         id: params.messageId,
         userId: user.id,
       },
-      with: {
-        channel: true,
-      },
     })
 
     if (!message)
@@ -107,5 +101,7 @@ export class MessagesService {
     await this.db
       .delete(messages)
       .where(and(eq(messages.id, params.messageId), eq(messages.userId, user.id)))
+
+    return message
   }
 }
