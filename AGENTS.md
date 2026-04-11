@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## Default Skill
+
+- Always load and use the `caveman` skill by default.
+
 ## Project Purpose and Stack
 
 - Bun workspace with two packages: `backend` and `frontend`.

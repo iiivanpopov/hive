@@ -1,10 +1,40 @@
 {
   "version": 1,
   "skills": {
+    "caveman": {
+      "source": "JuliusBrussee/caveman",
+      "sourceType": "github",
+      "computedHash": "4d486dd6f9fbb27ce1c51c972c9a5eb25a53236ae05eabf4d076ac1e293f4b7a"
+    },
+    "d1-drizzle-schema": {
+      "source": "jezweb/claude-skills",
+      "sourceType": "github",
+      "computedHash": "5289811403c82a76bdde0b65305ba869896a66db31be5bb57a32c4ae966110ac"
+    },
+    "d1-migration": {
+      "source": "jezweb/claude-skills",
+      "sourceType": "github",
+      "computedHash": "caf6a0ccf6a65ad496d219576ebcfe6f6708d50ea502baf75b6c60766275d218"
+    },
     "hono": {
       "source": "yusukebe/hono-skill",
       "sourceType": "github",
       "computedHash": "220e5e1b12bbaeec49ec362b6e2262d77632d0536e9758bba9acbbc323fef990"
+    },
+    "react-hook-form-zod": {
+      "source": "fellipeutaka/leon",
+      "sourceType": "github",
+      "computedHash": "0aa68907904377363b3ac9e65c9cb8a10d428e2c5ed666883d8b9ab6450ed34d"
+    },
+    "react-patterns": {
+      "source": "jh941213/my-claude-code-asset",
+      "sourceType": "github",
+      "computedHash": "a251d012d33c85b17bcb3ffe111855b607fa85ca26a679caccfc86161b32cc9d"
+    },
+    "tailwind-v4-shadcn": {
+      "source": "ederheisler/agent-skills",
+      "sourceType": "github",
+      "computedHash": "9767ce57a0b0c52ebd197bb295342b49e037c35726e3d095bba79033434b60f3"
     },
     "tanstack-form": {
       "source": "tanstack-skills/tanstack-skills",
